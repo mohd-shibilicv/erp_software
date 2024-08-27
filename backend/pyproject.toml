@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "erp-software-backend"
+version = "0.1.0"
+description = ""
+authors = ["mohd-shibilicv <project.nasra@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.1"
+djangorestframework = "^3.15.2"
+django-environs = "^0.1.1"
+django-cors-headers = "^4.4.0"
+djangorestframework-simplejwt = "^5.3.1"
+django-filter = "^24.3"
+psycopg2-binary = "^2.9.9"
+python-barcode = "^0.15.1"
+pillow = "^10.4.0"
+python-dateutil = "^2.9.0.post0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
