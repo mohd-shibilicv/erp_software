@@ -340,47 +340,6 @@ const SalesPage = () => {
         </Card>
 
         <div className="grid grid-cols-3 gap-6">
-          <Card>
-            <CardContent className="mt-6">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Sub Total</span>
-                  <Input
-                    type="number"
-                    value={calculateSubTotal().toFixed(2)}
-                    className="w-32"
-                    readOnly
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <span>Discount</span>
-                  <Input type="number" defaultValue={0} className="w-32" />
-                </div>
-                <div className="flex justify-between">
-                  <span>Total Tax</span>
-                  <Input
-                    type="number"
-                    defaultValue={0}
-                    className="w-32"
-                    readOnly
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <span>Total Addon</span>
-                  <Input type="number" defaultValue={0} className="w-32" />
-                </div>
-                <div className="flex justify-between font-bold">
-                  <span>Grand Total</span>
-                  <Input
-                    type="number"
-                    value={calculateSubTotal().toFixed(2)}
-                    className="w-32"
-                    readOnly
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
           <Card>
             <CardHeader>Bank Total</CardHeader>
@@ -423,6 +382,48 @@ const SalesPage = () => {
                 className="my-2"
               />
               <Input placeholder="Credit Note Details" />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="mt-6">
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span>Sub Total</span>
+                  <Input
+                    type="number"
+                    value={calculateSubTotal().toFixed(2)}
+                    className="w-32"
+                    readOnly
+                  />
+                </div>
+                <div className="flex justify-between">
+                  <span>Discount</span>
+                  <Input type="number" defaultValue={0} className="w-32" />
+                </div>
+                <div className="flex justify-between">
+                  <span>Total Tax</span>
+                  <Input
+                    type="number"
+                    defaultValue={0}
+                    className="w-32"
+                    readOnly
+                  />
+                </div>
+                <div className="flex justify-between">
+                  <span>Total Addon</span>
+                  <Input type="number" defaultValue={0} className="w-32" />
+                </div>
+                <div className="flex justify-between font-bold">
+                  <span>Grand Total</span>
+                  <Input
+                    type="number"
+                    value={calculateSubTotal().toFixed(2)}
+                    className="w-32"
+                    readOnly
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

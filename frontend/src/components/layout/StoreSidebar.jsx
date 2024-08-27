@@ -66,7 +66,11 @@ const StoreSidebar = () => {
     { path: "/store/van-sales", icon: NotebookText, label: "Van Sales" },
     { path: "/store/packing", icon: Package, label: "Packing" },
     { path: "/store/physical-stock", icon: Blocks, label: "Physical Stock" },
-    { path: "/store/material-transfer", icon: Replace, label: "Material Transfer" },
+    {
+      path: "/store/material-transfer",
+      icon: Replace,
+      label: "Material Transfer",
+    },
     { path: "/store/quotation", icon: Handshake, label: "Quotation" },
   ];
 
@@ -94,18 +98,17 @@ const StoreSidebar = () => {
   return (
     <div className="w-20 md:w-64 bg-white p-4 h-screen border-r border-gray-300 flex flex-col">
       <Link to="/" className="mb-8 flex justify-center md:justify-start">
-        <div className="hidden sm:flex gap-2 items-center text-black-500 text-2xl font-bold">
-          <Container />
-          <span>InventoryPro</span>
+        <div className="hidden sm:block">
+          <img src="/nasscript_full_banner_logo.png" alt="LOGO" className="w-full h-10" />
         </div>
         <div className="block sm:hidden text-black-500 text-2xl font-bold">
-          <Container />
+          <img src="/nasscript_logo.png" alt="LOGO" className="w-full h-10" />
         </div>
       </Link>
-      <nav className="flex-grow">
-        <ul className="space-y-2">{menuItems.map(renderMenuItem)}</ul>
+      <nav className="flex-grow overflow-y-auto custom-scrollbar">
+        <ul className="space-y-2 mr-2">{menuItems.map(renderMenuItem)}</ul>
       </nav>
-      <div className="mt-8">
+      <div className="mt-2">
         <ul>
           <TooltipProvider>
             <Tooltip>
