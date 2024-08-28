@@ -16,6 +16,7 @@ const CustomerAccountModal = ({ isOpen, onClose, onSave }) => {
     name: "",
     phone_number: "",
     whatsapp_number: "",
+    email: "",
   });
 
   useEffect(() => {
@@ -23,6 +24,7 @@ const CustomerAccountModal = ({ isOpen, onClose, onSave }) => {
       name: "",
       phone_number: "",
       whatsapp_number: "",
+      email: "",
     });
   }, []);
 
@@ -40,6 +42,7 @@ const CustomerAccountModal = ({ isOpen, onClose, onSave }) => {
       name: "",
       phone_number: "",
       whatsapp_number: "",
+      email: "",
     });
   };
 
@@ -87,6 +90,19 @@ const CustomerAccountModal = ({ isOpen, onClose, onSave }) => {
                 id="whatsapp_number"
                 name="whatsapp_number"
                 value={formData.whatsapp_number}
+                onChange={handleChange}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-left">
+                Email
+              </Label>
+              <Input
+                type="number"
+                id="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
                 className="col-span-3"
               />

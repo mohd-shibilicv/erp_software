@@ -30,6 +30,7 @@ import {
   Menu,
   CreditCard,
   ReceiptText,
+  Contact,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 
@@ -114,22 +115,37 @@ const StoreSidebar = () => {
     {
       section: "Transactions",
       items: [
-        { path: "/store/add-payment-transaction", icon: CreditCard, label: "Add Payment" },
-        { path: "/store/add-receipt-voucher", icon: ReceiptText, label: "Add Receipt" },
+        {
+          path: "/store/add-payment-transaction",
+          icon: CreditCard,
+          label: "Add Payment",
+        },
+        {
+          path: "/store/add-receipt-voucher",
+          icon: ReceiptText,
+          label: "Add Receipt",
+        },
+      ],
+    },
+    {
+      section: "CRM",
+      items: [
+        { path: "/store/client-relationship", icon: Contact, label: "Client Relationship" },
       ],
     },
   ];
 
   const renderMenuItem = (item) => (
-      <Link
-        to={item.path}
-        className={`flex items-center space-x-2 p-2 rounded ${isActive(
-          item.path
-        )}`}
-      >
-        <item.icon className="w-6 h-6" />
-        <span className="hidden md:inline">{item.label}</span>
-      </Link>
+    <Link
+      key={item.path}
+      to={item.path}
+      className={`flex items-center space-x-2 p-2 rounded ${isActive(
+        item.path
+      )}`}
+    >
+      <item.icon className="w-6 h-6" />
+      <span className="hidden md:inline">{item.label}</span>
+    </Link>
   );
 
   const renderSection = (section) => (

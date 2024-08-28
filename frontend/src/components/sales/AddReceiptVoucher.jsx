@@ -98,7 +98,7 @@ const AddReceiptVoucher = () => {
         <CardContent>
           <div className="space-y-4">
             <div className="flex space-x-4">
-              <div className="flex-1">
+            <div className="flex-1">
                 <label htmlFor="receiptFrom" className="text-sm font-medium">
                   Receipt From
                 </label>

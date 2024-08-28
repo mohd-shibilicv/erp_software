@@ -126,12 +126,8 @@ const InvoiceGenerator = () => {
     );
   };
 
-  const calculateTax = (subtotal) => {
-    return subtotal * 0.05; // Assuming 5% tax rate
-  };
-
-  const calculateTotal = (subtotal, tax, discount) => {
-    return subtotal - discount + tax;
+  const calculateTotal = (subtotal, discount) => {
+    return subtotal - discount;
   };
 
   return (
@@ -139,7 +135,7 @@ const InvoiceGenerator = () => {
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
-            Invoice Generator
+            Dummy Quotation
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -342,17 +338,12 @@ const InvoiceGenerator = () => {
                 className="w-20 text-right"
               />
             </div>
-            <div className="flex justify-between border-t border-gray-200 pt-2">
-              <span className="font-semibold">Tax</span>
-              <span>5%</span>
-            </div>
             <div className="flex justify-between border-t border-b border-gray-200 py-2">
               <span className="font-bold">Total Amount</span>
               <span className="font-bold">
                 QAR{" "}
                 {calculateTotal(
                   calculateSubtotal(),
-                  calculateTax(calculateSubtotal()),
                   discount
                 ).toFixed(2)}
               </span>
@@ -440,19 +431,12 @@ const InvoiceGenerator = () => {
                   <span className="font-semibold">Discount</span>
                   <span>QAR {discount.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between border-t border-gray-200 pt-2">
-                  <span className="font-semibold">Tax (5%)</span>
-                  <span>
-                    QAR {calculateTax(calculateSubtotal()).toFixed(2)}
-                  </span>
-                </div>
                 <div className="flex justify-between border-t border-b border-gray-200 py-2">
                   <span className="font-bold">Total Amount</span>
                   <span className="font-bold">
                     QAR{" "}
                     {calculateTotal(
                       calculateSubtotal(),
-                      calculateTax(calculateSubtotal()),
                       discount
                     ).toFixed(2)}
                   </span>

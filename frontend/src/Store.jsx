@@ -18,9 +18,9 @@ import PhysicalStock from "./components/sales/PhysicalStock";
 import MaterialTransfer from "./components/sales/MaterialTransfer";
 import Quotation from "./components/sales/Quotation";
 import InvoiceGenerator from "./components/invoice/InvoiceGenerator";
-import InvoicePage from "./pages/storePages/InvoicePage";
 import AddPaymentTransaction from "./components/sales/AddPaymentTransaction";
-import AddReceiptVoucher from "./components/sales/AddReceiptVoucher";
+import AddReceipt from "./components/sales/AddReceipt";
+import ClientRelationshipPage from "./pages/storePages/ClientRelationshipPage";
 
 function Store() {
   return (
@@ -42,7 +42,8 @@ function Store() {
         <Route path="/material-transfer" element={<MaterialTransfer /> } />
         <Route path="/quotation" element={<Quotation /> } />
         <Route path="/add-payment-transaction" element={<AddPaymentTransaction /> } />
-        <Route path="/add-receipt-voucher" element={<AddReceiptVoucher /> } />
+        <Route path="/add-receipt-voucher" element={<AddReceipt /> } />
+        <Route path="/client-relationship" element={<ClientRelationshipPage /> } />
         <Route path="/notifications" element={<Notifications /> } />
         <Route path="*" element={<NotFound404 /> } />
         <Route path="/invoice" element={<InvoiceGenerator /> } />
