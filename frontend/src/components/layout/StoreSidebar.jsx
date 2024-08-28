@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import {
   Tooltip,
@@ -24,11 +24,18 @@ import {
   Blocks,
   Replace,
   Handshake,
+  FileText,
+  ChevronDown,
+  ChevronRight,
+  Menu,
+  CreditCard,
+  ReceiptText,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 
 const StoreSidebar = () => {
   const location = useLocation();
+  const [expandedSections, setExpandedSections] = useState({});
 
   const isActive = (path) => {
     return location.pathname === path
@@ -36,98 +43,143 @@ const StoreSidebar = () => {
       : "hover:bg-[#5a329e] hover:text-white";
   };
 
+  const toggleSection = (section) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
   const menuItems = [
-    { path: "/store", icon: LayoutDashboard, label: "Dashboard" },
-    { path: "/store/products", icon: PackageSearch, label: "Products" },
-    { path: "/store/suppliers", icon: Truck, label: "Suppliers" },
-    { path: "/store/branches", icon: Warehouse, label: "Branches" },
     {
-      path: "/store/damaged-products",
-      icon: HeartCrack,
-      label: "Damaged Products",
+      section: "Main",
+      items: [
+        { path: "/store", icon: LayoutDashboard, label: "Dashboard" },
+        { path: "/store/products", icon: PackageSearch, label: "Products" },
+        { path: "/store/suppliers", icon: Truck, label: "Suppliers" },
+        { path: "/store/branches", icon: Warehouse, label: "Branches" },
+      ],
     },
     {
-      path: "/store/product-requests",
-      icon: PhoneIncoming,
-      label: "Product Requests",
+      section: "Inventory",
+      items: [
+        {
+          path: "/store/damaged-products",
+          icon: HeartCrack,
+          label: "Damaged Products",
+        },
+        {
+          path: "/store/product-requests",
+          icon: PhoneIncoming,
+          label: "Product Requests",
+        },
+        {
+          path: "/store/product-inflow",
+          icon: ArrowDownToDot,
+          label: "Product Inflows",
+        },
+        {
+          path: "/store/product-outflow",
+          icon: ArrowUpFromDot,
+          label: "Product Outflows",
+        },
+      ],
     },
     {
-      path: "/store/product-inflow",
-      icon: ArrowDownToDot,
-      label: "Product Inflows",
+      section: "Reports",
+      items: [
+        { path: "/store/reports", icon: Layers3, label: "Reports" },
+        { path: "/store/sales", icon: Sheet, label: "Sales" },
+        { path: "/store/van-sales", icon: NotebookText, label: "Van Sales" },
+      ],
     },
     {
-      path: "/store/product-outflow",
-      icon: ArrowUpFromDot,
-      label: "Product Outflows",
+      section: "Operations",
+      items: [
+        { path: "/store/packing", icon: Package, label: "Packing" },
+        {
+          path: "/store/physical-stock",
+          icon: Blocks,
+          label: "Physical Stock",
+        },
+        {
+          path: "/store/material-transfer",
+          icon: Replace,
+          label: "Material Transfer",
+        },
+        { path: "/store/quotation", icon: Handshake, label: "Quotation" },
+        { path: "/store/invoice", icon: FileText, label: "Invoice" },
+      ],
     },
-    { path: "/store/reports", icon: Layers3, label: "Reports" },
-    { path: "/store/sales", icon: Sheet, label: "Sales" },
-    { path: "/store/van-sales", icon: NotebookText, label: "Van Sales" },
-    { path: "/store/packing", icon: Package, label: "Packing" },
-    { path: "/store/physical-stock", icon: Blocks, label: "Physical Stock" },
     {
-      path: "/store/material-transfer",
-      icon: Replace,
-      label: "Material Transfer",
+      section: "Transactions",
+      items: [
+        { path: "/store/add-payment-transaction", icon: CreditCard, label: "Add Payment" },
+        { path: "/store/add-receipt-voucher", icon: ReceiptText, label: "Add Receipt" },
+      ],
     },
-    { path: "/store/quotation", icon: Handshake, label: "Quotation" },
   ];
 
   const renderMenuItem = (item) => (
-    <TooltipProvider key={item.path}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Link
-            to={item.path}
-            className={`flex items-center space-x-2 p-2 rounded ${isActive(
-              item.path
-            )}`}
-          >
-            <item.icon className="w-6 h-6" />
-            <span className="hidden md:inline">{item.label}</span>
-          </Link>
-        </TooltipTrigger>
-        <TooltipContent side="right" className="md:hidden">
-          <p>{item.label}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+      <Link
+        to={item.path}
+        className={`flex items-center space-x-2 p-2 rounded ${isActive(
+          item.path
+        )}`}
+      >
+        <item.icon className="w-6 h-6" />
+        <span className="hidden md:inline">{item.label}</span>
+      </Link>
+  );
+
+  const renderSection = (section) => (
+    <div key={section.section} className="mb-4 mr-2">
+      <button
+        onClick={() => toggleSection(section.section)}
+        className="flex items-center justify-between w-full p-2 text-left text-gray-600 hover:bg-gray-100 rounded"
+      >
+        <span className={`font-semibold`}>{section.section}</span>
+        {expandedSections[section.section] ? (
+          <ChevronDown className="w-4 h-4" />
+        ) : (
+          <ChevronRight className="w-4 h-4" />
+        )}
+      </button>
+      {expandedSections[section.section] && (
+        <ul className="ml-2 space-y-1">{section.items.map(renderMenuItem)}</ul>
+      )}
+    </div>
   );
 
   return (
-    <div className="w-20 md:w-64 bg-white p-4 h-screen border-r border-gray-300 flex flex-col">
-      <Link to="/" className="mb-8 flex justify-center md:justify-start">
-        <div className="hidden sm:block">
-          <img src="/nasscript_full_banner_logo.png" alt="LOGO" className="w-full h-10" />
-        </div>
-        <div className="block sm:hidden text-black-500 text-2xl font-bold">
-          <img src="/nasscript_logo.png" alt="LOGO" className="w-full h-10" />
-        </div>
-      </Link>
+    <div
+      className={
+        "bg-white p-4 h-screen border-r border-gray-300 flex flex-col transition-all duration-300 w-64"
+      }
+    >
+      <div className="flex justify-between items-center mb-8">
+        <Link to="/" className="flex justify-center">
+          <img
+            src="/nasscript_full_banner_logo.png"
+            alt="LOGO"
+            className="h-10"
+          />
+        </Link>
+      </div>
       <nav className="flex-grow overflow-y-auto custom-scrollbar">
-        <ul className="space-y-2 mr-2">{menuItems.map(renderMenuItem)}</ul>
+        {menuItems.map(renderSection)}
       </nav>
       <div className="mt-2">
         <ul>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  to="/store/notifications"
-                  className={`flex items-center space-x-2 p-2 rounded ${isActive(
-                    "/store/notifications"
-                  )}`}
-                >
-                  <Bell className="w-6 h-6" />
-                  <span className="hidden md:inline">Notifications</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="md:hidden">
-                <p>Notifications</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Link
+            to="/store/notifications"
+            className={`flex items-center space-x-2 p-2 rounded ${isActive(
+              "/store/notifications"
+            )}`}
+          >
+            <Bell className="w-6 h-6" />
+            <span className="hidden md:inline">Notifications</span>
+          </Link>
           <LogoutBtn />
         </ul>
       </div>

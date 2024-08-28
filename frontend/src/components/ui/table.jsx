@@ -12,6 +12,16 @@ const Table = React.forwardRef(({ className, ...props }, ref) => (
 ))
 Table.displayName = "Table"
 
+const DrawerTable = React.forwardRef(({ className, ...props }, ref) => (
+  <div className="max-h-[250px] relative w-full overflow-auto custom-scrollbar">
+    <table
+      ref={ref}
+      className={cn("w-full caption-bottom text-sm", className)}
+      {...props} />
+  </div>
+))
+DrawerTable.displayName = "DrawerTable"
+
 const TableHeader = React.forwardRef(({ className, ...props }, ref) => (
   <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
 ))
@@ -76,6 +86,7 @@ TableCaption.displayName = "TableCaption"
 
 export {
   Table,
+  DrawerTable,
   TableHeader,
   TableBody,
   TableFooter,

@@ -111,7 +111,7 @@ const MaterialTransfer = () => {
         </h1>
         <div className="flex flex-row justify-between items-center mb-2">
           <Input placeholder="V.NO." className="w-40" />
-          <Input type="date" className="w-40" defaultValue="2024-08-27" />
+          <Input type="date" className="w-40" defaultValue={new Date().toISOString().split("T")[0]} />
         </div>
         <div className="flex flex-col lg:flex-row gap-1 w-full">
           <Card className="mb-6">

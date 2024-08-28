@@ -131,7 +131,7 @@ const VanSalesComponent = () => {
         <Card className="mb-6">
           <CardHeader className="flex flex-row justify-between items-center">
             <div className="flex items-center space-x-4">
-              <Input type="date" className="w-40" defaultValue="2024-08-27" />
+              <Input type="date" className="w-40" defaultValue={new Date().toISOString().split("T")[0]} />
               <Input
                 placeholder="VST"
                 defaultValue="SL#00034"

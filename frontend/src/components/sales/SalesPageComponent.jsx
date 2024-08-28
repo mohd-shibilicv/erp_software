@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Calendar, Search, Plus, Minus, X } from "lucide-react";
+import { Calendar, Search, Plus, X } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -25,6 +25,13 @@ import {
 } from "@/components/ui/table";
 import { Combobox } from "../ui/Combobox";
 import Layout from "../layout/Layout";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import CustomerAccountModal from "../modals/CustomerAccountModal";
 
 const customerAccounts = [
   { label: "Cash Account - 0003", value: "cash-0003" },
@@ -73,6 +80,8 @@ const SalesPage = () => {
   );
   const [salesAccount, setSalesAccount] = useState(salesAccounts[0].value);
   const [salesman, setSalesman] = useState("");
+  const [isCustomerAccountModalOpen, setIsCustomerAccountModalOpen] =
+    useState();
 
   const addItem = () => {
     const newItem = {
@@ -126,6 +135,11 @@ const SalesPage = () => {
   const calculateSubTotal = () =>
     items.reduce((sum, item) => sum + item.total, 0);
 
+  const handleSaveCustomerAccount = async (formData) => {
+    console.log("Customer Account Created:", formData);
+    setIsCustomerAccountModalOpen(false);
+  };
+
   return (
     <Layout>
       <div className="container mx-auto p-4 bg-gray-100 min-h-screen">
@@ -134,7 +148,7 @@ const SalesPage = () => {
         <Card className="mb-6">
           <CardHeader className="flex flex-row justify-between items-center">
             <div className="flex items-center space-x-4">
-              <Input type="date" className="w-40" defaultValue="2024-08-27" />
+              <Input type="date" className="w-40" defaultValue={new Date().toISOString().split("T")[0]} />
               <Input
                 placeholder="Voucher Number"
                 defaultValue="SL#00034"
@@ -155,12 +169,24 @@ const SalesPage = () => {
                   options={customerAccounts}
                   value={customerAccount}
                   onChange={setCustomerAccount}
-                  placeholder="Select Cash Account"
+                  placeholder="Select Customer Account"
                   className="w-full"
                 />
-                <div className="p-2 border rounded cursor-pointer">
-                  <Plus />
-                </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        className="p-2 border rounded cursor-pointer"
+                        onClick={() => setIsCustomerAccountModalOpen(true)}
+                      >
+                        <Plus />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Add Customer Account</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
               <Select value={salesAccount} onValueChange={setSalesAccount}>
                 <SelectTrigger>
@@ -340,7 +366,6 @@ const SalesPage = () => {
         </Card>
 
         <div className="grid grid-cols-3 gap-6">
-
           <Card>
             <CardHeader>Bank Total</CardHeader>
             <CardContent>
@@ -437,6 +462,11 @@ const SalesPage = () => {
           </div>
         </div>
       </div>
+      <CustomerAccountModal
+        isOpen={isCustomerAccountModalOpen}
+        onClose={() => setIsCustomerAccountModalOpen(false)}
+        onSave={handleSaveCustomerAccount}
+      />
     </Layout>
   );
 };
