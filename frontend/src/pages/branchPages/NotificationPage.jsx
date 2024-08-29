@@ -3,9 +3,9 @@ import React from "react";
 
 const NotificationPage = () => {
   return (
-    <Layout>
+    <>
       <div>NotificationPage</div>
-    </Layout>
+    </>
   );
 };
 

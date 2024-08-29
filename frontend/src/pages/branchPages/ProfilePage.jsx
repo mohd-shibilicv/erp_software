@@ -11,7 +11,7 @@ import BranchManagerForm from "@/components/branch/BranchManagerForm";
 
 const ProfilePage = () => {
   return (
-    <Layout>
+    <>
       <Tabs defaultValue="branch" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="branch">Branch Profile</TabsTrigger>
@@ -24,7 +24,7 @@ const ProfilePage = () => {
           <BranchManagerForm />
         </TabsContent>
       </Tabs>
-    </Layout>
+    </>
   );
 };
 

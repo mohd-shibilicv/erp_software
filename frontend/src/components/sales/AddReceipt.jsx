@@ -70,7 +70,7 @@ const AddReceipt = () => {
   };
 
   return (
-    <Layout>
+    <>
       <Card className="w-full mx-auto">
         <CardHeader className="flex flex-row justify-between items-center">
           <h2 className="text-2xl font-bold">Add Receipt</h2>
@@ -242,7 +242,7 @@ const AddReceipt = () => {
         onClose={() => setIsDrawerOpen(false)}
         onSave={handleDrawerSave}
       />
-    </Layout>
+    </>
   );
 };
 

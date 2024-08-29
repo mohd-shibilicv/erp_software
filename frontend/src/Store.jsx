@@ -21,6 +21,7 @@ import InvoiceGenerator from "./components/invoice/InvoiceGenerator";
 import AddPaymentTransaction from "./components/sales/AddPaymentTransaction";
 import AddReceipt from "./components/sales/AddReceipt";
 import ClientRelationshipPage from "./pages/storePages/ClientRelationshipPage";
+import ClientRequirementsPage from "./pages/storePages/ClientRequirementsPage";
 
 function Store() {
   return (
@@ -44,6 +45,7 @@ function Store() {
         <Route path="/add-payment-transaction" element={<AddPaymentTransaction /> } />
         <Route path="/add-receipt-voucher" element={<AddReceipt /> } />
         <Route path="/client-relationship" element={<ClientRelationshipPage /> } />
+        <Route path="/client-requirements" element={<ClientRequirementsPage /> } />
         <Route path="/notifications" element={<Notifications /> } />
         <Route path="*" element={<NotFound404 /> } />
         <Route path="/invoice" element={<InvoiceGenerator /> } />

@@ -4,10 +4,10 @@ import React from "react";
 
 const Branches = () => {
   return (
-    <Layout>
+    <>
       <h1 className="font-semibold text-2xl">Branches</h1>
       <BranchesTable />
-    </Layout>
+    </>
   );
 };
 

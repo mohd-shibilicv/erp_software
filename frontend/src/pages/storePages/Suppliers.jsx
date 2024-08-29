@@ -4,10 +4,10 @@ import React from 'react'
 
 const Suppliers = () => {
   return (
-    <Layout>
+    <>
         <h1 className="font-semibold text-2xl">Suppliers</h1>
         <SuppliersTable />
-    </Layout>
+    </>
   )
 }
 

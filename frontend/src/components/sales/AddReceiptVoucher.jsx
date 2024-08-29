@@ -79,7 +79,7 @@ const AddReceiptVoucher = () => {
   };
 
   return (
-    <Layout>
+    <>
       <Card className="w-full mx-auto">
         <CardHeader className="flex flex-row justify-between items-center">
           <h2 className="text-2xl font-bold">Add Receipt</h2>
@@ -157,7 +157,7 @@ const AddReceiptVoucher = () => {
           <Button variant="outline">Cancel</Button>
         </CardFooter>
       </Card>
-    </Layout>
+    </>
   );
 };
 

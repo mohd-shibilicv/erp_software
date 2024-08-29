@@ -5,12 +5,12 @@ import React from "react";
 
 const InvoicePage = () => {
   return (
-    <Layout>
+    <>
       <Card>
         <Button></Button>
         <Button></Button>
       </Card>
-    </Layout>
+    </>
   );
 };
 

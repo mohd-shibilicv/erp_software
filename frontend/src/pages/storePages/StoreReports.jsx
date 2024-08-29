@@ -219,7 +219,7 @@ const StoreReports = () => {
   const [activeTab, setActiveTab] = useState("inward");
 
   return (
-    <Layout>
+    <>
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold mb-6">Store Reports</h1>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -253,7 +253,7 @@ const StoreReports = () => {
           </div>
         </Tabs>
       </div>
-    </Layout>
+    </>
   );
 };
 

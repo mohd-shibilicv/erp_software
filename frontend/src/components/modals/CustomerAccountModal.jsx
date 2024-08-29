@@ -99,7 +99,7 @@ const CustomerAccountModal = ({ isOpen, onClose, onSave }) => {
                 Email
               </Label>
               <Input
-                type="number"
+                type="email"
                 id="email"
                 name="email"
                 value={formData.email}

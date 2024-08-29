@@ -70,7 +70,7 @@ const AddPaymentTransaction = () => {
   };
 
   return (
-    <Layout>
+    <>
       <Card className="w-full mx-auto">
         <CardHeader className="flex flex-row justify-between items-center">
           <h2 className="text-2xl font-bold">Add Payment</h2>
@@ -242,7 +242,7 @@ const AddPaymentTransaction = () => {
         onClose={() => setIsDrawerOpen(false)}
         onSave={handleDrawerSave}
       />
-    </Layout>
+    </>
   );
 };
 

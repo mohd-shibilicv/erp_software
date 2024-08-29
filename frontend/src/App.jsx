@@ -2,6 +2,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./features/store";
+import Layout from "./components/layout/Layout";
 import Branch from "./Branch";
 import Store from "./Store";
 import LoginPage from "./pages/generals/LoginPage";
@@ -30,12 +31,13 @@ function App() {
                 </AuthenticatedRoute>
               }
             />
-            {/* <Route path="/" element={<GeneralViewPage />} /> */}
             <Route
               path="/branch/*"
               element={
                 <BranchProtectedRoute allowedRoles={["branch_manager"]}>
-                  <Branch />
+                  <Layout>
+                    <Branch />
+                  </Layout>
                 </BranchProtectedRoute>
               }
             />
@@ -43,7 +45,9 @@ function App() {
               path="/store/*"
               element={
                 <StoreProtectedRoute allowedRoles={["admin"]}>
-                  <Store />
+                  <Layout>
+                    <Store />
+                  </Layout>
                 </StoreProtectedRoute>
               }
             />

@@ -131,7 +131,7 @@ const InvoiceGenerator = () => {
   };
 
   return (
-    <Layout>
+    <>
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
@@ -453,7 +453,7 @@ const InvoiceGenerator = () => {
           )}
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

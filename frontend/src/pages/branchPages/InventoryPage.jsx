@@ -4,10 +4,10 @@ import React from "react";
 
 const InventoryPage = () => {
   return (
-    <Layout>
+    <>
       <h1 className="font-semibold text-2xl">Inventory Products</h1>
       <BranchProductsTable />
-    </Layout>
+    </>
   );
 };
 

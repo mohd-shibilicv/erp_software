@@ -4,9 +4,9 @@ import React from 'react'
 
 const BranchDashboardPage = () => {
   return (
-    <Layout>
+    <>
         <BranchDashboard />
-    </Layout>
+    </>
   )
 }
 

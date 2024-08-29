@@ -131,6 +131,7 @@ const StoreSidebar = () => {
       section: "CRM",
       items: [
         { path: "/store/client-relationship", icon: Contact, label: "Client Relationship" },
+        { path: "/store/client-requirements", icon: Contact, label: "Client Requirements" },
       ],
     },
   ];

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Plus, CalendarIcon } from "lucide-react";
+import { Plus, CalendarIcon, Loader2 } from "lucide-react";
+import { format } from "date-fns";
 import {
   Card,
   CardContent,
@@ -15,23 +16,57 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Layout from "@/components/layout/Layout";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import CustomerAccountModal from "@/components/modals/CustomerAccountModal";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import Layout from "@/components/layout/Layout";
+import CustomerAccountModal from "@/components/modals/CustomerAccountModal";
+
+const countries = [
+  { label: "Qatar", value: "qatar", cities: ["Doha", "Al Wakrah", "Al Khor"] },
+  { label: "Oman", value: "oman", cities: ["Muscat", "Salalah", "Sohar"] },
+  {
+    label: "Saudi Arabia",
+    value: "saudi_arabia",
+    cities: ["Riyadh", "Jeddah", "Mecca"],
+  },
+  {
+    label: "United Kingdom",
+    value: "uk",
+    cities: ["London", "Manchester", "Birmingham"],
+  },
+];
+
+const products = [
+  { label: "Restaurant Management", value: "restaurant_system" },
+  { label: "Stock Management", value: "stock_management" },
+  { label: "Laundry Management", value: "laundry_management" },
+];
+
+const statuses = [
+  { label: "Pending", value: "pending" },
+  { label: "Confirmed", value: "confirmed" },
+  { label: "Cancelled", value: "cancelled" },
+];
+
+const careofs = [
+  { label: "Nasscript", value: "nasscript" },
+  { label: "Hisaan", value: "hisaan" },
+];
 
 const clientAccounts = [
   {
@@ -57,87 +92,68 @@ const clientAccounts = [
   },
 ];
 
-const locations = [
-  { label: "Qatar", value: "qatar" },
-  { label: "Oman", value: "oman" },
-  { label: "Saudi Arabia", value: "saudi_arabia" },
-  { label: "United Kingdom", value: "uk" },
-];
-
-const products = [
-  { label: "Restaurant Management", value: "restaurant_system" },
-  { label: "Stock Management", value: "stock_management" },
-  { label: "Laundry Management", value: "laundry_management" },
-];
-
-const statuses = [
-    { label: "Pending", value: "pending" },
-    { label: "Confirmed", value: "confirmed" },
-    { label: "Cancelled", value: "cancelled" },
-]
-
-const careofs = [
-    { label: "Nasscript", value: "nasscript" },
-    { label: "Hisaan", value: "hisaan" },
-]
-
 const ClientRelationshipPage = () => {
-  const [clientAccount, setClientAccount] = useState({});
-  const [location, setLocation] = useState(locations[0].value);
-  const [product, setProduct] = useState("");
+  const [clientAccount, setClientAccount] = useState(null);
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [reminderDate, setReminderDate] = useState(null);
   const [meetingDate, setMeetingDate] = useState(null);
-  const [status, setStatus] = useState(null);
-  const [careOf, setCareOf] = useState(null);
+  const [status, setStatus] = useState("");
+  const [careOf, setCareOf] = useState("");
+  const [shortNote, setShortNote] = useState("");
+  const [remarks, setRemarks] = useState("");
   const [isClientAccountModalOpen, setIsClientAccountModalOpen] =
     useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const updateAccount = (id, field, value) => {
-    setClientAccount(
-      clientAccounts.map((item) => {
-        if (item.id === id) {
-          const updatedItem = { ...item, [field]: value };
-          return updatedItem;
-        }
-        return item;
-      })
+  const handleSaveClientAccount = async (formData) => {
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setClientAccount(formData);
+    setIsClientAccountModalOpen(false);
+    setIsLoading(false);
+  };
+
+  const handleProductSelection = (value) => {
+    setSelectedProducts((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
     );
   };
 
-  const handleSaveClientAccount = async (formData) => {
-    console.log("Client Account Created:", formData);
-    setIsClientAccountModalOpen(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setIsLoading(false);
+    // Reset form or show success message
   };
 
   return (
-    <Layout>
-      <Card className="w-full mx-auto">
-        <CardHeader className="flex flex-row justify-between items-center">
-          <h2 className="text-2xl font-bold">Add Client Relationship</h2>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <CalendarIcon className="h-5 w-5" />
-              <Input
-                type="date"
-                className="w-40"
-                defaultValue={new Date().toISOString().split("T")[0]}
-              />
-            </div>
-            <Input placeholder="File No." className="w-32" />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="flex gap-2 items-center">
-              <Select
-                value={clientAccount.name}
-                onValueChange={setClientAccount}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Client" />
-                </SelectTrigger>
-                <SelectContent>
-                  {clientAccounts.map((clientAccount) => (
+    <>
+      <form onSubmit={handleSubmit}>
+        <Card className="w-full mx-auto">
+          <CardHeader>
+            <h2 className="text-2xl font-bold">Add Client Relationship</h2>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              <div className="space-y-2">
+                <Label>Client Account</Label>
+                <div className="flex gap-2 items-center">
+                  <Select
+                    value={clientAccount?.name || ""}
+                    onValueChange={(value) => setClientAccount({ name: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Client" />
+                    </SelectTrigger>
+                    <SelectContent>
+                    {clientAccounts.map((clientAccount) => (
                     <SelectItem
                       key={clientAccount.id}
                       value={clientAccount.name}
@@ -145,182 +161,237 @@ const ClientRelationshipPage = () => {
                       {clientAccount.name}
                     </SelectItem>
                   ))}
-                </SelectContent>
-              </Select>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
+                    </SelectContent>
+                  </Select>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          onClick={() => setIsClientAccountModalOpen(true)}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Add Client Account</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Mobile Number</Label>
+                <Input
+                  type="text"
+                  defaultValue={clientAccount?.phone_number || ""}
+                  placeholder="Mobile Number"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>WhatsApp Number</Label>
+                <Input
+                  type="text"
+                  defaultValue={clientAccount?.whatsapp_number || ""}
+                  placeholder="WhatsApp Number"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  defaultValue={clientAccount?.email || ""}
+                  placeholder="Email"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Country</Label>
+                <Select value={country} onValueChange={setCountry}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countries.map((country) => (
+                      <SelectItem key={country.value} value={country.value}>
+                        {country.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>City</Label>
+                <Select value={city} onValueChange={setCity}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select City" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countries
+                      .find((c) => c.value === country)
+                      ?.cities.map((city) => (
+                        <SelectItem key={city} value={city}>
+                          {city}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Products</Label>
+                <ScrollArea className="h-[150px] w-full border rounded-md p-2">
+                  {products.map((product) => (
                     <div
-                      className="p-2 border rounded cursor-pointer"
-                      onClick={() => setIsClientAccountModalOpen(true)}
+                      key={product.value}
+                      className="flex items-center space-x-2 py-1"
                     >
-                      <Plus />
+                      <input
+                        type="checkbox"
+                        id={product.value}
+                        checked={selectedProducts.includes(product.value)}
+                        onChange={() => handleProductSelection(product.value)}
+                        className="rounded border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <label htmlFor={product.value}>{product.label}</label>
                     </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Add Client Account</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                  ))}
+                </ScrollArea>
+              </div>
+              <div className="space-y-2">
+                <Label>Reminder Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !reminderDate && "text-muted-foreground"
+                      )}
+                    >
+                      {reminderDate ? (
+                        format(reminderDate, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={reminderDate}
+                      onSelect={setReminderDate}
+                      disabled={(date) =>
+                        date < new Date() || date > new Date("2030-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="space-y-2">
+                <Label>Meeting Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !meetingDate && "text-muted-foreground"
+                      )}
+                    >
+                      {meetingDate ? (
+                        format(meetingDate, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={meetingDate}
+                      onSelect={setMeetingDate}
+                      disabled={(date) =>
+                        date < new Date() - 1 || date > new Date("2030-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select value={status} onValueChange={setStatus}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statuses.map((status) => (
+                      <SelectItem key={status.value} value={status.value}>
+                        {status.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>In Care of</Label>
+                <Select value={careOf} onValueChange={setCareOf}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Care of" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {careofs.map((careof) => (
+                      <SelectItem key={careof.value} value={careof.value}>
+                        {careof.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Short Note</Label>
+                <Input
+                  placeholder="Short note"
+                  value={shortNote}
+                  onChange={(e) => setShortNote(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2 col-span-full">
+                <Label>Remarks</Label>
+                <Textarea
+                  placeholder="Remarks"
+                  value={remarks}
+                  onChange={(e) => setRemarks(e.target.value)}
+                />
+              </div>
             </div>
-            <Input
-              type="text"
-              value={clientAccount.mobile_number}
-              placeholder="Mobile Number"
-              onChange={(e) =>
-                updateAccount(
-                  clientAccount.id,
-                  "mobile_number",
-                  parseInt(e.target.value)
-                )
-              }
-              className="w-full"
-            />
-            <Input
-              type="text"
-              value={clientAccount.whatsapp_number}
-              placeholder="Whatsapp Number"
-              onChange={(e) =>
-                updateAccount(
-                  clientAccount.id,
-                  "whatsapp_number",
-                  parseInt(e.target.value)
-                )
-              }
-              className="w-full"
-            />
-            <Input
-              type="email"
-              value={clientAccount.email}
-              placeholder="Email"
-              onChange={(e) =>
-                updateAccount(
-                  clientAccount.id,
-                  "email",
-                  parseInt(e.target.value)
-                )
-              }
-              className="w-full"
-            />
-            <Select value={location} onValueChange={setLocation}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Location" />
-              </SelectTrigger>
-              <SelectContent>
-                {locations.map((location) => (
-                  <SelectItem key={location.value} value={location.value}>
-                    {location.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={product} onValueChange={setProduct}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Product" />
-              </SelectTrigger>
-              <SelectContent>
-                {products.map((product) => (
-                  <SelectItem key={product.value} value={product.value}>
-                    {product.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full pl-3 text-left font-normal",
-                    !reminderDate && "text-muted-foreground"
-                  )}
-                >
-                  {reminderDate ? (
-                    format(reminderDate, "PPP")
-                  ) : (
-                    <span>Reminder Date</span>
-                  )}
-                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={reminderDate}
-                  onSelect={setReminderDate}
-                  disabled={(date) =>
-                    date < new Date() || date > new Date("2030-01-01")
-                  }
-                />
-              </PopoverContent>
-            </Popover>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full pl-3 text-left font-normal",
-                    !meetingDate && "text-muted-foreground"
-                  )}
-                >
-                  {meetingDate ? (
-                    format(meetingDate, "PPP")
-                  ) : (
-                    <span>Meeting Date</span>
-                  )}
-                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={meetingDate}
-                  onSelect={setMeetingDate}
-                  disabled={(date) =>
-                    date < new Date() || date > new Date("2030-01-01")
-                  }
-                />
-              </PopoverContent>
-            </Popover>
-            <Select onValueChange={setStatus}>
-              <SelectTrigger>
-                <SelectValue value={status} placeholder="Select Status" />
-              </SelectTrigger>
-              <SelectContent>
-                {statuses.map((status) => (
-                  <SelectItem key={status.value} value={status.value}>
-                    {status.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select onValueChange={setCareOf}>
-              <SelectTrigger>
-                <SelectValue value={careOf} placeholder="In Care of" />
-              </SelectTrigger>
-              <SelectContent>
-                {careofs.map((careof) => (
-                  <SelectItem key={careof.value} value={careof.value}>
-                    {careof.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Input placeholder="Short note"></Input>
-            <Textarea placeholder="Remarks"></Textarea>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-end space-x-2">
-          <Button>Save</Button>
-          <Button variant="outline">Cancel</Button>
-        </CardFooter>
-      </Card>
+          </CardContent>
+          <CardFooter className="flex justify-end space-x-2">
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
+                </>
+              ) : (
+                "Save"
+              )}
+            </Button>
+            <Button type="button" variant="outline">
+              Cancel
+            </Button>
+          </CardFooter>
+        </Card>
+      </form>
       <CustomerAccountModal
         isOpen={isClientAccountModalOpen}
         onClose={() => setIsClientAccountModalOpen(false)}
         onSave={handleSaveClientAccount}
       />
-    </Layout>
+    </>
   );
 };
 

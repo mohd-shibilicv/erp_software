@@ -176,7 +176,7 @@ const BranchReports = () => {
   const [activeTab, setActiveTab] = useState("product-details");
 
   return (
-    <Layout>
+    <>
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold mb-6">Branch Reports</h1>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -210,7 +210,7 @@ const BranchReports = () => {
           </div>
         </Tabs>
       </div>
-    </Layout>
+    </>
   );
 };
 

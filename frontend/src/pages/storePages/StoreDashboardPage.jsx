@@ -1,13 +1,9 @@
-import Layout from '@/components/layout/Layout'
-import Dashboard from '@/components/store/Dashboard'
-import React from 'react'
+import Layout from "@/components/layout/Layout";
+import Dashboard from "@/components/store/Dashboard";
+import React from "react";
 
 const StoreDashboardPage = () => {
-  return (
-    <Layout>
-        <Dashboard />
-    </Layout>
-  )
-}
+  return <Dashboard />;
+};
 
-export default StoreDashboardPage
+export default StoreDashboardPage;
