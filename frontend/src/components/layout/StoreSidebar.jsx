@@ -31,6 +31,7 @@ import {
   CreditCard,
   ReceiptText,
   Contact,
+  Headset,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 
@@ -131,7 +132,7 @@ const StoreSidebar = () => {
       section: "CRM",
       items: [
         { path: "/store/client-relationship", icon: Contact, label: "Client Relationship" },
-        { path: "/store/client-requirements", icon: Contact, label: "Client Requirements" },
+        { path: "/store/client-requirements", icon: Headset, label: "Client Requirements" },
       ],
     },
   ];
