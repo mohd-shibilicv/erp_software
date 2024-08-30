@@ -32,6 +32,7 @@ import {
   ReceiptText,
   Contact,
   Headset,
+  Signature,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 
@@ -110,6 +111,7 @@ const StoreSidebar = () => {
           label: "Material Transfer",
         },
         { path: "/store/quotation", icon: Handshake, label: "Quotation" },
+        { path: "/store/agreement", icon: Signature, label: "Agreement" },
         { path: "/store/invoice", icon: FileText, label: "Invoice" },
       ],
     },
@@ -196,7 +198,7 @@ const StoreSidebar = () => {
             )}`}
           >
             <Bell className="w-6 h-6" />
-            <span className="hidden md:inline">Notifications</span>
+            <span className="hidden sm:inline">Notifications</span>
           </Link>
           <LogoutBtn />
         </ul>
