@@ -1,12 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
   Bell,
   LayoutDashboard,
   PackageSearch,
@@ -110,8 +104,6 @@ const StoreSidebar = () => {
           icon: Replace,
           label: "Material Transfer",
         },
-        { path: "/store/quotation", icon: Handshake, label: "Quotation" },
-        { path: "/store/agreement", icon: Signature, label: "Agreement" },
         { path: "/store/invoice", icon: FileText, label: "Invoice" },
       ],
     },
@@ -135,6 +127,8 @@ const StoreSidebar = () => {
       items: [
         { path: "/store/client-relationship", icon: Contact, label: "Client Relationship" },
         { path: "/store/client-requirements", icon: Headset, label: "Client Requirements" },
+        { path: "/store/quotation", icon: Handshake, label: "Quotation" },
+        { path: "/store/agreement", icon: Signature, label: "Agreement" },
       ],
     },
   ];

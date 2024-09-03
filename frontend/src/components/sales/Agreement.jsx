@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { format } from "date-fns";
-import { useForm, Controller } from "react-hook-form";
-import { CalendarIcon, Upload, Printer } from "lucide-react";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { CalendarIcon, Plus, Trash2, Printer, Save } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -9,8 +9,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -24,7 +33,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import {
   FullDialog,
@@ -34,13 +42,53 @@ import {
   FullDialogHeader,
   FullDialogTitle,
 } from "../ui/full-dialog";
+import { Tooltip, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { TooltipContent } from "@radix-ui/react-tooltip";
 
 const Agreement = () => {
-  const { register, handleSubmit, control, watch } = useForm();
   const [tcFile, setTcFile] = useState(null);
   const [signedAgreement, setSignedAgreement] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [viewingFile, setViewingFile] = useState(null);
+
+  const { register, control, watch, setValue, handleSubmit } = useForm({
+    defaultValues: {
+      totalAmount: 0,
+      paymentTerms: [],
+      totalPaidAmount: 0,
+    },
+  });
+
+  const watchedFields = watch();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "paymentTerms",
+  });
+
+  useEffect(() => {
+    const total = watchedFields.paymentTerms.reduce(
+      (sum, term) => sum + (parseFloat(term.amount) || 0),
+      0
+    );
+    setValue("totalPaidAmount", total);
+  }, [watchedFields.paymentTerms, setValue]);
+
+  useEffect(() => {
+    if (watchedFields.totalAmount && fields.length === 0) {
+      append({ date: "", amount: "" });
+    }
+  }, [watchedFields.totalAmount, fields.length, append]);
+
+  const addPaymentTerm = () => {
+    append({ date: "", amount: 0 });
+  };
+
+  const savePaymentTerm = (index) => {
+    if (index === fields.length - 1 && remainingAmount > 0) {
+      addPaymentTerm();
+    }
+  };
 
   const onSubmit = (data) => {
     console.log(data);
@@ -54,6 +102,9 @@ const Agreement = () => {
     setViewingFile(file);
     setDialogOpen(true);
   };
+
+  const remainingAmount =
+    watchedFields.totalAmount - watchedFields.totalPaidAmount;
 
   const quotations = [
     { id: 1, name: "Quotation 1" },
@@ -180,7 +231,11 @@ const Agreement = () => {
               <Input
                 id="total-amount"
                 type="number"
-                {...register("totalAmount", { required: true })}
+                {...register("totalAmount", {
+                  required: true,
+                  valueAsNumber: true,
+                  min: 0,
+                })}
               />
             </div>
           </div>
@@ -295,6 +350,154 @@ const Agreement = () => {
               )}
             />
           </div>
+
+          <div className="space-y-4">
+            <Label>Payment Terms</Label>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Term</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {fields.map((field, index) => (
+                  <TableRow key={field.id}>
+                    <TableCell>{`Term ${index + 1}`}</TableCell>
+                    <TableCell>
+                      <Controller
+                        name={`paymentTerms.${index}.date`}
+                        control={control}
+                        render={({ field }) => (
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "w-[240px] justify-start text-left font-normal",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value ? (
+                                  format(new Date(field.value), "PPP")
+                                ) : (
+                                  <span>Pick a date</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={new Date(field.value)}
+                                onSelect={field.onChange}
+                                disabled={(date) => date < new Date()}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        )}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        type="number"
+                        {...register(`paymentTerms.${index}.amount`, {
+                          required: true,
+                          valueAsNumber: true,
+                          min: 0,
+                          max: remainingAmount + parseFloat(field.amount) || 0,
+                        })}
+                        placeholder="Amount"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              type="button"
+                              onClick={() => remove(index)}
+                              variant="ghost"
+                              size="sm"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Remove</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              type="button"
+                              onClick={() => savePaymentTerm(index)}
+                              variant="ghost"
+                              size="sm"
+                              disabled={
+                                !watchedFields.paymentTerms[index]?.date ||
+                                !watchedFields.paymentTerms[index]?.amount
+                              }
+                            >
+                              <Save className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Save</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <Label>Total Paid Amount</Label>
+            <Input
+              className="w-[200px]"
+              type="number"
+              value={watchedFields.totalPaidAmount}
+              readOnly
+            />
+          </div>
+
+          <div className="flex justify-between items-center">
+            <Label>Remaining Amount</Label>
+            <Input
+              className="w-[200px]"
+              type="number"
+              value={isNaN(remainingAmount) ? 0 : remainingAmount}
+              readOnly
+            />
+          </div>
+
+          {watchedFields.totalAmount && (
+            <div
+              className={cn(
+                "p-4 rounded-md",
+                remainingAmount === 0
+                  ? "bg-green-100 text-green-800"
+                  : "bg-yellow-100 text-yellow-800"
+              )}
+            >
+              {remainingAmount === 0
+                ? "Total paid amount matches the estimated amount."
+                : `Warning: There is still ${
+                    isNaN(remainingAmount) ? 0 : remainingAmount
+                  } remaining to be allocated.`}
+            </div>
+          )}
         </form>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
