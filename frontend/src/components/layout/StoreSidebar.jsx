@@ -27,6 +27,9 @@ import {
   Contact,
   Headset,
   Signature,
+  StickyNote,
+  NotebookPen,
+  SendToBack,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 
@@ -104,7 +107,7 @@ const StoreSidebar = () => {
           icon: Replace,
           label: "Material Transfer",
         },
-        { path: "/store/invoice", icon: FileText, label: "Invoice" },
+        { path: "/store/invoice-generator", icon: FileText, label: "Invoice Generator" },
       ],
     },
     {
@@ -120,13 +123,24 @@ const StoreSidebar = () => {
           icon: ReceiptText,
           label: "Add Receipt",
         },
+        { path: "/store/invoice", icon: StickyNote, label: "Invoice" },
+        { path: "/store/job-order", icon: SendToBack, label: "Job Order" },
+        { path: "/store/delivery-note", icon: NotebookPen, label: "Delivery Note" },
       ],
     },
     {
       section: "CRM",
       items: [
-        { path: "/store/client-relationship", icon: Contact, label: "Client Relationship" },
-        { path: "/store/client-requirements", icon: Headset, label: "Client Requirements" },
+        {
+          path: "/store/client-relationship",
+          icon: Contact,
+          label: "Client Relationship",
+        },
+        {
+          path: "/store/client-requirements",
+          icon: Headset,
+          label: "Client Requirements",
+        },
         { path: "/store/quotation", icon: Handshake, label: "Quotation" },
         { path: "/store/agreement", icon: Signature, label: "Agreement" },
       ],

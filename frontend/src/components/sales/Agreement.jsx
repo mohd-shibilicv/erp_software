@@ -84,6 +84,9 @@ const Agreement = () => {
     append({ date: "", amount: 0 });
   };
 
+  const remainingAmount =
+    watchedFields.totalAmount - watchedFields.totalPaidAmount;
+
   const savePaymentTerm = (index) => {
     if (index === fields.length - 1 && remainingAmount > 0) {
       addPaymentTerm();
@@ -102,9 +105,6 @@ const Agreement = () => {
     setViewingFile(file);
     setDialogOpen(true);
   };
-
-  const remainingAmount =
-    watchedFields.totalAmount - watchedFields.totalPaidAmount;
 
   const quotations = [
     { id: 1, name: "Quotation 1" },
