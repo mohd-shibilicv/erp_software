@@ -6,6 +6,7 @@ class User(AbstractUser):
     ROLES = (
         ('branch_manager', 'Branch Manager'),
         ('admin', 'Admin'),
+        ('staff', 'Staff'),
     )
     phone_number = models.CharField(max_length=15, blank=True)
     role = models.CharField(max_length=20, choices=ROLES)
@@ -14,6 +15,9 @@ class User(AbstractUser):
         if self.role == 'admin':
             self.is_staff = True
             self.is_superuser = True
+        elif self.role == 'staff':
+            self.is_staff = True
+            self.is_superuser = False
         elif self.role == 'branch_manager':
             self.is_staff = False
             self.is_superuser = False
@@ -23,6 +27,9 @@ class User(AbstractUser):
         if self.role == 'admin':
             admin_group, _ = Group.objects.get_or_create(name='Admin')
             self.groups.add(admin_group)
+        elif self.role == 'staff':
+            staffs_group, _ = Group.objects.get_or_create(name='Staff')
+            self.groups.add(staffs_group)
         elif self.role == 'branch_manager':
             branch_manager_group, _ = Group.objects.get_or_create(name='Branch Manager')
             self.groups.add(branch_manager_group)

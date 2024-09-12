@@ -8,7 +8,6 @@ import Branches from "./pages/storePages/Branches";
 import ProductInflow from "./pages/storePages/ProductInflow";
 import ProductOutflow from "./pages/storePages/ProductOutflow";
 import StoreReports from "./pages/storePages/StoreReports";
-import Notifications from "./pages/storePages/Notifications";
 import DamagedProductsPage from "./pages/storePages/DamagedProductsPage";
 import ProductRequestsPage from "./pages/storePages/ProductRequestsPage";
 import SalesPageComponent from "./components/sales/SalesPageComponent";
@@ -26,7 +25,8 @@ import Agreement from "./components/sales/Agreement";
 import Invoice from "./components/sales/Invoice";
 import DeliveryNote from "./components/sales/DeliveryNote";
 import JobOrder from "./components/sales/JobOrder";
-import DemoRequest from "./pages/storePages/DemoRequest";
+import DemoRequest from "./pages/storePages/demoRequests/DemoRequest";
+import NotificationsPage from "./pages/storePages/NotificationsPage";
 
 function Store() {
   return (
@@ -51,13 +51,13 @@ function Store() {
         <Route path="/invoice-generator" element={<InvoiceGenerator /> } />
         <Route path="/add-payment-transaction" element={<AddPaymentTransaction /> } />
         <Route path="/add-receipt-voucher" element={<AddReceipt /> } />
-        <Route path="/demo-request/" element={<DemoRequest />} />
+        <Route path="/demo-request" element={<DemoRequest />} />
         <Route path="/client-relationship" element={<ClientRelationshipPage /> } />
         <Route path="/client-requirements" element={<ClientRequirementsPage /> } />
         <Route path="/invoice" element={<Invoice /> } />
         <Route path="/job-order" element={<JobOrder /> } />
         <Route path="/delivery-note" element={<DeliveryNote /> } />
-        <Route path="/notifications" element={<Notifications /> } />
+        <Route path="/notifications" element={<NotificationsPage /> } />
         <Route path="*" element={<NotFound404 /> } />
       </Routes>
     </>
