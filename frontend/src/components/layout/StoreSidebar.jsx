@@ -30,8 +30,10 @@ import {
   StickyNote,
   NotebookPen,
   SendToBack,
+  CalendarArrowDown,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
+
 
 const StoreSidebar = () => {
   const location = useLocation();
@@ -131,6 +133,11 @@ const StoreSidebar = () => {
     {
       section: "CRM",
       items: [
+        {
+          path: "/store/demo-request",
+          icon: CalendarArrowDown,
+          label: "Demo Requests",
+        },
         {
           path: "/store/client-relationship",
           icon: Contact,

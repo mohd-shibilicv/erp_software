@@ -74,7 +74,7 @@ class LogoutView(viewsets.ViewSet):
 
 class RefreshViewSet(viewsets.ViewSet, TokenRefreshView):
     permission_classes = (permissions.AllowAny,)
-    http_method_names = ["post"]
+    http_method_names = ["post"]  
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

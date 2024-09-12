@@ -26,6 +26,7 @@ import Agreement from "./components/sales/Agreement";
 import Invoice from "./components/sales/Invoice";
 import DeliveryNote from "./components/sales/DeliveryNote";
 import JobOrder from "./components/sales/JobOrder";
+import DemoRequest from "./pages/storePages/DemoRequest";
 
 function Store() {
   return (
@@ -50,6 +51,7 @@ function Store() {
         <Route path="/invoice-generator" element={<InvoiceGenerator /> } />
         <Route path="/add-payment-transaction" element={<AddPaymentTransaction /> } />
         <Route path="/add-receipt-voucher" element={<AddReceipt /> } />
+        <Route path="/demo-request/" element={<DemoRequest />} />
         <Route path="/client-relationship" element={<ClientRelationshipPage /> } />
         <Route path="/client-requirements" element={<ClientRequirementsPage /> } />
         <Route path="/invoice" element={<Invoice /> } />
