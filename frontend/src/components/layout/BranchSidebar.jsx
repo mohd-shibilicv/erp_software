@@ -24,8 +24,8 @@ const BranchSidebar = () => {
 
   const isActive = (path) => {
     return location.pathname === path
-      ? "bg-black text-white"
-      : "hover:bg-gray-100";
+      ? "bg-[#6f42c1] text-white"
+      : "hover:bg-[#5a329e] hover:text-white";
   };
 
   const menuItems = [
