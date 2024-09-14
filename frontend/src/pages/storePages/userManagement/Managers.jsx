@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { api } from '@/services/api';
-
+import { useToast } from '@/components/ui/use-toast';
 
 const Managers = () => {
   const [managers, setManagers] = useState([]);
@@ -9,6 +8,8 @@ const Managers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const { toast } = useToast();
+
   const [selectedManager, setSelectedManager] = useState(null);
   const [newManager, setNewManager] = useState({
     username: '',
@@ -70,8 +71,17 @@ const Managers = () => {
           delete managerData.password;
         }
         await api.put(`/branch-managers/${selectedManager.id}/`, managerData);
+        toast({
+          title: "Manager Updated",
+          description: `${managerData.username} has been successfully updated.`,
+        });
+
       } else {
         await api.post('/branch-managers/', managerData);
+        toast({
+          title: "Manager Added",
+          description: `${managerData.username} has been successfully added.`,
+        });
       }
       setIsModalOpen(false);
       setNewManager({ username: '', email: '', phone_number: '', password: '', is_active: true });
@@ -89,7 +99,7 @@ const Managers = () => {
       email: manager.email,
       phone_number: manager.phone_number,
       password: '',
-      is_active: manager.is_active 
+      is_active: manager.is_active
     });
     setIsModalOpen(true);
   };
@@ -111,7 +121,7 @@ const Managers = () => {
           onClick={() => {
             setIsUpdating(false);
             setSelectedManager(null);
-            setNewManager({ username: '', email: '', phone_number: '', password: '' });
+            setNewManager({ username: '', email: '', phone_number: '', password: '', is_active: true });
             setIsModalOpen(true);
           }}
         >
@@ -172,7 +182,7 @@ const Managers = () => {
                       checked={newManager.is_active}
                       onChange={(e) => setNewManager({ ...newManager, is_active: e.target.checked })}
                     />
-                    <div className={`block w-14 h-8 rounded-full ${newManager.is_active ? 'bg-green-400' : 'bg-gray-400'}`}></div>
+                    <div className={`block w-14 h-8 rounded-full ${newManager.is_active ? 'bg-violet-500' : 'bg-gray-400'}`}></div>
                     <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${newManager.is_active ? 'transform translate-x-6' : ''}`}></div>
                   </div>
                   <div className="ml-3 text-gray-700 font-medium">
@@ -228,7 +238,9 @@ const Managers = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button onClick={() => openUpdateModal(manager)} className="text-indigo-600 hover:text-indigo-900">
-                    ⋮
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
                   </button>
                 </td>
               </tr>

@@ -98,7 +98,9 @@ class UserViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.role == 'admin':
             return User.objects.all()
-        elif user.role == 'branch_manager':
+        elif user.role == 'staff':
+            return User.objects.filter(username=user.username)
+        elif user.role == 'staff':
             return User.objects.filter(username=user.username)
         return User.objects.none()
 

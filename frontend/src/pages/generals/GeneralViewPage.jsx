@@ -48,7 +48,7 @@ const GeneralViewPage = () => {
           <div className="w-full flex justify-end">
             <div>
               {user ? (
-                user.role === "admin" ? (
+                user.role === "admin" || user.role == "staff" ? (
                   <Button
                     variant="ghost"
                     onClick={() => handleNavigation("/store")}

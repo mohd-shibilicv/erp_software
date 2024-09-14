@@ -30,10 +30,13 @@ const LoginPage = () => {
   const { isLoading, error, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (user?.role === "admin") {
+    if (user?.role === "admin" || user?.role === "staff") {
       navigate("/store");
     } else if (user?.role === "branch_manager") {
       navigate("/branch");
+    }
+    else{
+      navigate("/")
     }
   }, [user, navigate]);
 
