@@ -67,7 +67,7 @@ const StoreSidebar = () => {
       ],
     },
     {
-      section: "User",
+      section: "Users",
       items: [
         {
           path: "/admin/managers",
@@ -149,9 +149,9 @@ const StoreSidebar = () => {
       section: "CRM",
       items: [
         {
-          path: "/admin/demo-request",
+          path: "/admin/client-request",
           icon: CalendarArrowDown,
-          label: "Demo Requests",
+          label: "Client Requests",
         },
         {
           path: "/admin/client-relationship",

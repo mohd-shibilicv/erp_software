@@ -119,7 +119,7 @@ function Store() {
             <AddReceipt />
           </StoreProtectedRoute>
         } /> 
-        <Route path="/manager" element={
+        <Route path="/managers" element={
           <StoreProtectedRoute allowedRoles={["admin"]}>
             <Managers />
           </StoreProtectedRoute>
@@ -145,12 +145,12 @@ function Store() {
           </StoreProtectedRoute>
         } />
         <Route path="/notifications" element={
-          <StoreProtectedRoute allowedRoles={["admin"]}>
+          <StoreProtectedRoute allowedRoles={["admin", "staff"]}>
             <NotificationsPage />
           </StoreProtectedRoute>
         } />
 
-        <Route path="/demo-request" element={<DemoRequest />} />
+        <Route path="/client-request" element={<DemoRequestTable />} />
         <Route path="/client-relationship" element={<ClientRelationshipPage />} />
         <Route path="/client-requirements" element={<ClientRequirementsPage />} />
         <Route path="/quotation" element={<Quotation />} />

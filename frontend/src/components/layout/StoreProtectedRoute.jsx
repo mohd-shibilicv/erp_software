@@ -20,7 +20,7 @@ export const AuthenticatedRoute = ({ children }) => {
   const { user } = useSelector((state) => state.auth);
 
   if (user?.role === "admin" || user?.role == "staff") {
-    return <Navigate to="/store" />;
+    return <Navigate to="/admin" />;
   } else if (user?.role === "branch_manager") {
     return <Navigate to="/branch" />;
   }

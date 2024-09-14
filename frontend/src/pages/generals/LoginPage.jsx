@@ -31,7 +31,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (user?.role === "admin" || user?.role === "staff") {
-      navigate("/store");
+      navigate("/admin");
     } else if (user?.role === "branch_manager") {
       navigate("/branch");
     }

@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import ClientDetails from "./ClientDetails";
 import { api } from "@/services/api";
 
-export default function DemoRequest() {
+export default function DemoRequestTable() {
   const [data, setData] = useState([]);
   const [filterValue, setFilterValue] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -99,7 +99,7 @@ export default function DemoRequest() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Demo Requests</CardTitle>
+        <CardTitle>Client Requests</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="mb-4 flex flex-wrap gap-4 items-end">
