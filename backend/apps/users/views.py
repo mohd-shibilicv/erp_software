@@ -5,7 +5,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from django.contrib.auth import get_user_model
-from .serializers import UserSerializer, LoginSerializer
+from .serializers import UserSerializer, LoginSerializer, UserCreateUpdateSerializer
+from .models import User
+from rest_framework.permissions import IsAdminUser
+
 
 
 User = get_user_model()
@@ -98,3 +101,46 @@ class UserViewSet(viewsets.ModelViewSet):
         elif user.role == 'branch_manager':
             return User.objects.filter(username=user.username)
         return User.objects.none()
+
+
+
+class BranchManagerViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(role='branch_manager')
+    permission_classes = [IsAdminUser]
+
+    def get_serializer_class(self):
+        return UserCreateUpdateSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(role='branch_manager')
+
+    def perform_update(self, serializer):
+        serializer.save(role='branch_manager')
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+    
+
+class StaffManagementViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(role='staff')
+    serializer_class = UserCreateUpdateSerializer
+    permission_classes = [IsAdminUser]
+
+    def perform_create(self, serializer):
+        serializer.save(role='staff')
+
+    def perform_update(self, serializer):
+        serializer.save(role='staff')
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)

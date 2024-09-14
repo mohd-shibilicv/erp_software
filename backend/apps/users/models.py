@@ -10,6 +10,8 @@ class User(AbstractUser):
     )
     phone_number = models.CharField(max_length=15, blank=True)
     role = models.CharField(max_length=20, choices=ROLES)
+    is_active = models.BooleanField(default=True)
+
 
     def save(self, *args, **kwargs):
         if self.role == 'admin':

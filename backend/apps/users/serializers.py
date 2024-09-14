@@ -39,3 +39,27 @@ class LoginSerializer(TokenObtainPairSerializer):
             update_last_login(None, self.user)
 
         return data
+    
+class UserCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'phone_number', 'password', 'is_active']
+        extra_kwargs = {
+            'password': {'write_only': True, 'required': False},
+            'is_active': {'default': True}
+        }
+
+    def create(self, validated_data):
+        validated_data['is_active'] = True 
+        user = User.objects.create_user(**validated_data)
+        return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        is_active = validated_data.get('is_active', instance.is_active) 
+        user = super().update(instance, validated_data)
+        if password:
+            user.set_password(password)
+        user.is_active = is_active
+        user.save()
+        return user

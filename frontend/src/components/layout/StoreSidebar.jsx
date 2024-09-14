@@ -30,6 +30,8 @@ import {
   StickyNote,
   NotebookPen,
   SendToBack,
+  User,
+  UserCog,
   CalendarArrowDown,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
@@ -60,6 +62,17 @@ const StoreSidebar = () => {
         { path: "/store/products", icon: PackageSearch, label: "Products" },
         { path: "/store/suppliers", icon: Truck, label: "Suppliers" },
         { path: "/store/branches", icon: Warehouse, label: "Branches" },
+      ],
+    },
+    {
+      section: "User",
+      items: [
+        {
+          path: "/store/manager",
+          icon: UserCog,
+          label: "Managers",
+        },
+        { path: "/store/staff", icon: User, label: "Staff" },
       ],
     },
     {
