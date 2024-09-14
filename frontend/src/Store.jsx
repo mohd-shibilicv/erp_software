@@ -27,6 +27,8 @@ import DeliveryNote from "./components/sales/DeliveryNote";
 import JobOrder from "./components/sales/JobOrder";
 import DemoRequest from "./pages/storePages/demoRequests/DemoRequest";
 import NotificationsPage from "./pages/storePages/NotificationsPage";
+import Managers from "./pages/storePages/userManagement/Managers";
+import Staff from "./pages/storePages/userManagement/Staff";
 
 function Store() {
   return (
@@ -54,6 +56,8 @@ function Store() {
         <Route path="/demo-request" element={<DemoRequest />} />
         <Route path="/client-relationship" element={<ClientRelationshipPage /> } />
         <Route path="/client-requirements" element={<ClientRequirementsPage /> } />
+        <Route path="/manager" element={<Managers /> }/>
+        <Route path="/staff" element={<Staff />} />
         <Route path="/invoice" element={<Invoice /> } />
         <Route path="/job-order" element={<JobOrder /> } />
         <Route path="/delivery-note" element={<DeliveryNote /> } />

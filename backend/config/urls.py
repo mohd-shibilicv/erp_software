@@ -9,6 +9,8 @@ from apps.users.views import (
     LoginViewSet,
     RefreshViewSet,
     UserViewSet,
+    BranchManagerViewSet,
+    StaffManagementViewSet
 )
 from apps.products.views import ProductViewSet, DamagedProductViewSet
 from apps.branches.views import (
@@ -44,8 +46,9 @@ router.register(r"users", UserViewSet, basename="users")
 router.register(r"register", UserRegisterViewSet, basename="register")
 router.register(r"login", LoginViewSet, basename="login")
 router.register(r"refresh", RefreshViewSet, basename="refresh")
-
-# Store
+router.register(r'staff', StaffManagementViewSet, basename='staff')
+router.register(r'branch-managers', BranchManagerViewSet, basename='branch-managers')
+ 
 router.register(r"products", ProductViewSet, basename="products")
 router.register(r"damaged-products", DamagedProductViewSet, basename="damaged_products")
 router.register(r"suppliers", SupplierViewSet, basename="suppliers")

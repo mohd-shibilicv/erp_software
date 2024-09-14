@@ -19,5 +19,5 @@ class ClientRequests(models.Model):
     client_number = models.CharField(max_length=15)
     company_name = models.CharField(max_length=255)
     schedule_date = models.DateTimeField()
-    company_size = models.CharField(choices=COMPANY_SIZE_CHOICES)
-    platform = models.CharField(choices=PLATFORM_CHOICES)
+    company_size = models.CharField(choices=COMPANY_SIZE_CHOICES,max_length=255)
+    platform = models.CharField(choices=PLATFORM_CHOICES,max_length=255)
