@@ -29,40 +29,134 @@ import DemoRequest from "./pages/storePages/demoRequests/DemoRequest";
 import NotificationsPage from "./pages/storePages/NotificationsPage";
 import Managers from "./pages/storePages/userManagement/Managers";
 import Staff from "./pages/storePages/userManagement/Staff";
+import { StoreProtectedRoute } from "./components/layout/StoreProtectedRoute";
+
+
 
 function Store() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<StoreDashboardPage /> } />
-        <Route path="/products" element={<StoreProducts /> } />
-        <Route path="/suppliers" element={<Suppliers /> } />
-        <Route path="/branches" element={<Branches /> } />
-        <Route path="/damaged-products" element={<DamagedProductsPage /> } />
-        <Route path="/product-requests" element={<ProductRequestsPage /> } />
-        <Route path="/product-inflow" element={<ProductInflow /> } />
-        <Route path="/product-outflow" element={<ProductOutflow /> } />
-        <Route path="/reports" element={<StoreReports /> } />
-        <Route path="/sales" element={<SalesPageComponent /> } />
-        <Route path="/van-sales" element={<VanSalesComponent /> } />
-        <Route path="/packing" element={<Packing /> } />
-        <Route path="/physical-stock" element={<PhysicalStock /> } />
-        <Route path="/material-transfer" element={<MaterialTransfer /> } />
-        <Route path="/quotation" element={<Quotation /> } />
-        <Route path="/agreement" element={<Agreement /> } />
-        <Route path="/invoice-generator" element={<InvoiceGenerator /> } />
-        <Route path="/add-payment-transaction" element={<AddPaymentTransaction /> } />
-        <Route path="/add-receipt-voucher" element={<AddReceipt /> } />
+        <Route path="/" element={<StoreDashboardPage />} />
+
+        <Route path="/products" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <StoreProducts />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/suppliers" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <Suppliers />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/branches" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <Branches />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/damaged-products" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <DamagedProductsPage />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/product-requests" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <ProductRequestsPage />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/product-inflow" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <ProductInflow />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/product-outflow" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <ProductOutflow />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/reports" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <StoreReports />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/sales" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <SalesPageComponent />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/van-sales" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <VanSalesComponent />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/packing" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <Packing />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/physical-stock" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <PhysicalStock />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/material-transfer" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <MaterialTransfer />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/invoice-generator" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <InvoiceGenerator />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/add-payment-transaction" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <AddPaymentTransaction />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/add-receipt-voucher" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <AddReceipt />
+          </StoreProtectedRoute>
+        } /> 
+        <Route path="/manager" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <Managers />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/staff" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <Staff />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/invoice" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <Invoice />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/job-order" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <JobOrder />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/delivery-note" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <DeliveryNote />
+          </StoreProtectedRoute>
+        } />
+        <Route path="/notifications" element={
+          <StoreProtectedRoute allowedRoles={["admin"]}>
+            <NotificationsPage />
+          </StoreProtectedRoute>
+        } />
+
         <Route path="/demo-request" element={<DemoRequest />} />
-        <Route path="/client-relationship" element={<ClientRelationshipPage /> } />
-        <Route path="/client-requirements" element={<ClientRequirementsPage /> } />
-        <Route path="/manager" element={<Managers /> }/>
-        <Route path="/staff" element={<Staff />} />
-        <Route path="/invoice" element={<Invoice /> } />
-        <Route path="/job-order" element={<JobOrder /> } />
-        <Route path="/delivery-note" element={<DeliveryNote /> } />
-        <Route path="/notifications" element={<NotificationsPage /> } />
-        <Route path="*" element={<NotFound404 /> } />
+        <Route path="/client-relationship" element={<ClientRelationshipPage />} />
+        <Route path="/client-requirements" element={<ClientRequirementsPage />} />
+        <Route path="/quotation" element={<Quotation />} />
+        <Route path="/agreement" element={<Agreement />} />
+
+        <Route path="*" element={<NotFound404 />} />
       </Routes>
     </>
   );

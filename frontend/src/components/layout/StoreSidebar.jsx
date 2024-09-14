@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { useLocation, Link } from "react-router-dom";
 import {
   Bell,
@@ -40,6 +41,8 @@ import LogoutBtn from "./LogoutBtn";
 const StoreSidebar = () => {
   const location = useLocation();
   const [expandedSections, setExpandedSections] = useState({});
+  const { user } = useSelector((state) => state.auth);
+
 
   const isActive = (path) => {
     return location.pathname === path
@@ -167,6 +170,10 @@ const StoreSidebar = () => {
     },
   ];
 
+  const filteredMenuItems = user?.role === "staff" 
+    ? menuItems.filter(item => item.section === "CRM")
+    : menuItems;
+
   const renderMenuItem = (item) => (
     <Link
       key={item.path}
@@ -215,7 +222,7 @@ const StoreSidebar = () => {
         </Link>
       </div>
       <nav className="flex-grow overflow-y-auto custom-scrollbar">
-        {menuItems.map(renderSection)}
+        {filteredMenuItems.map(renderSection)}
       </nav>
       <div className="mt-2">
         <ul>

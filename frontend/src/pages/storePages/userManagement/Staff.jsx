@@ -156,7 +156,7 @@ const Staff = () => {
                         checked={newUser.is_active}
                         onChange={(e) => setNewUser({ ...newUser, is_active: e.target.checked })}
                       />
-                      <div className={`block w-14 h-8 rounded-full ${newUser.is_active ? 'bg-green-400' : 'bg-gray-400'}`}></div>
+                      <div className={`block w-14 h-8 rounded-full ${newUser.is_active ? 'bg-violet-500' : 'bg-gray-400'}`}></div>
                       <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${newUser.is_active ? 'transform translate-x-6' : ''}`}></div>
                     </div>
                     <div className="ml-3 text-gray-700 font-medium">
@@ -210,7 +210,9 @@ const Staff = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button onClick={() => openUpdateModal(staff)} className="text-indigo-600 hover:text-indigo-900">
-                      Edit
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
                     </button>
                   </td>
                 </tr>
