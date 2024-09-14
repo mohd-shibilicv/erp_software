@@ -37,7 +37,6 @@ import {
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 
-
 const StoreSidebar = () => {
   const location = useLocation();
   const [expandedSections, setExpandedSections] = useState({});
@@ -61,43 +60,43 @@ const StoreSidebar = () => {
     {
       section: "Main",
       items: [
-        { path: "/store", icon: LayoutDashboard, label: "Dashboard" },
-        { path: "/store/products", icon: PackageSearch, label: "Products" },
-        { path: "/store/suppliers", icon: Truck, label: "Suppliers" },
-        { path: "/store/branches", icon: Warehouse, label: "Branches" },
+        { path: "/admin", icon: LayoutDashboard, label: "Dashboard" },
+        { path: "/admin/products", icon: PackageSearch, label: "Products" },
+        { path: "/admin/suppliers", icon: Truck, label: "Suppliers" },
+        { path: "/admin/branches", icon: Warehouse, label: "Branches" },
       ],
     },
     {
       section: "User",
       items: [
         {
-          path: "/store/manager",
+          path: "/admin/managers",
           icon: UserCog,
           label: "Managers",
         },
-        { path: "/store/staff", icon: User, label: "Staff" },
+        { path: "/admin/staff", icon: User, label: "Staff" },
       ],
     },
     {
       section: "Inventory",
       items: [
         {
-          path: "/store/damaged-products",
+          path: "/admin/damaged-products",
           icon: HeartCrack,
           label: "Damaged Products",
         },
         {
-          path: "/store/product-requests",
+          path: "/admin/product-requests",
           icon: PhoneIncoming,
           label: "Product Requests",
         },
         {
-          path: "/store/product-inflow",
+          path: "/admin/product-inflow",
           icon: ArrowDownToDot,
           label: "Product Inflows",
         },
         {
-          path: "/store/product-outflow",
+          path: "/admin/product-outflow",
           icon: ArrowUpFromDot,
           label: "Product Outflows",
         },
@@ -106,66 +105,66 @@ const StoreSidebar = () => {
     {
       section: "Reports",
       items: [
-        { path: "/store/reports", icon: Layers3, label: "Reports" },
-        { path: "/store/sales", icon: Sheet, label: "Sales" },
-        { path: "/store/van-sales", icon: NotebookText, label: "Van Sales" },
+        { path: "/admin/reports", icon: Layers3, label: "Reports" },
+        { path: "/admin/sales", icon: Sheet, label: "Sales" },
+        { path: "/admin/van-sales", icon: NotebookText, label: "Van Sales" },
       ],
     },
     {
       section: "Operations",
       items: [
-        { path: "/store/packing", icon: Package, label: "Packing" },
+        { path: "/admin/packing", icon: Package, label: "Packing" },
         {
-          path: "/store/physical-stock",
+          path: "/admin/physical-stock",
           icon: Blocks,
           label: "Physical Stock",
         },
         {
-          path: "/store/material-transfer",
+          path: "/admin/material-transfer",
           icon: Replace,
           label: "Material Transfer",
         },
-        { path: "/store/invoice-generator", icon: FileText, label: "Invoice Generator" },
+        { path: "/admin/invoice-generator", icon: FileText, label: "Invoice Generator" },
       ],
     },
     {
       section: "Transactions",
       items: [
         {
-          path: "/store/add-payment-transaction",
+          path: "/admin/add-payment-transaction",
           icon: CreditCard,
           label: "Add Payment",
         },
         {
-          path: "/store/add-receipt-voucher",
+          path: "/admin/add-receipt-voucher",
           icon: ReceiptText,
           label: "Add Receipt",
         },
-        { path: "/store/invoice", icon: StickyNote, label: "Invoice" },
-        { path: "/store/job-order", icon: SendToBack, label: "Job Order" },
-        { path: "/store/delivery-note", icon: NotebookPen, label: "Delivery Note" },
+        { path: "/admin/invoice", icon: StickyNote, label: "Invoice" },
+        { path: "/admin/job-order", icon: SendToBack, label: "Job Order" },
+        { path: "/admin/delivery-note", icon: NotebookPen, label: "Delivery Note" },
       ],
     },
     {
       section: "CRM",
       items: [
         {
-          path: "/store/demo-request",
+          path: "/admin/demo-request",
           icon: CalendarArrowDown,
           label: "Demo Requests",
         },
         {
-          path: "/store/client-relationship",
+          path: "/admin/client-relationship",
           icon: Contact,
           label: "Client Relationship",
         },
         {
-          path: "/store/client-requirements",
+          path: "/admin/client-requirements",
           icon: Headset,
           label: "Client Requirements",
         },
-        { path: "/store/quotation", icon: Handshake, label: "Quotation" },
-        { path: "/store/agreement", icon: Signature, label: "Agreement" },
+        { path: "/admin/quotation", icon: Handshake, label: "Quotation" },
+        { path: "/admin/agreement", icon: Signature, label: "Agreement" },
       ],
     },
   ];
@@ -227,9 +226,9 @@ const StoreSidebar = () => {
       <div className="mt-2">
         <ul>
           <Link
-            to="/store/notifications"
+            to="/admin/notifications"
             className={`flex items-center space-x-2 p-2 rounded ${isActive(
-              "/store/notifications"
+              "/admin/notifications"
             )}`}
           >
             <Bell className="w-6 h-6" />

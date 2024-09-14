@@ -42,7 +42,7 @@ function App() {
               }
             />
             <Route
-              path="/store/*"
+              path="/admin/*"
               element={
                 <StoreProtectedRoute allowedRoles={["admin","staff"]}>
                   <Layout>

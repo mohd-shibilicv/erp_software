@@ -25,7 +25,7 @@ import Agreement from "./components/sales/Agreement";
 import Invoice from "./components/sales/Invoice";
 import DeliveryNote from "./components/sales/DeliveryNote";
 import JobOrder from "./components/sales/JobOrder";
-import DemoRequest from "./pages/storePages/demoRequests/DemoRequest";
+import DemoRequestTable from "./pages/storePages/demoRequests/DemoRequestTable";
 import NotificationsPage from "./pages/storePages/NotificationsPage";
 import Managers from "./pages/storePages/userManagement/Managers";
 import Staff from "./pages/storePages/userManagement/Staff";

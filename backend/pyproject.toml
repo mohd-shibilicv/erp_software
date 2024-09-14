@@ -19,6 +19,10 @@ python-barcode = "^0.15.1"
 pillow = "^10.4.0"
 python-dateutil = "^2.9.0.post0"
 reportlab = "^4.2.2"
+google-auth = "^2.34.0"
+google-auth-oauthlib = "^1.2.1"
+google-auth-httplib2 = "^0.2.0"
+google-api-python-client = "^2.145.0"
 
 
 [build-system]

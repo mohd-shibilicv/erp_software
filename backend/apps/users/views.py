@@ -105,7 +105,6 @@ class UserViewSet(viewsets.ModelViewSet):
         return User.objects.none()
 
 
-
 class BranchManagerViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(role='branch_manager')
     permission_classes = [IsAdminUser]
@@ -126,7 +125,7 @@ class BranchManagerViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
-    
+
 
 class StaffManagementViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(role='staff')
