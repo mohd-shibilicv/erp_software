@@ -31,7 +31,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import Layout from "../layout/Layout";
 
 const InvoiceGenerator = () => {
   const [invoiceType, setInvoiceType] = useState("sales");

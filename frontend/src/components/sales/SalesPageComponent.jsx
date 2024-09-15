@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
+import { useReactToPrint } from 'react-to-print';
+import { Printer } from "lucide-react";
+import InvoicePrint from "./templates/InvoicePrint";
 import { Calendar, Search, Plus, X } from "lucide-react";
 import {
   Card,
@@ -32,6 +35,8 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import CustomerAccountModal from "../modals/CustomerAccountModal";
+import InvoiceWithHeaderFooter from "./templates/InvoiceWithHeaderFooter";
+import ModalOptions from "./templates/ModalOptions";
 
 const customerAccounts = [
   { label: "Cash Account - 0003", value: "cash-0003" },
@@ -75,6 +80,9 @@ const SalesPage = () => {
       total: 0,
     },
   ]);
+
+  const [selectedInvoiceType, setSelectedInvoiceType] = useState(null);
+
   const [customerAccount, setCustomerAccount] = useState(
     customerAccounts[0].value
   );
@@ -82,6 +90,19 @@ const SalesPage = () => {
   const [salesman, setSalesman] = useState("");
   const [isCustomerAccountModalOpen, setIsCustomerAccountModalOpen] =
     useState();
+
+  const [invoiceNumber, setInvoiceNumber] = useState("SL#00034");
+  const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split("T")[0]);
+  
+  const invoicePrintRef = useRef();
+  
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+  const handlePrintContent = useReactToPrint({
+    content: () => invoicePrintRef.current,
+  });
 
   const addItem = () => {
     const newItem = {
@@ -139,6 +160,8 @@ const SalesPage = () => {
     console.log("Customer Account Created:", formData);
     setIsCustomerAccountModalOpen(false);
   };
+
+  
 
   return (
     <>
@@ -455,7 +478,11 @@ const SalesPage = () => {
 
         <div className="flex justify-end mt-6">
           <div className="space-x-2">
-            <Button>Apply</Button>
+            {/* <Button>Apply</Button> */}
+            <Button onClick={() => setIsModalOpen(true)}
+            >
+              <Printer className="h-3 w-4 mr-2" /> Print Invoice
+            </Button>
             <Button variant="outline">Save & Print</Button>
             <Button variant="outline">Clear All</Button>
             <Button variant="outline">Find</Button>
@@ -467,6 +494,38 @@ const SalesPage = () => {
         onClose={() => setIsCustomerAccountModalOpen(false)}
         onSave={handleSaveCustomerAccount}
       />
+            {isModalOpen && (
+         <ModalOptions onClose={() => setIsModalOpen(false)}
+         items={items}
+         customerAccount={customerAccount}
+         invoiceNumber={invoiceNumber}
+         invoiceDate={invoiceDate}
+         calculateSubTotal={calculateSubTotal}
+         />
+       )}
+       {/* <div style={{ display: 'none' }}>
+        {selectedInvoiceType === 'headerFooter' ? (
+          <InvoiceWithHeaderFooter
+            ref={invoicePrintRef}
+            items={items}
+            customerAccount={customerAccount}
+            invoiceNumber={invoiceNumber}
+            invoiceDate={invoiceDate}
+            calculateSubTotal={calculateSubTotal}
+            headerImage="path-to-header-image"
+            footerImage="path-to-footer-image"
+          />
+        ) : (
+          <InvoicePrint
+            ref={invoicePrintRef}
+            items={items}
+            customerAccount={customerAccount}
+            invoiceNumber={invoiceNumber}
+            invoiceDate={invoiceDate}
+            calculateSubTotal={calculateSubTotal}
+          />
+        )}
+      </div> */}
     </>
   );
 };
