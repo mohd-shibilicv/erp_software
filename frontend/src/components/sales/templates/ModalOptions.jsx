@@ -1,5 +1,5 @@
 import React, { useRef,useState } from 'react'
-import InvoicePrint from './InvoicePrint'
+import InvoicePrint from './InvoicePrint';
 import InvoiceWithHeaderFooter from './InvoiceWithHeaderFooter'
 import InvoiceWithHeader from './InvoiceWithHeader';
 import InvoiceWithFooter from './InvoiceWithFooter';
@@ -7,7 +7,7 @@ import { useReactToPrint } from 'react-to-print';
 
 
 
-const ModalOptions = ({ onClose, items, customerAccount, invoiceNumber, invoiceDate, calculateSubTotal }) => {
+const ModalOptions = ({ onClose, items, customerAccount, invoiceNumber, invoiceDate, calculateSubTotal, calculateTotalDiscount,calculateTotalTax  }) => {
     const [selectedInvoiceType, setSelectedInvoiceType] = useState(null);
     const [headerImage, setHeaderImage] = useState(null);
     const [footerImage, setFooterImage] = useState(null);
@@ -19,13 +19,13 @@ const ModalOptions = ({ onClose, items, customerAccount, invoiceNumber, invoiceD
     });
   
     const handleInvoiceSelection = (type) => {
-      setSelectedInvoiceType(type);
-      if (type === "headerFooter" || type === "header" || type === "footer") {
-        setIsImageProvided(false); 
-      } else {
-        handlePrintContent(); 
-      }
-    };
+        setSelectedInvoiceType(type);
+        if (type === "headerFooter" || type === "header" || type === "footer") {
+          setIsImageProvided(false);
+        } else if (type === "noHeaderFooter") {
+          handlePrintContent();
+        }
+      };
   
     const handleImageUpload = () => {
       if (selectedInvoiceType === "headerFooter") {
@@ -146,52 +146,60 @@ const ModalOptions = ({ onClose, items, customerAccount, invoiceNumber, invoiceD
         </div>
       
         {/* Hidden components for printing */}
-        <div style={{ display: "none" }}>
-          {selectedInvoiceType === "headerFooter" && (
-            <InvoiceWithHeaderFooter
-              ref={invoicePrintRef}
-              items={items}
-              customerAccount={customerAccount}
-              invoiceNumber={invoiceNumber}
-              invoiceDate={invoiceDate}
-              calculateSubTotal={calculateSubTotal}
-              headerImage={headerImage}
-              footerImage={footerImage}
-            />
-          )}
-          {selectedInvoiceType === "header" && (
-            <InvoiceWithHeader
-              ref={invoicePrintRef}
-              items={items}
-              customerAccount={customerAccount}
-              invoiceNumber={invoiceNumber}
-              invoiceDate={invoiceDate}
-              calculateSubTotal={calculateSubTotal}
-              headerImage={headerImage}
-            />
-          )}
-          {selectedInvoiceType === "footer" && (
-            <InvoiceWithFooter
-              ref={invoicePrintRef}
-              items={items}
-              customerAccount={customerAccount}
-              invoiceNumber={invoiceNumber}
-              invoiceDate={invoiceDate}
-              calculateSubTotal={calculateSubTotal}
-              footerImage={footerImage}
-            />
-          )}
-          {selectedInvoiceType === "noHeaderFooter" && (
-            <InvoicePrint
-              ref={invoicePrintRef}
-              items={items}
-              customerAccount={customerAccount}
-              invoiceNumber={invoiceNumber}
-              invoiceDate={invoiceDate}
-              calculateSubTotal={calculateSubTotal}
-            />
-          )}
-        </div>
+<div style={{ display: "none" }}>
+  {selectedInvoiceType === "headerFooter" && (
+    <InvoiceWithHeaderFooter
+      ref={invoicePrintRef}
+      items={items}
+      customerAccount={customerAccount}
+      invoiceNumber={invoiceNumber}
+      invoiceDate={invoiceDate}
+      calculateSubTotal={calculateSubTotal}
+      headerImage={headerImage}
+      footerImage={footerImage}
+      calculateTotalDiscount={calculateTotalDiscount}
+      calculateTotalTax={calculateTotalTax}
+    />
+  )}
+  {selectedInvoiceType === "header" && (
+    <InvoiceWithHeader
+      ref={invoicePrintRef}
+      items={items}
+      customerAccount={customerAccount}
+      invoiceNumber={invoiceNumber}
+      invoiceDate={invoiceDate}
+      calculateSubTotal={calculateSubTotal}
+      headerImage={headerImage}
+      calculateTotalDiscount={calculateTotalDiscount}
+      calculateTotalTax={calculateTotalTax}
+    />
+  )}
+  {selectedInvoiceType === "footer" && (
+    <InvoiceWithFooter
+      ref={invoicePrintRef}
+      items={items}
+      customerAccount={customerAccount}
+      invoiceNumber={invoiceNumber}
+      invoiceDate={invoiceDate}
+      calculateSubTotal={calculateSubTotal}
+      footerImage={footerImage}
+      calculateTotalDiscount={calculateTotalDiscount}
+      calculateTotalTax={calculateTotalTax}
+    />
+  )}
+  {selectedInvoiceType === "noHeaderFooter" && (
+    <InvoicePrint
+      ref={invoicePrintRef}
+      items={items}
+      customerAccount={customerAccount}
+      invoiceNumber={invoiceNumber}
+      invoiceDate={invoiceDate}
+      calculateSubTotal={calculateSubTotal}
+      calculateTotalDiscount={calculateTotalDiscount}
+      calculateTotalTax={calculateTotalTax}
+    />
+  )}
+</div>
       </div>
     );
   };

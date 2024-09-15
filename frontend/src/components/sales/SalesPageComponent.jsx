@@ -1,4 +1,4 @@
-import React, { useState,useRef } from "react";
+import React, { useState, useRef } from "react";
 import { useReactToPrint } from 'react-to-print';
 import { Printer } from "lucide-react";
 import InvoicePrint from "./templates/InvoicePrint";
@@ -27,7 +27,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Combobox } from "../ui/Combobox";
-import Layout from "../layout/Layout";
 import {
   Tooltip,
   TooltipContent,
@@ -35,7 +34,6 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import CustomerAccountModal from "../modals/CustomerAccountModal";
-import InvoiceWithHeaderFooter from "./templates/InvoiceWithHeaderFooter";
 import ModalOptions from "./templates/ModalOptions";
 
 const customerAccounts = [
@@ -93,9 +91,9 @@ const SalesPage = () => {
 
   const [invoiceNumber, setInvoiceNumber] = useState("SL#00034");
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split("T")[0]);
-  
+
   const invoicePrintRef = useRef();
-  
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -161,7 +159,23 @@ const SalesPage = () => {
     setIsCustomerAccountModalOpen(false);
   };
 
-  
+
+  const calculateTotalDiscount = () => {
+    return items.reduce((sum, item) => {
+      const subtotal = item.quantity * item.unitPrice;
+      return sum + (subtotal * (item.discount / 100));
+    }, 0);
+  };
+
+  const calculateTotalTax = () => {
+    return items.reduce((sum, item) => {
+      const subtotal = item.quantity * item.unitPrice;
+      const discountAmount = subtotal * (item.discount / 100);
+      return sum + ((subtotal - discountAmount) * (item.taxRate / 100));
+    }, 0);
+  };
+
+
 
   return (
     <>
@@ -447,13 +461,18 @@ const SalesPage = () => {
                 </div>
                 <div className="flex justify-between">
                   <span>Discount</span>
-                  <Input type="number" defaultValue={0} className="w-32" />
+                  <Input
+                    type="number"
+                    value={calculateTotalDiscount().toFixed(2)}
+                    className="w-32"
+                    readOnly
+                  />
                 </div>
                 <div className="flex justify-between">
                   <span>Total Tax</span>
                   <Input
                     type="number"
-                    defaultValue={0}
+                    value={calculateTotalTax().toFixed(2)}
                     className="w-32"
                     readOnly
                   />
@@ -494,38 +513,17 @@ const SalesPage = () => {
         onClose={() => setIsCustomerAccountModalOpen(false)}
         onSave={handleSaveCustomerAccount}
       />
-            {isModalOpen && (
-         <ModalOptions onClose={() => setIsModalOpen(false)}
-         items={items}
-         customerAccount={customerAccount}
-         invoiceNumber={invoiceNumber}
-         invoiceDate={invoiceDate}
-         calculateSubTotal={calculateSubTotal}
-         />
-       )}
-       {/* <div style={{ display: 'none' }}>
-        {selectedInvoiceType === 'headerFooter' ? (
-          <InvoiceWithHeaderFooter
-            ref={invoicePrintRef}
-            items={items}
-            customerAccount={customerAccount}
-            invoiceNumber={invoiceNumber}
-            invoiceDate={invoiceDate}
-            calculateSubTotal={calculateSubTotal}
-            headerImage="path-to-header-image"
-            footerImage="path-to-footer-image"
-          />
-        ) : (
-          <InvoicePrint
-            ref={invoicePrintRef}
-            items={items}
-            customerAccount={customerAccount}
-            invoiceNumber={invoiceNumber}
-            invoiceDate={invoiceDate}
-            calculateSubTotal={calculateSubTotal}
-          />
-        )}
-      </div> */}
+      {isModalOpen && (
+        <ModalOptions onClose={() => setIsModalOpen(false)}
+          items={items}
+          customerAccount={customerAccount}
+          invoiceNumber={invoiceNumber}
+          invoiceDate={invoiceDate}
+          calculateSubTotal={calculateSubTotal}
+          calculateTotalDiscount={calculateTotalDiscount}
+          calculateTotalTax={calculateTotalTax}
+        />
+      )}
     </>
   );
 };
