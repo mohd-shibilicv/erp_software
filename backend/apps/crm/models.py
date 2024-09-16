@@ -3,6 +3,7 @@ from apps.users.models import User
 from django.contrib.postgres.fields import ArrayField
 import json
 
+
 class Client(models.Model):
     name = models.CharField(max_length=255)
     mobile_number = models.CharField(max_length=20)
@@ -54,6 +55,10 @@ class ClientRequest(models.Model):
     company_size = models.CharField(max_length=20, choices=COMPANY_SIZE_CHOICES)
     platform = models.CharField(max_length=20, choices=PLATFORM_CHOICES)
     service_requested = models.CharField(max_length=255)
+    project_details = models.TextField()
+
+    class Meta:
+        ordering = ("created_at",)
 
     def __str__(self):
         return f"Demo Request for {self.company_name} on {self.scheduled_date}"
@@ -74,7 +79,6 @@ class ClientRelationship(models.Model):
     client = models.ForeignKey(
         Client, on_delete=models.CASCADE, related_name="relationships"
     )
-    products = models.JSONField()  
     reminder_date = models.DateField(null=True, blank=True)
     meeting_date = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
@@ -86,10 +90,18 @@ class ClientRelationship(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    _products = models.JSONField(db_column="products")
+
+    @property
+    def products(self):
+        return self._products if isinstance(self._products, list) else []
+
+    @products.setter
+    def products(self, value):
+        self._products = value if isinstance(value, list) else []
+
     def __str__(self):
         return f"{self.client.name} - {self.get_status_display()}"
-    
-
 
 
 class Feature(models.Model):
@@ -97,15 +109,20 @@ class Feature(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class ClientRequirement(models.Model):
-    client = models.ForeignKey(Client, related_name='requirements', on_delete=models.CASCADE)
+    client = models.ForeignKey(
+        Client, related_name="requirements", on_delete=models.CASCADE
+    )
     file_number = models.CharField(max_length=255)
     color_theme = models.CharField(max_length=255)
     layout = models.CharField(max_length=255)
     additional_requirements = models.TextField(blank=True)
-    predefined_features = models.ManyToManyField(Feature, related_name='requirements', blank=True)
-    custom_features = models.TextField(blank=True, default='[]')
+    predefined_features = models.ManyToManyField(
+        Feature, related_name="requirements", blank=True
+    )
+    custom_features = models.TextField(blank=True, default="[]")
 
     def __str__(self):
         return f"{self.client} - {self.file_number}"
@@ -115,9 +132,10 @@ class ClientRequirement(models.Model):
 
     def get_custom_features(self):
         return json.loads(self.custom_features)
-    
-    
+
 
 class RequirementImage(models.Model):
-    client_requirement = models.ForeignKey(ClientRequirement, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='requirement_images/')
+    client_requirement = models.ForeignKey(
+        ClientRequirement, related_name="images", on_delete=models.CASCADE
+    )
+    image = models.ImageField(upload_to="requirement_images/")

@@ -12,6 +12,9 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLES)
     is_active = models.BooleanField(default=True)
 
+    class Meta:
+        ordering = ("username",)
+
     def save(self, *args, **kwargs):
         if self.role == 'admin':
             self.is_staff = True

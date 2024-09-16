@@ -191,7 +191,7 @@ export default function ClientDetails({ client, onBack }) {
         <Separator className="my-6" />
         <div className="mb-8">
           <h3 className="font-semibold mb-3">More Details About the Project</h3>
-          <p className="text-sm leading-relaxed">{client.service_requested}</p>
+          <p className="text-sm leading-relaxed">{client.project_details}</p>
         </div>
         {saveSuccess !== null && (
           <Alert

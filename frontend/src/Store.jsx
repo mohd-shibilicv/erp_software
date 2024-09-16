@@ -32,12 +32,12 @@ import Staff from "./pages/storePages/userManagement/Staff";
 import { StoreProtectedRoute } from "./components/layout/StoreProtectedRoute";
 import ClientRelationshipList from "./pages/storePages/clientRelationships/ClientRelationshipList";
 import ClientRelationshipDetails from "./pages/storePages/clientRelationships/ClientRelationshipDetails";
-
-
+import { Toaster } from "./components/ui/toaster";
 
 function Store() {
   return (
     <>
+      <Toaster />
       <Routes>
         <Route path="/" element={<StoreDashboardPage />} />
 

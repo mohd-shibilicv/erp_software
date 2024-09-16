@@ -3,6 +3,8 @@ from .models import Client, ClientRequest, ClientRelationship, ClientRequirement
 
 
 class ClientRequestSerializer(serializers.ModelSerializer):
+    platform = serializers.CharField(source="get_platform_display")
+
     class Meta:
         model = ClientRequest
         fields = "__all__"
@@ -19,24 +21,33 @@ class ClientRequestSerializer(serializers.ModelSerializer):
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = '__all__'
+        fields = [
+            "id",
+            "name",
+            "mobile_number",
+            "whatsapp_number",
+            "email",
+            "country",
+            "city",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["created_at", "updated_at"]
 
 
 class ClientRelationshipSerializer(serializers.ModelSerializer):
     client = ClientSerializer(read_only=True)
     client_id = serializers.PrimaryKeyRelatedField(
-        queryset=Client.objects.all(), 
-        source='client', 
-        write_only=True
+        queryset=Client.objects.all(), source="client", write_only=True
     )
 
     class Meta:
         model = ClientRelationship
-        fields = '__all__'
+        fields = "__all__"
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['client'] = ClientSerializer(instance.client).data
+        representation["client"] = ClientSerializer(instance.client).data
         return representation
     
 

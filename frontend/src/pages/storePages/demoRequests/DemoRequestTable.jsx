@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import ClientDetails from "./ClientDetails";
 import { api } from "@/services/api";
 import { format } from "date-fns";
+import { Eye } from "lucide-react";
 
 export default function DemoRequestTable() {
   const [data, setData] = useState([]);
@@ -69,7 +70,18 @@ export default function DemoRequestTable() {
       cell: ({ row }) => {
         const status = row.original.status;
         return (
-          <p className="p-2 bg-gray-100 font-semibold rounded text-center capitalize">
+          <p className="p-2 font-semibold rounded capitalize flex items-center justify-start gap-2">
+            <span
+              className={`p-1 h-1 rounded-full ${
+                status === "pending"
+                  ? "bg-yellow-500"
+                  : status === "scheduled"
+                  ? "bg-indigo-500"
+                  : status === "completed"
+                  ? "bg-green-500"
+                  : "bg-red-500"
+              }`}
+            />
             {status}
           </p>
         );
@@ -80,7 +92,7 @@ export default function DemoRequestTable() {
       header: "Action",
       cell: ({ row }) => (
         <Button variant="ghost" onClick={() => handleView(row.original.id)}>
-          View
+          <Eye size={18} />
         </Button>
       ),
     },

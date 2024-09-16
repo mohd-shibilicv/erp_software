@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Table,
@@ -21,13 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  MoreHorizontal,
-  Plus,
-  ArrowUpDown,
-  ChevronDown,
-  ChevronsUpDown,
-} from "lucide-react";
+import { MoreHorizontal, Plus, ArrowUpDown, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import {
   flexRender,
@@ -37,70 +29,38 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-// Mock data for demonstration
-const clientRelationships = [
-  {
-    id: 1,
-    clientName: "John Doe",
-    product: "Restaurant Management",
-    status: "Pending",
-    meetingDate: new Date("2023-06-15"),
-    careOf: "Nasscript",
-  },
-  {
-    id: 2,
-    clientName: "Jane Smith",
-    product: "Stock Management",
-    status: "Confirmed",
-    meetingDate: new Date("2023-06-20"),
-    careOf: "Hisaan",
-  },
-  {
-    id: 3,
-    clientName: "Alice Johnson",
-    product: "Laundry Management",
-    status: "Cancelled",
-    meetingDate: new Date("2023-06-25"),
-    careOf: "Nasscript",
-  },
-  {
-    id: 4,
-    clientName: "Bob Williams",
-    product: "Restaurant Management",
-    status: "Pending",
-    meetingDate: new Date("2023-06-30"),
-    careOf: "Hisaan",
-  },
-  {
-    id: 5,
-    clientName: "Charlie Brown",
-    product: "Stock Management",
-    status: "Confirmed",
-    meetingDate: new Date("2023-07-05"),
-    careOf: "Nasscript",
-  },
-];
+import { clientRelationshipService } from "@/services/crmServiceApi";
 
 export default function ClientRelationshipList() {
-  const navigate = useNavigate();
+  const [relationships, setRelationships] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
+  const navigate = useNavigate();
 
-  const columns = [
-    {
-      accessorKey: "id",
-      header: ({ column }) => {
-        return (
+  useEffect(() => {
+    fetchRelationships();
+  }, []);
+
+  const fetchRelationships = async () => {
+    try {
+      setLoading(true);
+      const response = await clientRelationshipService.getAll();
+      setRelationships(response.data.results);
+    } catch (error) {
+      console.error("Error fetching relationships:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "id",
+        header: ({ column }) => (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
@@ -108,14 +68,12 @@ export default function ClientRelationshipList() {
             ID
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
-        );
+        ),
+        cell: ({ row }) => <div>{row.getValue("id")}</div>,
       },
-      cell: ({ row }) => <div>{row.getValue("id")}</div>,
-    },
-    {
-      accessorKey: "clientName",
-      header: ({ column }) => {
-        return (
+      {
+        accessorKey: "client_name",
+        header: ({ column }) => (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
@@ -123,19 +81,15 @@ export default function ClientRelationshipList() {
             Client Name
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
-        );
+        ),
+        cell: ({ row }) => {
+          const client_name = row.original.client.name
+          return <div>{client_name}</div>;
+        },
       },
-      cell: ({ row }) => <div>{row.getValue("clientName")}</div>,
-    },
-    {
-      accessorKey: "product",
-      header: "Product",
-      cell: ({ row }) => <div>{row.getValue("product")}</div>,
-    },
-    {
-      accessorKey: "meetingDate",
-      header: ({ column }) => {
-        return (
+      {
+        accessorKey: "meeting_date",
+        header: ({ column }) => (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
@@ -143,37 +97,38 @@ export default function ClientRelationshipList() {
             Meeting Date
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
-        );
+        ),
+        cell: ({ row }) =>
+          row.getValue("meeting_date")
+            ? format(new Date(row.getValue("meeting_date")), "PP")
+            : "N/A",
       },
-      cell: ({ row }) => format(row.getValue("meetingDate"), "PP"),
-    },
-    {
-      accessorKey: "careOf",
-      header: "Care Of",
-      cell: ({ row }) => <div>{row.getValue("careOf")}</div>,
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => (
-        <div className="capitalize flex justify-center gap-2 items-center">
-          {row.getValue("status") === "Pending" ? (
-            <p className="p-1 h-1 rounded-full text-center bg-yellow-500"></p>
-          ) : row.getValue("status") === "Confirmed" ? (
-            <p className="p-1 h-1 rounded-full text-center bg-green-500"></p>
-          ) : (
-            <p className="p-1 h-1 rounded-full text-center bg-red-500"></p>
-          )}
-          {row.getValue("status")}
-        </div>
-      ),
-    },
-    {
-      id: "actions",
-      cell: ({ row }) => {
-        const relationship = row.original;
-
-        return (
+      {
+        accessorKey: "care_of",
+        header: "Care Of",
+        cell: ({ row }) => <div className="capitalize">{row.getValue("care_of")}</div>,
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => (
+          <div className="capitalize flex justify-center gap-2 items-center">
+            <span
+              className={`p-1 h-1 rounded-full ${
+                row.getValue("status") === "pending"
+                  ? "bg-yellow-500"
+                  : row.getValue("status") === "confirmed"
+                  ? "bg-green-500"
+                  : "bg-red-500"
+              }`}
+            />
+            {row.getValue("status")}
+          </div>
+        ),
+      },
+      {
+        id: "actions",
+        cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -185,28 +140,21 @@ export default function ClientRelationshipList() {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() =>
-                  navigate(`/admin/client-relationship/${relationship.id}`)
+                  navigate(`/admin/client-relationship/${row.original.id}`)
                 }
               >
                 View details
               </DropdownMenuItem>
-              {/* <DropdownMenuItem
-                onClick={() => {
-                  // Handle delete action
-                  console.log("Delete", relationship.id);
-                }}
-              >
-                Delete
-              </DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
-        );
+        ),
       },
-    },
-  ];
+    ],
+    [navigate]
+  );
 
   const table = useReactTable({
-    data: clientRelationships,
+    data: relationships,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -224,6 +172,10 @@ export default function ClientRelationshipList() {
     },
   });
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-4">
@@ -235,9 +187,9 @@ export default function ClientRelationshipList() {
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter client names..."
-          value={table.getColumn("clientName")?.getFilterValue() ?? ""}
+          value={table.getColumn("client_name")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("clientName")?.setFilterValue(event.target.value)
+            table.getColumn("client_name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -273,21 +225,16 @@ export default function ClientRelationshipList() {
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="bg-gray-200">
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className="text-center text-black"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="text-center text-black">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
