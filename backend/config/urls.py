@@ -37,7 +37,7 @@ from apps.reports.views import (
     DashboardView,
     BranchDashboardView,
 )
-from apps.crm.views import ClientRequestViewSet, ClientViewSet, ClientRelationshipViewSet
+from apps.crm.views import ClientRequestViewSet, ClientViewSet, ClientRelationshipViewSet,ClientRequirementViewSet,FeatureViewSet
 
 
 router = DefaultRouter()
@@ -65,6 +65,9 @@ router.register(r"product-requests", ProductRequestViewSet, basename="product_re
 router.register(r'clients', ClientViewSet, basename="clients")
 router.register(r'client-requests', ClientRequestViewSet, basename="client_requests")
 router.register(r'client-relationships', ClientRelationshipViewSet, basename="client_relationships")
+router.register(r'client-requirements', ClientRequirementViewSet)
+router.register(r'features', FeatureViewSet)
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),

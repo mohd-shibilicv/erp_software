@@ -1,6 +1,7 @@
 from django.db import models
 from apps.users.models import User
-
+from django.contrib.postgres.fields import ArrayField
+import json
 
 class Client(models.Model):
     name = models.CharField(max_length=255)
@@ -73,7 +74,7 @@ class ClientRelationship(models.Model):
     client = models.ForeignKey(
         Client, on_delete=models.CASCADE, related_name="relationships"
     )
-    products = models.JSONField()  # Store as a list of product identifiers
+    products = models.JSONField()  
     reminder_date = models.DateField(null=True, blank=True)
     meeting_date = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
@@ -87,3 +88,36 @@ class ClientRelationship(models.Model):
 
     def __str__(self):
         return f"{self.client.name} - {self.get_status_display()}"
+    
+
+
+
+class Feature(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+    
+class ClientRequirement(models.Model):
+    client = models.ForeignKey(Client, related_name='requirements', on_delete=models.CASCADE)
+    file_number = models.CharField(max_length=255)
+    color_theme = models.CharField(max_length=255)
+    layout = models.CharField(max_length=255)
+    additional_requirements = models.TextField(blank=True)
+    predefined_features = models.ManyToManyField(Feature, related_name='requirements', blank=True)
+    custom_features = models.TextField(blank=True, default='[]')
+
+    def __str__(self):
+        return f"{self.client} - {self.file_number}"
+
+    def set_custom_features(self, features):
+        self.custom_features = json.dumps(features)
+
+    def get_custom_features(self):
+        return json.loads(self.custom_features)
+    
+    
+
+class RequirementImage(models.Model):
+    client_requirement = models.ForeignKey(ClientRequirement, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='requirement_images/')
