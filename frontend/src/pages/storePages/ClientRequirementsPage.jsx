@@ -116,7 +116,7 @@ const ClientRequirementsPage = () => {
     setIsLoading(true);
   
     const formData = new FormData();
-    formData.append('client', parseInt(selectedClient, 10)); 
+    formData.append('client', parseInt(selectedClient, 10)); // Ensure client is sent as an integer
     formData.append('file_number', fileNumber);
     formData.append('color_theme', colorTheme);
     formData.append('layout', layout);
@@ -128,7 +128,6 @@ const ClientRequirementsPage = () => {
       } else if (String(feature.id).startsWith('custom')) {
         formData.append('custom_features', feature.name);
       }
-      
     });
   
     uploadedImages.forEach((image) => {
@@ -150,6 +149,7 @@ const ClientRequirementsPage = () => {
       setIsLoading(false);
     }
   };
+  
   
 
   useEffect(() => {
@@ -183,9 +183,10 @@ const ClientRequirementsPage = () => {
                   <p>Loading clients...</p>
                 ) : (
                   <Select
-                    value={selectedClient ? selectedClient.toString() : ""}
-                    onValueChange={(value) => setSelectedClient(value)}
-                  >
+  value={selectedClient ? selectedClient.toString() : ""}
+  onValueChange={(value) => setSelectedClient(parseInt(value, 10))} // Ensure value is an integer
+>
+
                     <SelectTrigger>
                       <SelectValue placeholder="Select Client" />
                     </SelectTrigger>
