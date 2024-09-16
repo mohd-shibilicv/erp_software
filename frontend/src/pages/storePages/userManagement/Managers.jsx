@@ -121,15 +121,36 @@ const Managers = () => {
       </h1>
 
       <div className="flex items-center justify-between py-4">
-        <input
-          placeholder="Filter managers by name, email, or phone..."
-          className="max-w-sm p-2 border border-gray-300 rounded"
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        {/* Enhanced Search Component */}
+        <div className="relative w-full max-w-sm">
+          <input
+            placeholder="Filter managers by name, email, or phone..."
+            className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500 shadow-sm"
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 16l-2-2m0 0a6 6 0 118.485-8.485A6 6 0 0116 14l-2 2zm-6-2h12"
+              />
+            </svg>
+          </div>
+        </div>
+
+        {/* Add Branch Manager Button */}
         <button
-          className="px-4 py-2 flex gap-2  bg-violet-600 text-white rounded hover:bg-violet-700"
+          className="ml-4 px-4 py-2 flex gap-2 bg-violet-600 text-white rounded-lg shadow hover:bg-violet-700 focus:ring-2 focus:ring-violet-500 focus:ring-opacity-50"
           onClick={() => {
             setIsUpdating(false);
             setSelectedManager(null);
@@ -143,11 +164,87 @@ const Managers = () => {
             setIsModalOpen(true);
           }}
         >
-          <PlusCircle />
+          <PlusCircle className="h-5 w-5" />
           <p>Add Branch Manager</p>
         </button>
       </div>
 
+      {/* Table Section */}
+      <div className="overflow-x-auto shadow rounded-lg">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Email
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Phone Number
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredManagers.map((manager) => (
+              <tr key={manager.id}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {manager.id}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {manager.username}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {manager.email}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {manager.phone_number || "Not Available"}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${manager.is_active
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                      }`}
+                  >
+                    {manager.is_active ? "Active" : "Inactive"}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <button
+                    onClick={() => openUpdateModal(manager)}
+                    className="text-indigo-600 hover:text-indigo-900"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
           <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
@@ -215,14 +312,12 @@ const Managers = () => {
                       }
                     />
                     <div
-                      className={`block w-14 h-8 rounded-full ${
-                        newManager.is_active ? "bg-violet-500" : "bg-gray-400"
-                      }`}
+                      className={`block w-14 h-8 rounded-full ${newManager.is_active ? "bg-violet-500" : "bg-gray-400"
+                        }`}
                     ></div>
                     <div
-                      className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${
-                        newManager.is_active ? "transform translate-x-6" : ""
-                      }`}
+                      className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${newManager.is_active ? "transform translate-x-6" : ""
+                        }`}
                     ></div>
                   </div>
                   <div className="ml-3 text-gray-700 font-medium">
@@ -252,82 +347,6 @@ const Managers = () => {
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ID
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Phone Number
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredManagers.map((manager) => (
-              <tr key={manager.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {manager.id}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {manager.username}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {manager.email}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {manager.phone_number || "Not Available"}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      manager.is_active
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {manager.is_active ? "Active" : "Inactive"}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button
-                    onClick={() => openUpdateModal(manager)}
-                    className="text-indigo-600 hover:text-indigo-900"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                      />
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 };

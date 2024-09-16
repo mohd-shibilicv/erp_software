@@ -183,14 +183,12 @@ const Staff = () => {
                       }
                     />
                     <div
-                      className={`block w-14 h-8 rounded-full ${
-                        newUser.is_active ? "bg-violet-500" : "bg-gray-400"
-                      }`}
+                      className={`block w-14 h-8 rounded-full ${newUser.is_active ? "bg-violet-500" : "bg-gray-400"
+                        }`}
                     ></div>
                     <div
-                      className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${
-                        newUser.is_active ? "transform translate-x-6" : ""
-                      }`}
+                      className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${newUser.is_active ? "transform translate-x-6" : ""
+                        }`}
                     ></div>
                   </div>
                   <div className="ml-3 text-gray-700 font-medium">
@@ -248,22 +246,21 @@ const Staff = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {staff.id}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                   {staff.username || "Not Available"}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                   {staff.email}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                   {staff.phone_number || "Not available"}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                   <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      staff.is_active
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${staff.is_active
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
-                    }`}
+                      }`}
                   >
                     {staff.is_active ? "Active" : "Inactive"}
                   </span>
