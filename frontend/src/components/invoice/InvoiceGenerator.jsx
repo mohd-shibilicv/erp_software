@@ -293,7 +293,7 @@ const InvoiceGenerator = () => {
             </Button>
           </div>
         </CardContent>
-        <div className="w-full flex justify-between mb-4">
+        <div className="w-full flex justify-between m-4">
           <Card className="flex flex-col p-5 mr-6">
             <h3 className="text-lg font-semibold mb-2">Issued To:</h3>
             <Input

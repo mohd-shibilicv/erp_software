@@ -30,6 +30,8 @@ import NotificationsPage from "./pages/storePages/NotificationsPage";
 import Managers from "./pages/storePages/userManagement/Managers";
 import Staff from "./pages/storePages/userManagement/Staff";
 import { StoreProtectedRoute } from "./components/layout/StoreProtectedRoute";
+import ClientRelationshipList from "./pages/storePages/clientRelationships/ClientRelationshipList";
+import ClientRelationshipDetails from "./pages/storePages/clientRelationships/ClientRelationshipDetails";
 
 
 
@@ -151,7 +153,9 @@ function Store() {
         } />
 
         <Route path="/client-request" element={<DemoRequestTable />} />
-        <Route path="/client-relationship" element={<ClientRelationshipPage />} />
+        <Route path="/client-relationship" element={<ClientRelationshipList />} />
+        <Route path="/client-relationship/new" element={<ClientRelationshipDetails />} />
+        <Route path="/client-relationship/:id" element={<ClientRelationshipDetails />} />
         <Route path="/client-requirements" element={<ClientRequirementsPage />} />
         <Route path="/quotation" element={<Quotation />} />
         <Route path="/agreement" element={<Agreement />} />

@@ -1,10 +1,16 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import ClientRequest
-from .serializers import ClientRequestSerializer
+from .models import Client, ClientRequest, ClientRelationship
+from .serializers import ClientSerializer, ClientRequestSerializer, ClientRelationshipSerializer
 from django.contrib.auth import get_user_model
 from .utils import create_google_calendar_event, send_calendar_invite_email
+
+
+class ClientViewSet(viewsets.ModelViewSet):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class ClientRequestViewSet(viewsets.ModelViewSet):
@@ -56,3 +62,9 @@ class ClientRequestViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(demo_request)
         return Response(serializer.data)
+
+
+class ClientRelationshipViewSet(viewsets.ModelViewSet):
+    queryset = ClientRelationship.objects.all()
+    serializer_class = ClientRelationshipSerializer
+    permission_classes = [permissions.IsAuthenticated]

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ClientRequest
+from .models import Client, ClientRequest, ClientRelationship
 
 
 class ClientRequestSerializer(serializers.ModelSerializer):
@@ -14,3 +14,27 @@ class ClientRequestSerializer(serializers.ModelSerializer):
         if value < timezone.now():
             raise serializers.ValidationError("Scheduled date cannot be in the past.")
         return value
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = '__all__'
+
+
+class ClientRelationshipSerializer(serializers.ModelSerializer):
+    client = ClientSerializer(read_only=True)
+    client_id = serializers.PrimaryKeyRelatedField(
+        queryset=Client.objects.all(), 
+        source='client', 
+        write_only=True
+    )
+
+    class Meta:
+        model = ClientRelationship
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['client'] = ClientSerializer(instance.client).data
+        return representation

@@ -34,6 +34,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 export default function ClientDetails({ client, onBack }) {
   const [assignTo, setAssignTo] = useState(client.assigned_staff);
@@ -94,7 +95,7 @@ export default function ClientDetails({ client, onBack }) {
               { label: "Email", value: client.client_email },
               { label: "Number", value: client.client_number },
               { label: "Company", value: client.company_name },
-              { label: "Schedule Date", value: client.scheduled_date },
+              { label: "Schedule Date", value: format(client.scheduled_date, "PPPp") },
             ].map((item, index) => (
               <div key={index} className="flex">
                 <Label className="w-1/3 font-medium">{item.label}:</Label>

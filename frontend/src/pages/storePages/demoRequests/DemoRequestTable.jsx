@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import ClientDetails from "./ClientDetails";
 import { api } from "@/services/api";
+import { format } from "date-fns";
 
 export default function DemoRequestTable() {
   const [data, setData] = useState([]);
@@ -55,9 +56,12 @@ export default function DemoRequestTable() {
     { id: "number", header: "Number", accessorKey: "client_number" },
     { id: "companyName", header: "Company Name", accessorKey: "company_name" },
     {
-      id: "scheduleDate",
-      header: "Schedule Date",
-      accessorKey: "scheduled_date",
+      id: "scheduled_date",
+      header: "Scheduled Date",
+      cell: ({ row }) => {
+        const scheduledDate = format(row.original.scheduled_date, "PPPp");
+        return <p>{scheduledDate}</p>;
+      },
     },
     {
       id: "status",
