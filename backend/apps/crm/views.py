@@ -81,5 +81,5 @@ class FeatureViewSet(viewsets.ModelViewSet):
 
 
 class ClientRequirementViewSet(viewsets.ModelViewSet):
-    queryset = ClientRequirement.objects.all()
+    queryset = ClientRequirement.objects.select_related('client').all()
     serializer_class = ClientRequirementSerializer

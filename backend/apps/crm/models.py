@@ -111,6 +111,12 @@ class Feature(models.Model):
 
 
 class ClientRequirement(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("confirmed", "Confirmed"),
+        ("cancelled", "Cancelled"),
+    ]
+
     client = models.ForeignKey(
         Client, related_name="requirements", on_delete=models.CASCADE
     )
@@ -118,6 +124,7 @@ class ClientRequirement(models.Model):
     color_theme = models.CharField(max_length=255)
     layout = models.CharField(max_length=255)
     additional_requirements = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     predefined_features = models.ManyToManyField(
         Feature, related_name="requirements", blank=True
     )

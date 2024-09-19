@@ -51,10 +51,6 @@ class ClientRelationshipSerializer(serializers.ModelSerializer):
         return representation
     
 
-
-#client Requirements
-
-
 class FeatureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feature
@@ -73,7 +69,12 @@ class RequirementImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'image']
 
 class ClientRequirementSerializer(serializers.ModelSerializer):
-    client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
+    client = ClientSerializer(read_only=True)
+    client_id = serializers.PrimaryKeyRelatedField(
+        queryset=Client.objects.all(), 
+        source='client', 
+        write_only=True
+    )
     images = RequirementImageSerializer(many=True, read_only=True)
     uploaded_images = serializers.ListField(
         child=serializers.ImageField(max_length=1000000, allow_empty_file=False, use_url=False),
@@ -91,15 +92,16 @@ class ClientRequirementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClientRequirement
-        fields = ['id', 'client', 'file_number', 'color_theme', 'layout', 'additional_requirements', 
-                  'predefined_features', 'custom_features', 'images', 'uploaded_images']
+        fields = ['id', 'client', 'client_id', 'file_number', 'color_theme', 'layout', 'additional_requirements', 
+                  'predefined_features', 'custom_features', 'images', 'uploaded_images','status']
 
     def create(self, validated_data):
+        client = validated_data.pop('client', None)
         uploaded_images = validated_data.pop('uploaded_images', [])
         predefined_features = validated_data.pop('predefined_features', [])
         custom_features = validated_data.pop('custom_features', [])
 
-        client_requirement = ClientRequirement.objects.create(**validated_data)
+        client_requirement = ClientRequirement.objects.create(client=client, **validated_data)
         client_requirement.predefined_features.set(predefined_features)
         client_requirement.set_custom_features(custom_features)
         client_requirement.save()
@@ -109,9 +111,9 @@ class ClientRequirementSerializer(serializers.ModelSerializer):
 
         return client_requirement
 
-
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+        representation['client'] = ClientSerializer(instance.client).data
         representation['predefined_features'] = [
             {'id': feature.id, 'name': feature.name}
             for feature in instance.predefined_features.all()

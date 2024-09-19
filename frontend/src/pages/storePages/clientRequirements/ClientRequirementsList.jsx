@@ -29,28 +29,32 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { clientRelationshipService } from "@/services/crmServiceApi";
+import { clientRequirementService } from "@/services/crmServiceApi";
 
-export default function ClientRequirementsPage() {
+export default function ClientRequirementsList() {
   const [relationships, setRelationships] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
+  const [columnVisibility, setColumnVisibility] = useState({
+    color_theme: false,
+    layout: false,
+  });
 
   useEffect(() => {
-    fetchRelationships();
+    fetchClientlist();
   }, []);
 
-  const fetchRelationships = async () => {
+  const fetchClientlist = async () => {
     try {
       setLoading(true);
-      const response = await clientRelationshipService.getAll();
+      const response = await clientRequirementService.getAll();
+      console.log(response.data.results)
       setRelationships(response.data.results);
     } catch (error) {
-      console.error("Error fetching relationships:", error);
+      console.error("Error fetching client Requirements:", error);
     } finally {
       setLoading(false);
     }
@@ -85,7 +89,7 @@ export default function ClientRequirementsPage() {
         cell: ({ row }) => <div>{row.getValue("file_number")}</div>,
       },
       {
-        accessorKey: "client_name",
+        accessorKey: "client.name",
         header: ({ column }) => (
           <Button
             variant="ghost"
@@ -95,13 +99,10 @@ export default function ClientRequirementsPage() {
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }) => {
-          const client_name = row.original.client.name;
-          return <div>{client_name}</div>;
-        },
+        cell: ({ row }) => <div>{row.original.client.name}</div>,
       },
       {
-        accessorKey: "status",
+        accessorKey: "status", // New status column
         header: "Status",
         cell: ({ row }) => (
           <div className="capitalize flex justify-center gap-2 items-center">
@@ -116,7 +117,19 @@ export default function ClientRequirementsPage() {
             />
             {row.getValue("status")}
           </div>
-        ),
+        )
+      },
+      {
+        accessorKey: "color_theme",
+        header: "Color Theme",
+        cell: ({ row }) => <div>{row.getValue("color_theme")}</div>,
+        enableColumnFilter: false, // Hides the column by default
+      },
+      {
+        accessorKey: "layout",
+        header: "Layout",
+        cell: ({ row }) => <div>{row.getValue("layout")}</div>,
+        enableColumnFilter: false, // Hides the column by default
       },
       {
         id: "actions",
@@ -132,7 +145,7 @@ export default function ClientRequirementsPage() {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() =>
-                  navigate(`/admin/client-relationship/${row.original.id}`)
+                  navigate(`/admin/client-requirements/${row.original.id}`)
                 }
               >
                 View details
@@ -145,7 +158,10 @@ export default function ClientRequirementsPage() {
     [navigate]
   );
   
+  // Ensure color_theme and layout columns are hidden by default
 
+  
+  
   const table = useReactTable({
     data: relationships,
     columns,

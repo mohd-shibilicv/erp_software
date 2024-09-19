@@ -15,3 +15,14 @@ export const clientRelationshipService = {
   update: (id, data) => api.put(`/client-relationships/${id}/`, data),
   delete: (id) => api.delete(`/client-relationships/${id}/`),
 };
+
+export const clientRequirementService = {
+  getAll: () => api.get("/client-requirements/"),
+  get: (id) => api.get(`/client-requirements/${id}/`),
+  create: (data) => api.post("/client-requirements/",data),
+  update: (id, data) => {
+    console.log(`Updating client requirement with id: ${id}`);
+    console.log('Data to be sent:', data);
+    return api.put(`/client-requirements/${id}/`, data);
+  },  delete: (id) => api.delete(`/client-requirements/${id}/`),
+}

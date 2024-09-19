@@ -23,8 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Layout from "@/components/layout/Layout";
 import { api } from "@/services/api";
-import { useNavigate } from "react-router-dom";
-
+import { useParams, useNavigate } from 'react-router-dom';
 
 const colorThemes = [
   { id: "light", label: "Light" },
@@ -39,7 +38,7 @@ const layouts = [
   { value: "topNavigation", label: "Top Navigation" },
 ];
 
-const ClientRequirementsPage = () => {
+const ClientRequirementsDetails = () => {
   const [selectedClient, setSelectedClient] = useState(null);
   const [fileNumber, setFileNumber] = useState("");
   const [uploadedImages, setUploadedImages] = useState([]);
@@ -54,6 +53,8 @@ const ClientRequirementsPage = () => {
   const [clients, setClients] = useState([]);
   const [features, setFeatures] = useState([])
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [clientRequirement, setClientRequirement] = useState(null);
 
 
   const onDrop = (acceptedFiles) => {
@@ -121,14 +122,14 @@ const ClientRequirementsPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
+  
     const formData = new FormData();
     formData.append('client_id', parseInt(selectedClient, 10));
     formData.append('file_number', fileNumber);
     formData.append('color_theme', colorTheme);
     formData.append('layout', layout);
     formData.append('additional_requirements', additionalRequirements);
-
+  
     selectedFeatures.forEach((feature) => {
       if (typeof feature === 'object' && !String(feature.id).startsWith('custom')) {
         formData.append('predefined_features', feature.id);
@@ -136,20 +137,30 @@ const ClientRequirementsPage = () => {
         formData.append('custom_features', feature.name);
       }
     });
-
+  
     uploadedImages.forEach((image) => {
       formData.append('uploaded_images', image);
     });
-
+  
     try {
-      const response = await api.post('/client-requirements/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
+      let response;
+      if (id) {
+        response = await api.put(`/client-requirements/${id}/`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      } else {
+        response = await api.post('/client-requirements/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      }
+  
       console.log("Successfully submitted:", response.data);
-
+      navigate('/admin/client-requirements');
+  
     } catch (error) {
       console.error("Error submitting form:", error.response?.data || error.message);
     } finally {
@@ -157,8 +168,31 @@ const ClientRequirementsPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (id) {
+      fetchClientRequirement(id);
+    }
+  }, [id]);
 
-
+  const fetchClientRequirement = async (reqId) => {
+    try {
+      setIsLoading(true);
+      const response = await api.get(`/client-requirements/${reqId}/`);
+      const data = response.data;
+      setClientRequirement(data);
+      setSelectedClient(data.client.id);
+      setFileNumber(data.file_number);
+      setColorTheme(data.color_theme);
+      setLayout(data.layout);
+      setAdditionalRequirements(data.additional_requirements);
+      setSelectedFeatures([...data.predefined_features, ...data.custom_features.map(f => ({ id: `custom-${f}`, name: f }))]);
+      // Handle images if needed
+    } catch (error) {
+      console.error("Error fetching client requirement:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -180,8 +214,9 @@ const ClientRequirementsPage = () => {
       <form onSubmit={handleSubmit} className="overflow-y-hidden">
         <Card className="w-full mx-auto">
           <CardHeader>
-            <h2 className="text-2xl font-bold">Client Requirements</h2>
-          </CardHeader>
+          <h2 className="text-2xl font-bold">
+            {id ? 'Edit Client Requirement' : 'New Client Requirement'}
+          </h2>          </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div className="space-y-2">
@@ -348,20 +383,19 @@ const ClientRequirementsPage = () => {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end space-x-2">
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Save Requirements"
-              )}
-            </Button>
-            <Button type="button" variant="outline" onClick={handleBack}
-            disabled={isLoading}>
-              Cancel
-            </Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              id ? "Update Requirement" : "Save Requirement"
+            )}
+          </Button>
+          <Button type="button" variant="outline" onClick={handleBack} disabled={isLoading}>
+            Cancel
+          </Button>
           </CardFooter>
         </Card>
       </form>
@@ -369,4 +403,4 @@ const ClientRequirementsPage = () => {
   );
 };
 
-export default ClientRequirementsPage;
+export default ClientRequirementsDetails;
