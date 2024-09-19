@@ -33,6 +33,7 @@ import { StoreProtectedRoute } from "./components/layout/StoreProtectedRoute";
 import ClientRelationshipList from "./pages/storePages/clientRelationships/ClientRelationshipList";
 import ClientRelationshipDetails from "./pages/storePages/clientRelationships/ClientRelationshipDetails";
 import { Toaster } from "./components/ui/toaster";
+import ClientRequirementsList from "./pages/storePages/clientRequirements/ClientRequirementsList";
 
 function Store() {
   return (
@@ -156,7 +157,11 @@ function Store() {
         <Route path="/client-relationship" element={<ClientRelationshipList />} />
         <Route path="/client-relationship/new" element={<ClientRelationshipDetails />} />
         <Route path="/client-relationship/:id" element={<ClientRelationshipDetails />} />
-        <Route path="/client-requirements" element={<ClientRequirementsPage />} />
+
+        <Route path="/client-requirements" element={<ClientRequirementsList />} />
+        <Route path="/client-requirements/new" element={<ClientRequirementsPage />} />
+        <Route path="/client-requirements/:id" element={<ClientRequirementsPage />} />
+
         <Route path="/quotation" element={<Quotation />} />
         <Route path="/agreement" element={<Agreement />} />
 

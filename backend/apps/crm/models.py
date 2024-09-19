@@ -46,7 +46,6 @@ class ClientRequest(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
     client_name = models.CharField(max_length=255)
     client_email = models.EmailField(max_length=255)
     client_number = models.CharField(max_length=15)
