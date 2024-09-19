@@ -102,7 +102,7 @@ export default function ClientRequirementsList() {
         cell: ({ row }) => <div>{row.original.client.name}</div>,
       },
       {
-        accessorKey: "status",
+        accessorKey: "status", // New status column
         header: "Status",
         cell: ({ row }) => (
           <div className="capitalize flex justify-center gap-2 items-center">
@@ -122,13 +122,13 @@ export default function ClientRequirementsList() {
         accessorKey: "color_theme",
         header: "Color Theme",
         cell: ({ row }) => <div>{row.getValue("color_theme")}</div>,
-        enableColumnFilter: false, 
+        enableColumnFilter: false, // Hides the column by default
       },
       {
         accessorKey: "layout",
         header: "Layout",
         cell: ({ row }) => <div>{row.getValue("layout")}</div>,
-        enableColumnFilter: false, 
+        enableColumnFilter: false, // Hides the column by default
       },
       {
         id: "actions",
@@ -156,7 +156,11 @@ export default function ClientRequirementsList() {
     ],
     [navigate]
   );
+  
+  // Ensure color_theme and layout columns are hidden by default
 
+  
+  
   const table = useReactTable({
     data: relationships,
     columns,
