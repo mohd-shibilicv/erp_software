@@ -102,18 +102,17 @@ export default function ClientRequirementsList() {
         cell: ({ row }) => <div>{row.original.client.name}</div>,
       },
       {
-        accessorKey: "status", // New status column
+        accessorKey: "status",
         header: "Status",
         cell: ({ row }) => (
           <div className="capitalize flex justify-center gap-2 items-center">
             <span
-              className={`p-1 h-1 rounded-full ${
-                row.getValue("status") === "pending"
+              className={`p-1 h-1 rounded-full ${row.getValue("status") === "pending"
                   ? "bg-yellow-500"
                   : row.getValue("status") === "confirmed"
-                  ? "bg-green-500"
-                  : "bg-red-500"
-              }`}
+                    ? "bg-green-500"
+                    : "bg-red-500"
+                }`}
             />
             {row.getValue("status")}
           </div>
@@ -123,13 +122,13 @@ export default function ClientRequirementsList() {
         accessorKey: "color_theme",
         header: "Color Theme",
         cell: ({ row }) => <div>{row.getValue("color_theme")}</div>,
-        enableColumnFilter: false, // Hides the column by default
+        enableColumnFilter: false, 
       },
       {
         accessorKey: "layout",
         header: "Layout",
         cell: ({ row }) => <div>{row.getValue("layout")}</div>,
-        enableColumnFilter: false, // Hides the column by default
+        enableColumnFilter: false, 
       },
       {
         id: "actions",
@@ -157,11 +156,7 @@ export default function ClientRequirementsList() {
     ],
     [navigate]
   );
-  
-  // Ensure color_theme and layout columns are hidden by default
 
-  
-  
   const table = useReactTable({
     data: relationships,
     columns,
@@ -239,9 +234,9 @@ export default function ClientRequirementsList() {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
