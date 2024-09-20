@@ -134,10 +134,16 @@ class ClientRequirement(models.Model):
         return f"{self.client} - {self.file_number}"
 
     def set_custom_features(self, features):
-        self.custom_features = json.dumps(features)
-
+        if isinstance(features, list):
+            self.custom_features = json.dumps(features)
+        else:
+            raise ValueError("Features must be a list")
+    
     def get_custom_features(self):
-        return json.loads(self.custom_features)
+        try:
+            return json.loads(self.custom_features) if self.custom_features else []
+        except json.JSONDecodeError:
+            return []
 
 
 class RequirementImage(models.Model):

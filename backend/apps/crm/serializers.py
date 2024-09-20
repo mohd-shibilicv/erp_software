@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from .models import Client, ClientRequest, ClientRelationship, ClientRequirement, RequirementImage,Feature
+from .models import (
+    Client,
+    ClientRequest,
+    ClientRelationship,
+    ClientRequirement,
+    RequirementImage,
+    Feature,
+)
 
 
 class ClientRequestSerializer(serializers.ModelSerializer):
@@ -49,74 +56,143 @@ class ClientRelationshipSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation["client"] = ClientSerializer(instance.client).data
         return representation
-    
+
 
 class FeatureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feature
-        fields = ['id', 'name']
+        fields = ["id", "name"]
+
 
 class ClientSerializer(serializers.ModelSerializer):
-    features = serializers.PrimaryKeyRelatedField(queryset=Feature.objects.all(), many=True, required=False)
-    
+    features = serializers.PrimaryKeyRelatedField(
+        queryset=Feature.objects.all(), many=True, required=False
+    )
+
     class Meta:
         model = Client
-        fields = ['id', 'name', 'mobile_number', 'whatsapp_number', 'email', 'country', 'city', 'features']
+        fields = [
+            "id",
+            "name",
+            "mobile_number",
+            "whatsapp_number",
+            "email",
+            "country",
+            "city",
+            "features",
+        ]
+
 
 class RequirementImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequirementImage
-        fields = ['id', 'image']
+        fields = ["id", "image"]
+
 
 class ClientRequirementSerializer(serializers.ModelSerializer):
     client = ClientSerializer(read_only=True)
     client_id = serializers.PrimaryKeyRelatedField(
-        queryset=Client.objects.all(), 
-        source='client', 
-        write_only=True
+        queryset=Client.objects.all(), source="client", write_only=True
     )
     images = RequirementImageSerializer(many=True, read_only=True)
     uploaded_images = serializers.ListField(
-        child=serializers.ImageField(max_length=1000000, allow_empty_file=False, use_url=False),
-        write_only=True, required=False
+        child=serializers.ImageField(
+            max_length=1000000, allow_empty_file=False, use_url=False
+        ),
+        write_only=True,
+        required=False,
+    )
+    existing_images = serializers.ListField(
+        child=serializers.IntegerField(), write_only=True, required=False
     )
     predefined_features = serializers.PrimaryKeyRelatedField(
-        queryset=Feature.objects.all(),
-        many=True,
-        required=False
+        queryset=Feature.objects.all(), many=True, required=False
     )
     custom_features = serializers.ListField(
-        child=serializers.CharField(max_length=255),
-        required=False
+        child=serializers.CharField(max_length=255), required=False
+    )
+    status = serializers.ChoiceField(
+        choices=ClientRequirement.STATUS_CHOICES, required=False
     )
 
     class Meta:
         model = ClientRequirement
-        fields = ['id', 'client', 'client_id', 'file_number', 'color_theme', 'layout', 'additional_requirements', 
-                  'predefined_features', 'custom_features', 'images', 'uploaded_images','status']
+        fields = [
+            "id",
+            "client",
+            "client_id",
+            "file_number",
+            "color_theme",
+            "layout",
+            "additional_requirements",
+            "predefined_features",
+            "custom_features",
+            "images",
+            "uploaded_images",
+            "existing_images",
+            "status",
+        ]
 
     def create(self, validated_data):
-        client = validated_data.pop('client', None)
-        uploaded_images = validated_data.pop('uploaded_images', [])
-        predefined_features = validated_data.pop('predefined_features', [])
-        custom_features = validated_data.pop('custom_features', [])
-
-        client_requirement = ClientRequirement.objects.create(client=client, **validated_data)
+        client = validated_data.pop("client", None)
+        uploaded_images = validated_data.pop("uploaded_images", [])
+        predefined_features = validated_data.pop("predefined_features", [])
+        custom_features = validated_data.pop("custom_features", [])
+        client_requirement = ClientRequirement.objects.create(
+            client=client, **validated_data
+        )
         client_requirement.predefined_features.set(predefined_features)
         client_requirement.set_custom_features(custom_features)
         client_requirement.save()
 
         for image in uploaded_images:
-            RequirementImage.objects.create(client_requirement=client_requirement, image=image)
+            RequirementImage.objects.create(
+                client_requirement=client_requirement, image=image
+            )
 
         return client_requirement
 
+    def update(self, instance, validated_data):
+        client = validated_data.pop("client", None)
+        uploaded_images = validated_data.pop("uploaded_images", [])
+        existing_images = validated_data.pop("existing_images", [])
+
+        predefined_features = validated_data.pop("predefined_features", [])
+        if predefined_features is not None:
+            instance.predefined_features.set(predefined_features)
+
+        custom_features = validated_data.pop("custom_features", [])
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if client:
+            instance.client = client
+
+        instance.predefined_features.set(predefined_features)
+        instance.set_custom_features(custom_features)
+        current_images = set(instance.images.values_list("id", flat=True))
+        images_to_keep = set(existing_images)
+        images_to_delete = current_images - images_to_keep
+        instance.images.filter(id__in=images_to_delete).delete()
+
+        for image in uploaded_images:
+            RequirementImage.objects.create(client_requirement=instance, image=image)
+
+        instance.save()
+        return instance
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['client'] = ClientSerializer(instance.client).data
-        representation['predefined_features'] = [
-            {'id': feature.id, 'name': feature.name}
+        representation["client"] = ClientSerializer(instance.client).data
+        representation["predefined_features"] = [
+            {"id": feature.id, "name": feature.name}
             for feature in instance.predefined_features.all()
         ]
-        representation['custom_features'] = instance.get_custom_features()
+        representation["status"] = instance.status 
+
+        try:
+            representation["custom_features"] = instance.get_custom_features()
+        except Exception:
+            representation["custom_features"] = []
         return representation
