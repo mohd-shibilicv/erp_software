@@ -154,7 +154,7 @@ export function ProductsTable() {
         const price = parseFloat(row.getValue("price"));
         const formatted = new Intl.NumberFormat("en-US", {
           style: "currency",
-          currency: "USD",
+          currency: "QAR",
         }).format(price);
         return <div className="text-right font-medium">{formatted}</div>;
       },
