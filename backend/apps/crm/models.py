@@ -130,6 +130,7 @@ class ClientRequirement(models.Model):
     )
     custom_features = models.TextField(blank=True, default="[]")
 
+
     def __str__(self):
         return f"{self.client} - {self.file_number}"
 

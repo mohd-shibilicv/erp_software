@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -133,13 +132,12 @@ const ClientRequirementsDetails = () => {
   
     const predefinedFeatures = selectedFeatures
       .filter(feature => !String(feature.id).startsWith('custom'))
-      .map(feature => feature.id); // Directly use the feature.id here, no need to JSON stringify
+      .map(feature => feature.id); 
   
     const customFeatures = selectedFeatures
       .filter(feature => String(feature.id).startsWith('custom'))
-      .map(feature => feature.name); // Custom features remain as a list of strings
+      .map(feature => feature.name); 
   
-    // Append directly as arrays, not JSON strings
     predefinedFeatures.forEach(featureId => formData.append('predefined_features', featureId));
     customFeatures.forEach(customFeature => formData.append('custom_features', customFeature));
   
