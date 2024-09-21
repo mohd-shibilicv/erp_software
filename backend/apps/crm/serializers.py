@@ -6,7 +6,10 @@ from .models import (
     ClientRequirement,
     RequirementImage,
     Feature,
+    Quotation,
+    QuotationItem,
 )
+from apps.users.models import User
 
 
 class ClientRequestSerializer(serializers.ModelSerializer):
@@ -199,9 +202,7 @@ class ClientRequirementSerializer(serializers.ModelSerializer):
 
 
 
-from rest_framework import serializers, viewsets
-from rest_framework.permissions import IsAuthenticated
-from .models import Quotation, QuotationItem
+
 
 class QuotationItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -210,11 +211,12 @@ class QuotationItemSerializer(serializers.ModelSerializer):
 
 class QuotationSerializer(serializers.ModelSerializer):
     items = QuotationItemSerializer(many=True, read_only=True)
+    assigned_to = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(role='staff'), allow_null=True, required=False)
 
     class Meta:
         model = Quotation
         fields = '__all__'
-        read_only_fields = ('created_at', 'updated_at', 'created_by', 'last_updated_by')
+        read_only_fields = ('created_at', 'updated_at', 'created_by', 'last_updated_by', 'total_amount')
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -225,3 +227,4 @@ class QuotationSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         validated_data['last_updated_by'] = self.context['request'].user
         return super().update(instance, validated_data)
+

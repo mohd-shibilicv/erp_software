@@ -9,6 +9,7 @@ from .serializers import UserSerializer, LoginSerializer, UserCreateUpdateSerial
 from .models import User
 from rest_framework.permissions import IsAdminUser
 
+from rest_framework.decorators import api_view
 
 
 User = get_user_model()
@@ -145,3 +146,12 @@ class StaffManagementViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
+    
+    def list(self, request, *args, **kwargs):
+        """List all staff members"""
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    
+

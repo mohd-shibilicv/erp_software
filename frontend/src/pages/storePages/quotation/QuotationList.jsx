@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "@/services/api";
 import {
   Table,
   TableBody,
@@ -37,6 +38,23 @@ export default function QuotationList() {
     const [columnVisibility, setColumnVisibility] = useState({});
     const [rowSelection, setRowSelection] = useState({});
     const navigate = useNavigate();
+  
+
+    useEffect(() => {
+      const fetchQuotations = async () => {
+        try {
+          const response = await api.get('/quotations/'); 
+          setQuotations(response.data.results);
+          console.log(response,"thisis response")
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching quotations", error);
+          setLoading(false);
+        }
+      };
+  
+      fetchQuotations();
+    }, []);
   
     const columns = useMemo(
       () => [
@@ -91,11 +109,21 @@ export default function QuotationList() {
             <div className="capitalize flex justify-center gap-2 items-center">
               <span
                 className={`p-1 h-1 rounded-full ${
-                  row.getValue("status") === "pending"
+                  row.getValue("status") === "DRAFT"
+                    ? "bg-gray-400"
+                    : row.getValue("status") === "PENDING_APPROVAL"
                     ? "bg-yellow-500"
-                    : row.getValue("status") === "confirmed"
+                    : row.getValue("status") === "APPROVED"
                     ? "bg-green-500"
-                    : "bg-red-500"
+                    : row.getValue("status") === "SENT"
+                    ? "bg-blue-500"
+                    : row.getValue("status") === "ACCEPTED"
+                    ? "bg-green-600"
+                    : row.getValue("status") === "REJECTED"
+                    ? "bg-red-500"
+                    : row.getValue("status") === "EXPIRED"
+                    ? "bg-red-400"
+                    : ""
                 }`}
               />
               {row.getValue("status")}

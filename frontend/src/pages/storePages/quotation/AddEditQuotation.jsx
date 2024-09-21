@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { api } from '@/services/api';
+import { useNavigate } from 'react-router-dom';
 const AddEditQuotation = ({ quotation = {} }) => {
+  const [clients, setClients] = useState([]);
+  const navigate = useNavigate()
+  const [staffMembers, setStaffMembers] = useState([]);
   const [formData, setFormData] = useState({
     quotation_number: quotation.quotation_number || '',
     version: quotation.version || 1,
@@ -10,7 +14,6 @@ const AddEditQuotation = ({ quotation = {} }) => {
     customer_reference: quotation.customer_reference || '',
     assigned_to: quotation.assigned_to || '',
     subtotal: quotation.subtotal || 0,
-    tax_amount: quotation.tax_amount || 0,
     discount_amount: quotation.discount_amount || 0,
     total_amount: quotation.total_amount || 0,
     notes: quotation.notes || '',
@@ -26,10 +29,59 @@ const AddEditQuotation = ({ quotation = {} }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    try {
+      const dataToSubmit = { ...formData };
+      delete dataToSubmit.total_amount;
+  
+      let response;
+      if (quotation.id) {
+        response = await api.put(`/quotations/${quotation.id}/`, dataToSubmit);
+      } else {
+        response = await api.post('/quotations/', dataToSubmit);
+      }
+  
+      console.log("Successfully submitted:", response.data);
+      navigate('/admin/quotation');
+    } catch (error) {
+      console.error("Error submitting form:", error.response?.data || error.message);
+    }
   };
+  
+
+  useEffect(() => {
+    const fetchQuotation = async () => {
+      if (quotation.id) {
+        try {
+          const response = await api.get(`/quotation/${quotation.id}/`);
+          setFormData({
+            ...formData,
+            ...response.data,
+          });
+        } catch (error) {
+          console.error('Error fetching quotation:', error);
+        }
+      }
+    };
+
+    fetchQuotation();
+  }, [quotation.id]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const clientResponse = await api.get('/clients/');
+        setClients(clientResponse.data.results);
+        const staffResponse = await api.get('/staff');
+        setStaffMembers(staffResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="bg-gray-100 min-h-screen p-4">
@@ -85,8 +137,11 @@ const AddEditQuotation = ({ quotation = {} }) => {
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
               >
                 <option value="">Select a customer</option>
-                <option value="customer1">Customer 1</option>
-                <option value="customer2">Customer 2</option>
+                {clients.map(client => (
+                  <option key={client.id} value={client.id}>
+                    {client.name} - {client.city}, {client.country}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
@@ -99,7 +154,6 @@ const AddEditQuotation = ({ quotation = {} }) => {
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
               />
             </div>
-           
             <div>
               <label className="block text-sm font-medium text-gray-700">Customer Reference</label>
               <input
@@ -112,13 +166,19 @@ const AddEditQuotation = ({ quotation = {} }) => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Assigned To</label>
-              <input
-                type="text"
+              <select
                 name="assigned_to"
                 value={formData.assigned_to}
                 onChange={handleChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
-              />
+              >
+                <option value="">Select staff</option>
+                {staffMembers.map((staffMember) => (
+                  <option key={staffMember.id} value={staffMember.id}>
+                    {staffMember.username}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Subtotal</label>
@@ -131,31 +191,11 @@ const AddEditQuotation = ({ quotation = {} }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Tax Amount</label>
-              <input
-                type="number"
-                name="tax_amount"
-                value={formData.tax_amount}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
-              />
-            </div>
-            <div>
               <label className="block text-sm font-medium text-gray-700">Discount Amount</label>
               <input
                 type="number"
                 name="discount_amount"
                 value={formData.discount_amount}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Total Amount</label>
-              <input
-                type="number"
-                name="total_amount"
-                value={formData.total_amount}
                 onChange={handleChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
               />
