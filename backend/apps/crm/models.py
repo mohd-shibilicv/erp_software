@@ -144,3 +144,77 @@ class RequirementImage(models.Model):
         ClientRequirement, related_name="images", on_delete=models.CASCADE
     )
     image = models.ImageField(upload_to="requirement_images/")
+
+
+
+
+
+
+from django.db import models
+from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
+
+class Quotation(models.Model):
+    STATUS_CHOICES = [
+        ('DRAFT', 'Draft'),
+        ('PENDING_APPROVAL', 'Pending Approval'),
+        ('APPROVED', 'Approved'),
+        ('SENT', 'Sent to Customer'),
+        ('ACCEPTED', 'Accepted'),
+        ('REJECTED', 'Rejected'),
+        ('EXPIRED', 'Expired'),
+    ]
+
+    # Basic Information
+    quotation_number = models.CharField(max_length=50, unique=True)
+    version = models.PositiveIntegerField(default=1)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='DRAFT')
+
+    # Dates
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    valid_until = models.DateField()
+    
+    # Customer Information
+    customer = models.ForeignKey('Customer', on_delete=models.PROTECT)
+    customer_reference = models.CharField(max_length=100, blank=True, null=True)
+
+    # User Information
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_created')
+    last_updated_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_updated')
+    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_quotations')
+
+    # Financial Information
+    subtotal = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
+    tax_amount = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
+    discount_amount = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
+    total_amount = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
+
+    # Additional Information
+    notes = models.TextField(blank=True)
+    terms_and_conditions = models.TextField(blank=True)
+
+    # Approval Information
+    requires_approval = models.BooleanField(default=False)
+    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_quotations')
+    approved_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Quotation {self.quotation_number} - {self.customer}"
+
+class QuotationItem(models.Model):
+    quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey('Product', on_delete=models.PROTECT)
+    description = models.TextField(blank=True)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    unit_price = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
+    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0, validators=[MinValueValidator(0)])
+    tax_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0, validators=[MinValueValidator(0)])
+    subtotal = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
+
+    def __str__(self):
+        return f"{self.product}"
+
