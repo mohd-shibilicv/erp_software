@@ -2,7 +2,7 @@ from django.db import models
 from apps.users.models import User
 from django.contrib.postgres.fields import ArrayField
 import json
-
+from apps.products.models import Product
 
 class Client(models.Model):
     name = models.CharField(max_length=255)
@@ -145,7 +145,6 @@ class RequirementImage(models.Model):
 
 
 from django.db import models
-from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 
 class Quotation(models.Model):
@@ -158,7 +157,6 @@ class Quotation(models.Model):
         ('REJECTED', 'Rejected'),
         ('EXPIRED', 'Expired'),
     ]
-
     # Basic Information
     quotation_number = models.CharField(max_length=50, unique=True)
     version = models.PositiveIntegerField(default=1)
@@ -170,7 +168,7 @@ class Quotation(models.Model):
     valid_until = models.DateField()
     
     # Customer Information
-    customer = models.ForeignKey('Customer', on_delete=models.PROTECT)
+    customer = models.ForeignKey('Client', on_delete=models.PROTECT)
     customer_reference = models.CharField(max_length=100, blank=True, null=True)
 
     # User Information
@@ -201,7 +199,7 @@ class Quotation(models.Model):
 
 class QuotationItem(models.Model):
     quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE, related_name='items')
-    product = models.ForeignKey('Product', on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
     description = models.TextField(blank=True)
     quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     unit_price = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])

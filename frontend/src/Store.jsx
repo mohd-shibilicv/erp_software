@@ -34,8 +34,6 @@ import ClientRelationshipList from "./pages/storePages/clientRelationships/Clien
 import ClientRelationshipDetails from "./pages/storePages/clientRelationships/ClientRelationshipDetails";
 import { Toaster } from "./components/ui/toaster";
 import ClientRequirementsList from "./pages/storePages/clientRequirements/ClientRequirementsList";
-import ClientRequirementsDetails from "./pages/storePages/clientRequirements/ClientRequirementsDetails";
-import ClientRequirementsAddEdit from "./pages/storePages/clientRequirements/ClientRequirementsAddEdit";
 import AddEditQuotation from "./pages/storePages/quotation/AddEditQuotation";
 import QuotationList from "./pages/storePages/quotation/QuotationList";
 
