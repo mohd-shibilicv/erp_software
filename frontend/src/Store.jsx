@@ -167,6 +167,9 @@ function Store() {
         <Route path="/client-requirements/new/:id" element={<ClientRequirementsAddEdit />} />
         <Route path="/client-requirements/:id" element={<ClientRequirementsDetails />} />
 
+        <Route path="/quotation" element={<QuotationList />} />
+        <Route path="/quotation/new" element={<AddEditQuotation />} />
+
         <Route path="/agreement" element={<Agreement />} />
 
         <Route path="*" element={<NotFound404 />} />
