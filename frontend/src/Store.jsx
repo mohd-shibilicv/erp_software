@@ -170,9 +170,6 @@ function Store() {
         <Route path="/quotation" element={<QuotationList />} />
         <Route path="/quotation/new" element={<AddEditQuotation />} />
 
-        <Route path="/quotation" element={<QuotationList />} />
-        <Route path="/quotation/new" element={<AddEditQuotation />} />
-
         <Route path="/agreement" element={<Agreement />} />
 
         <Route path="*" element={<NotFound404 />} />
