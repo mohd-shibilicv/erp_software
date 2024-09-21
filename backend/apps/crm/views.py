@@ -1,8 +1,8 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Client, ClientRequest, ClientRelationship,ClientRequirement, Feature
-from .serializers import ClientSerializer, ClientRequestSerializer, ClientRelationshipSerializer, ClientRequirementSerializer, FeatureSerializer
+from .models import Client, ClientRequest, ClientRelationship,ClientRequirement, Feature, Quotation, QuotationItem
+from .serializers import ClientSerializer, ClientRequestSerializer, ClientRelationshipSerializer, ClientRequirementSerializer, FeatureSerializer, QuotationItemSerializer,QuotationSerializer
 from django.contrib.auth import get_user_model
 from .utils import create_google_calendar_event, send_calendar_invite_email
 
@@ -83,3 +83,22 @@ class FeatureViewSet(viewsets.ModelViewSet):
 class ClientRequirementViewSet(viewsets.ModelViewSet):
     queryset = ClientRequirement.objects.select_related('client').all()
     serializer_class = ClientRequirementSerializer
+
+
+
+class QuotationViewSet(viewsets.ModelViewSet):
+    queryset = Quotation.objects.all()
+    serializer_class = QuotationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user, last_updated_by=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(last_updated_by=self.request.user)
+
+class QuotationItemViewSet(viewsets.ModelViewSet):
+    queryset = QuotationItem.objects.all()
+    serializer_class = QuotationItemSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
