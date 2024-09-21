@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '@/services/api';
 import { useNavigate } from 'react-router-dom';
-const AddEditQuotation = ({ quotation = {} }) => {
+import { useParams } from 'react-router-dom';
+import { clientQuotation } from '@/services/crmServiceApi';
+
+const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
   const [clients, setClients] = useState([]);
   const navigate = useNavigate()
+  const { id } = useParams();
   const [staffMembers, setStaffMembers] = useState([]);
+
+  let sam = id
   const [formData, setFormData] = useState({
     quotation_number: quotation.quotation_number || '',
     version: quotation.version || 1,
@@ -34,12 +40,16 @@ const AddEditQuotation = ({ quotation = {} }) => {
     try {
       const dataToSubmit = { ...formData };
       delete dataToSubmit.total_amount;
+      delete dataToSubmit.client_name; // Remove read-only field
   
       let response;
-      if (quotation.id) {
-        response = await api.put(`/quotations/${quotation.id}/`, dataToSubmit);
+
+      if (isEditMode) {
+        console.log("this is updateee")
+        response = await clientQuotation.update(sam, dataToSubmit);
       } else {
-        response = await api.post('/quotations/', dataToSubmit);
+        console.log("this is posttt")
+        response = await clientQuotation.create(dataToSubmit);
       }
   
       console.log("Successfully submitted:", response.data);
@@ -51,22 +61,24 @@ const AddEditQuotation = ({ quotation = {} }) => {
   
 
   useEffect(() => {
-    const fetchQuotation = async () => {
-      if (quotation.id) {
+    if (isEditMode) {
+      const fetchQuotation = async () => {
         try {
-          const response = await api.get(`/quotation/${quotation.id}/`);
-          setFormData({
-            ...formData,
+
+          const response = await clientQuotation.get(sam);
+          setFormData(prevState => ({
+            ...prevState,
             ...response.data,
-          });
+          }));
         } catch (error) {
           console.error('Error fetching quotation:', error);
         }
-      }
-    };
+      };
+  
+      fetchQuotation();
+    }
+  }, [isEditMode]);
 
-    fetchQuotation();
-  }, [quotation.id]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -87,7 +99,7 @@ const AddEditQuotation = ({ quotation = {} }) => {
     <div className="bg-gray-100 min-h-screen p-4">
       <div className="bg-white rounded-lg shadow-md p-6 max-w-8xl mx-auto">
         <h2 className="text-2xl font-bold mb-6 text-left">
-          {quotation.id ? 'Edit Quotation' : 'Add New Quotation'}
+        {isEditMode ? 'Edit Quotation' : 'Add New Quotation'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -235,7 +247,7 @@ const AddEditQuotation = ({ quotation = {} }) => {
           </div>
           <div className="flex justify-end">
             <button type="submit" className="bg-violet-600 text-white px-4 py-2 rounded-md hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              {quotation.id ? 'Update Quotation' : 'Create Quotation'}
+            {isEditMode ? 'Update Quotation' : 'Create Quotation'}
             </button>
           </div>
         </form>

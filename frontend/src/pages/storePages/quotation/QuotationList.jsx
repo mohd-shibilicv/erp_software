@@ -85,7 +85,7 @@ export default function QuotationList() {
           cell: ({ row }) => <div>{row.getValue("quotation_number")}</div>,
         },
         {
-          accessorKey: "customer",
+          accessorKey: "client_name",
           header: ({ column }) => (
             <Button
               variant="ghost"
@@ -95,7 +95,7 @@ export default function QuotationList() {
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           ),
-          cell: ({ row }) => <div>{row.getValue("customer")}</div>,
+          cell: ({ row }) => <div>{row.getValue("client_name")}</div>,
         },
         {
           accessorKey: "customer_reference",
@@ -186,14 +186,24 @@ export default function QuotationList() {
             </Button>
           </div>
           <div className="flex items-center py-4">
-            <Input
-              placeholder="Filter quotations..."
-              value={table.getColumn("quotation_number")?.getFilterValue() ?? ""}
-              onChange={(event) =>
-                table.getColumn("quotation_number")?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm"
-            />
+          <Input
+  placeholder="Filter quotations..."
+  value={table.getColumn("quotation_number")?.getFilterValue() ?? ""}
+  onChange={(event) => {
+    const filterValue = event.target.value;
+    table.getColumn("quotation_number")?.setFilterValue(filterValue);
+
+    // Navigate to details page if a valid quotation number is entered
+    const selectedQuotation = quotations.find(
+      (quotation) => quotation.quotation_number === filterValue
+    );
+    if (selectedQuotation) {
+      navigate(`/admin/quotation/${selectedQuotation.id}`);
+    }
+  }}
+  className="max-w-sm"
+/>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto">

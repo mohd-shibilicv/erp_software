@@ -202,8 +202,6 @@ class ClientRequirementSerializer(serializers.ModelSerializer):
 
 
 
-
-
 class QuotationItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
@@ -212,11 +210,13 @@ class QuotationItemSerializer(serializers.ModelSerializer):
 class QuotationSerializer(serializers.ModelSerializer):
     items = QuotationItemSerializer(many=True, read_only=True)
     assigned_to = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(role='staff'), allow_null=True, required=False)
+    client_name = serializers.CharField(source='customer.name', read_only=True)
+
 
     class Meta:
         model = Quotation
         fields = '__all__'
-        read_only_fields = ('created_at', 'updated_at', 'created_by', 'last_updated_by', 'total_amount')
+        read_only_fields = ('created_at', 'updated_at', 'created_by', 'last_updated_by', 'total_amount','client_name')
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -225,6 +225,9 @@ class QuotationSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
+        # Remove quotation_number from validated_data if it's the same as the existing one
+        if 'quotation_number' in validated_data and validated_data['quotation_number'] == instance.quotation_number:
+            validated_data.pop('quotation_number')
+        
         validated_data['last_updated_by'] = self.context['request'].user
         return super().update(instance, validated_data)
-

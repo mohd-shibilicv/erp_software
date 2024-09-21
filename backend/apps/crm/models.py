@@ -177,7 +177,7 @@ class Quotation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     valid_until = models.DateField()    
-    customer = models.ForeignKey('Client', on_delete=models.PROTECT)
+    customer = models.ForeignKey(Client, on_delete=models.PROTECT)
     customer_reference = models.CharField(max_length=100, blank=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_created')
     last_updated_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_updated')
