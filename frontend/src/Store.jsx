@@ -34,6 +34,10 @@ import ClientRelationshipList from "./pages/storePages/clientRelationships/Clien
 import ClientRelationshipDetails from "./pages/storePages/clientRelationships/ClientRelationshipDetails";
 import { Toaster } from "./components/ui/toaster";
 import ClientRequirementsList from "./pages/storePages/clientRequirements/ClientRequirementsList";
+import ClientRequirementsDetails from "./pages/storePages/clientRequirements/ClientRequirementsDetails";
+import ClientRequirementsAddEdit from "./pages/storePages/clientRequirements/ClientRequirementsAddEdit";
+import AddEditQuotation from "./pages/storePages/quotation/AddEditQuotation";
+import QuotationList from "./pages/storePages/quotation/QuotationList";
 
 function Store() {
   return (
@@ -162,7 +166,9 @@ function Store() {
         <Route path="/client-requirements/new" element={<ClientRequirementsPage />} />
         <Route path="/client-requirements/:id" element={<ClientRequirementsPage />} />
 
-        <Route path="/quotation" element={<Quotation />} />
+        <Route path="/quotation" element={<QuotationList />} />
+        <Route path="/quotation/new" element={<AddEditQuotation />} />
+
         <Route path="/agreement" element={<Agreement />} />
 
         <Route path="*" element={<NotFound404 />} />
