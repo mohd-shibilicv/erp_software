@@ -2,7 +2,7 @@ from django.db import models
 from apps.users.models import User
 from django.contrib.postgres.fields import ArrayField
 import json
-
+from apps.products.models import Product
 
 class Client(models.Model):
     name = models.CharField(max_length=255)
@@ -117,6 +117,12 @@ class Feature(models.Model):
 
 
 class ClientRequirement(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("confirmed", "Confirmed"),
+        ("cancelled", "Cancelled"),
+    ]
+
     client = models.ForeignKey(
         Client, related_name="requirements", on_delete=models.CASCADE
     )
@@ -124,19 +130,27 @@ class ClientRequirement(models.Model):
     color_theme = models.CharField(max_length=255)
     layout = models.CharField(max_length=255)
     additional_requirements = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     predefined_features = models.ManyToManyField(
         Feature, related_name="requirements", blank=True
     )
     custom_features = models.TextField(blank=True, default="[]")
 
+
     def __str__(self):
         return f"{self.client} - {self.file_number}"
 
     def set_custom_features(self, features):
-        self.custom_features = json.dumps(features)
-
+        if isinstance(features, list):
+            self.custom_features = json.dumps(features)
+        else:
+            raise ValueError("Features must be a list")
+    
     def get_custom_features(self):
-        return json.loads(self.custom_features)
+        try:
+            return json.loads(self.custom_features) if self.custom_features else []
+        except json.JSONDecodeError:
+            return []
 
 
 class RequirementImage(models.Model):
@@ -151,7 +165,6 @@ class RequirementImage(models.Model):
 
 
 from django.db import models
-from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 
 class Quotation(models.Model):
@@ -164,7 +177,6 @@ class Quotation(models.Model):
         ('REJECTED', 'Rejected'),
         ('EXPIRED', 'Expired'),
     ]
-
     # Basic Information
     quotation_number = models.CharField(max_length=50, unique=True)
     version = models.PositiveIntegerField(default=1)
@@ -176,7 +188,7 @@ class Quotation(models.Model):
     valid_until = models.DateField()
     
     # Customer Information
-    customer = models.ForeignKey('Customer', on_delete=models.PROTECT)
+    customer = models.ForeignKey('Client', on_delete=models.PROTECT)
     customer_reference = models.CharField(max_length=100, blank=True, null=True)
 
     # User Information
@@ -207,7 +219,7 @@ class Quotation(models.Model):
 
 class QuotationItem(models.Model):
     quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE, related_name='items')
-    product = models.ForeignKey('Product', on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
     description = models.TextField(blank=True)
     quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     unit_price = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])

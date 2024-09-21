@@ -163,8 +163,9 @@ function Store() {
         <Route path="/client-relationship/:id" element={<ClientRelationshipDetails />} />
 
         <Route path="/client-requirements" element={<ClientRequirementsList />} />
-        <Route path="/client-requirements/new" element={<ClientRequirementsPage />} />
-        <Route path="/client-requirements/:id" element={<ClientRequirementsPage />} />
+        <Route path="/client-requirements/new" element={<ClientRequirementsAddEdit />} />
+        <Route path="/client-requirements/new/:id" element={<ClientRequirementsAddEdit />} />
+        <Route path="/client-requirements/:id" element={<ClientRequirementsDetails />} />
 
         <Route path="/quotation" element={<QuotationList />} />
         <Route path="/quotation/new" element={<AddEditQuotation />} />
