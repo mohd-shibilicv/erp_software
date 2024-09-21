@@ -36,6 +36,8 @@ import { Toaster } from "./components/ui/toaster";
 import ClientRequirementsList from "./pages/storePages/clientRequirements/ClientRequirementsList";
 import ClientRequirementsDetails from "./pages/storePages/clientRequirements/ClientRequirementsDetails";
 import ClientRequirementsAddEdit from "./pages/storePages/clientRequirements/ClientRequirementsAddEdit";
+import AddEditQuotation from "./pages/storePages/quotation/AddEditQuotation";
+import QuotationList from "./pages/storePages/quotation/QuotationList";
 
 function Store() {
   return (
@@ -165,7 +167,9 @@ function Store() {
         <Route path="/client-requirements/new/:id" element={<ClientRequirementsAddEdit />} />
         <Route path="/client-requirements/:id" element={<ClientRequirementsDetails />} />
 
-        <Route path="/quotation" element={<Quotation />} />
+        <Route path="/quotation" element={<QuotationList />} />
+        <Route path="/quotation/new" element={<AddEditQuotation />} />
+
         <Route path="/agreement" element={<Agreement />} />
 
         <Route path="*" element={<NotFound404 />} />
