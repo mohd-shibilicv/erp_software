@@ -51,7 +51,7 @@ const ClientRequirementsDetails = () => {
   const [showAllFeatures, setShowAllFeatures] = useState(false);
   const [clients, setClients] = useState([]);
   const [features, setFeatures] = useState([])
-  const [status, setStatus] = useState("pending"); 
+  const [status, setStatus] = useState("pending");
   const navigate = useNavigate();
   const { id } = useParams();
   const [clientRequirement, setClientRequirement] = useState(null);
@@ -129,18 +129,18 @@ const ClientRequirementsDetails = () => {
     formData.append('color_theme', colorTheme);
     formData.append('layout', layout);
     formData.append('additional_requirements', additionalRequirements);
-  
+
     const predefinedFeatures = selectedFeatures
       .filter(feature => !String(feature.id).startsWith('custom'))
-      .map(feature => feature.id); 
-  
+      .map(feature => feature.id);
+
     const customFeatures = selectedFeatures
       .filter(feature => String(feature.id).startsWith('custom'))
-      .map(feature => feature.name); 
-  
+      .map(feature => feature.name);
+
     predefinedFeatures.forEach(featureId => formData.append('predefined_features', featureId));
     customFeatures.forEach(customFeature => formData.append('custom_features', customFeature));
-  
+
     uploadedImages.forEach((image, index) => {
       if (image.id) {
         formData.append(`existing_images[${index}]`, image.id);
@@ -148,7 +148,7 @@ const ClientRequirementsDetails = () => {
         formData.append(`uploaded_images[${index}]`, image);
       }
     });
-  
+
     try {
       let response;
       if (id) {
@@ -164,7 +164,7 @@ const ClientRequirementsDetails = () => {
           },
         });
       }
-  
+
       console.log("Successfully submitted:", response.data);
       navigate('/admin/client-requirements');
     } catch (error) {
@@ -173,7 +173,7 @@ const ClientRequirementsDetails = () => {
       setIsLoading(false);
     }
   };
-  
+
 
   useEffect(() => {
     if (id) {
@@ -192,26 +192,30 @@ const ClientRequirementsDetails = () => {
       setColorTheme(data.color_theme);
       setLayout(data.layout);
       setAdditionalRequirements(data.additional_requirements);
-      setStatus(data.status); 
-      
+      setStatus(data.status);
+
       const predefinedFeatures = data.predefined_features || [];
-      let customFeatures = [];
-      try {
-        customFeatures = JSON.parse(data.custom_features);
-      } catch (e) {
-        console.error("Error parsing custom features:", e);
-        customFeatures = [];
+      let customFeatures = data.custom_features || [];
+
+      if (typeof customFeatures === 'string') {
+        try {
+          customFeatures = JSON.parse(customFeatures);
+        } catch (e) {
+          console.error("Error parsing custom features:", e);
+          customFeatures = customFeatures.split(',').map(f => f.trim());
+        }
       }
-      
+
+
       setSelectedFeatures([
         ...predefinedFeatures.map(f => ({ id: f.id, name: f.name })),
         ...customFeatures.map(f => ({ id: `custom-${f}`, name: f }))
       ]);
       setUploadedImages(data.images.map(img => ({
         ...img,
-        preview: img.image 
+        preview: img.image
       })));
-      
+
     } catch (error) {
       console.log("Form data being sent:", Object.fromEntries(formData));
       console.error("Error fetching client requirement:", error);
@@ -241,9 +245,9 @@ const ClientRequirementsDetails = () => {
       <form onSubmit={handleSubmit} className="overflow-y-hidden">
         <Card className="w-full mx-auto">
           <CardHeader>
-          <h2 className="text-2xl font-bold">
-            {id ? 'Edit Client Requirement' : 'New Client Requirement'}
-          </h2>          </CardHeader>
+            <h2 className="text-2xl font-bold">
+              {id ? 'Edit Client Requirement' : 'New Client Requirement'}
+            </h2>          </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div className="space-y-2">
@@ -295,27 +299,27 @@ const ClientRequirementsDetails = () => {
                 </p>
               </div>
               {uploadedImages.length > 0 && (
-  <ScrollArea className="h-32 w-full border rounded-md p-4 mt-2">
-    <div className="flex flex-wrap gap-4">
-      {uploadedImages.map((file, index) => (
-        <div key={file.id || index} className="relative mt-2">
-          <img
-            src={file.preview || file.image}
-            alt={`uploaded-${index}`}
-            className="h-20 w-20 object-cover rounded-md"
-          />
-          <button
-            type="button"
-            onClick={() => removeImage(index)}
-            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      ))}
-    </div>
-  </ScrollArea>
-)}
+                <ScrollArea className="h-32 w-full border rounded-md p-4 mt-2">
+                  <div className="flex flex-wrap gap-4">
+                    {uploadedImages.map((file, index) => (
+                      <div key={file.id || index} className="relative mt-2">
+                        <img
+                          src={file.preview || file.image}
+                          alt={`uploaded-${index}`}
+                          className="h-20 w-20 object-cover rounded-md"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
             </div>
             <div className="mb-6">
               <Label>Features</Label>
@@ -398,19 +402,19 @@ const ClientRequirementsDetails = () => {
               </Select>
             </div>
             {id && (
-        <div className="mb-6">
-          <Label>Status</Label>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-full p-2 border rounded-md"
-          >
-            <option value="pending">Pending</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-        </div>
-      )}
+              <div className="mb-6">
+                <Label>Status</Label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="w-full p-2 border rounded-md"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            )}
 
             <div>
               <Label>Additional Requirements</Label>
@@ -424,19 +428,19 @@ const ClientRequirementsDetails = () => {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end space-x-2">
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              id ? "Update Requirement" : "Save Requirement"
-            )}
-          </Button>
-          <Button type="button" variant="outline" onClick={handleBack} disabled={isLoading}>
-            Cancel
-          </Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                id ? "Update Requirement" : "Save Requirement"
+              )}
+            </Button>
+            <Button type="button" variant="outline" onClick={handleBack} disabled={isLoading}>
+              Cancel
+            </Button>
           </CardFooter>
         </Card>
       </form>

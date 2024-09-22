@@ -6,7 +6,11 @@ from .models import (
     ClientRequirement,
     RequirementImage,
     Feature,
+    Quotation,
+    QuotationItem,
 )
+from apps.users.models import User
+import json
 
 
 class ClientRequestSerializer(serializers.ModelSerializer):
@@ -191,17 +195,19 @@ class ClientRequirementSerializer(serializers.ModelSerializer):
         ]
         representation["status"] = instance.status 
 
-        try:
-            representation["custom_features"] = instance.get_custom_features()
-        except Exception:
-            representation["custom_features"] = []
+        custom_features = instance.get_custom_features()
+        representation["custom_features"] = custom_features if isinstance(custom_features, list) else []
         return representation
 
+    def validate_custom_features(self, value):
+        if isinstance(value, list):
+            return value
+        elif isinstance(value, str):
+            return [feature.strip() for feature in value.split(',')]
+        else:
+            raise serializers.ValidationError("Custom features must be a list or a comma-separated string.")
 
 
-from rest_framework import serializers, viewsets
-from rest_framework.permissions import IsAuthenticated
-from .models import Quotation, QuotationItem
 
 class QuotationItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -210,11 +216,14 @@ class QuotationItemSerializer(serializers.ModelSerializer):
 
 class QuotationSerializer(serializers.ModelSerializer):
     items = QuotationItemSerializer(many=True, read_only=True)
+    assigned_to = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(role='staff'), allow_null=True, required=False)
+    client_name = serializers.CharField(source='customer.name', read_only=True)
+
 
     class Meta:
         model = Quotation
         fields = '__all__'
-        read_only_fields = ('created_at', 'updated_at', 'created_by', 'last_updated_by')
+        read_only_fields = ('created_at', 'updated_at', 'created_by', 'last_updated_by', 'total_amount','client_name')
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -223,5 +232,9 @@ class QuotationSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
+        # Remove quotation_number from validated_data if it's the same as the existing one
+        if 'quotation_number' in validated_data and validated_data['quotation_number'] == instance.quotation_number:
+            validated_data.pop('quotation_number')
+        
         validated_data['last_updated_by'] = self.context['request'].user
         return super().update(instance, validated_data)

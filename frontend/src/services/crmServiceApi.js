@@ -21,8 +21,16 @@ export const clientRequirementService = {
   get: (id) => api.get(`/client-requirements/${id}/`),
   create: (data) => api.post("/client-requirements/",data),
   update: (id, data) => {
-    console.log(`Updating client requirement with id: ${id}`);
-    console.log('Data to be sent:', data);
     return api.put(`/client-requirements/${id}/`, data);
   },  delete: (id) => api.delete(`/client-requirements/${id}/`),
 }
+
+export const clientQuotation = {
+  getAll: () => api.get("/quotations/"),
+  get: (id) => api.get(`/quotations/${id}/`),
+  create: (data) => api.post("/quotations/", data),
+  update: (id, data) => api.put(`/quotations/${id}/`, data),
+  delete: (id) => api.delete(`/quotations/${id}/`),
+};
+
+

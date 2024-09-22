@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { api } from '@/services/api';
+import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { clientQuotation } from '@/services/crmServiceApi';
+import { Button } from '@/components/ui/button';
 
-const AddEditQuotation = ({ quotation = {} }) => {
+const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
+  const [clients, setClients] = useState([]);
+  const navigate = useNavigate()
+  const { id } = useParams();
+  const [staffMembers, setStaffMembers] = useState([]);
+  let sam = id
   const [formData, setFormData] = useState({
     quotation_number: quotation.quotation_number || '',
     version: quotation.version || 1,
@@ -10,7 +20,6 @@ const AddEditQuotation = ({ quotation = {} }) => {
     customer_reference: quotation.customer_reference || '',
     assigned_to: quotation.assigned_to || '',
     subtotal: quotation.subtotal || 0,
-    tax_amount: quotation.tax_amount || 0,
     discount_amount: quotation.discount_amount || 0,
     total_amount: quotation.total_amount || 0,
     notes: quotation.notes || '',
@@ -26,16 +35,69 @@ const AddEditQuotation = ({ quotation = {} }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
+  const handleBack = () => {
+    navigate("/admin/quotation");
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const dataToSubmit = { ...formData };
+      delete dataToSubmit.total_amount;
+      delete dataToSubmit.client_name;
+      let response;
+      if (isEditMode) {
+        console.log("this is updateee")
+        response = await clientQuotation.update(sam, dataToSubmit);
+      } else {
+        console.log("this is posttt")
+        response = await clientQuotation.create(dataToSubmit);
+      }
+      console.log("Successfully submitted:", response.data);
+      navigate('/admin/quotation');
+    } catch (error) {
+      console.error("Error submitting form:", error.response?.data || error.message);
+    }
+  };
+
+
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchQuotation = async () => {
+        try {
+          const response = await clientQuotation.get(sam);
+          setFormData(prevState => ({
+            ...prevState,
+            ...response.data,
+          }));
+        } catch (error) {
+          console.error('Error fetching quotation:', error);
+        }
+      };
+      fetchQuotation();
+    }
+  }, [isEditMode]);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const clientResponse = await api.get('/clients/');
+        setClients(clientResponse.data.results);
+        const staffResponse = await api.get('/staff');
+        setStaffMembers(staffResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="bg-gray-100 min-h-screen p-4">
       <div className="bg-white rounded-lg shadow-md p-6 max-w-8xl mx-auto">
         <h2 className="text-2xl font-bold mb-6 text-left">
-          {quotation.id ? 'Edit Quotation' : 'Add New Quotation'}
+          {isEditMode ? 'Edit Quotation' : 'Add New Quotation'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -85,8 +147,11 @@ const AddEditQuotation = ({ quotation = {} }) => {
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
               >
                 <option value="">Select a customer</option>
-                <option value="customer1">Customer 1</option>
-                <option value="customer2">Customer 2</option>
+                {clients.map(client => (
+                  <option key={client.id} value={client.id}>
+                    {client.name} - {client.city}, {client.country}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
@@ -99,7 +164,6 @@ const AddEditQuotation = ({ quotation = {} }) => {
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
               />
             </div>
-           
             <div>
               <label className="block text-sm font-medium text-gray-700">Customer Reference</label>
               <input
@@ -112,13 +176,19 @@ const AddEditQuotation = ({ quotation = {} }) => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Assigned To</label>
-              <input
-                type="text"
+              <select
                 name="assigned_to"
                 value={formData.assigned_to}
                 onChange={handleChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
-              />
+              >
+                <option value="">Select staff</option>
+                {staffMembers.map((staffMember) => (
+                  <option key={staffMember.id} value={staffMember.id}>
+                    {staffMember.username}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Subtotal</label>
@@ -131,31 +201,11 @@ const AddEditQuotation = ({ quotation = {} }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Tax Amount</label>
-              <input
-                type="number"
-                name="tax_amount"
-                value={formData.tax_amount}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
-              />
-            </div>
-            <div>
               <label className="block text-sm font-medium text-gray-700">Discount Amount</label>
               <input
                 type="number"
                 name="discount_amount"
                 value={formData.discount_amount}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Total Amount</label>
-              <input
-                type="number"
-                name="total_amount"
-                value={formData.total_amount}
                 onChange={handleChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
               />
@@ -194,8 +244,17 @@ const AddEditQuotation = ({ quotation = {} }) => {
             </label>
           </div>
           <div className="flex justify-end">
+            <div className='mr-4'>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleBack}
+              >
+                Back
+              </Button>
+            </div>
             <button type="submit" className="bg-violet-600 text-white px-4 py-2 rounded-md hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              {quotation.id ? 'Update Quotation' : 'Create Quotation'}
+              {isEditMode ? 'Update Quotation' : 'Create Quotation'}
             </button>
           </div>
         </form>

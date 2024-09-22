@@ -97,6 +97,9 @@ class QuotationViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(last_updated_by=self.request.user)
 
+    
+
+
 class QuotationItemViewSet(viewsets.ModelViewSet):
     queryset = QuotationItem.objects.all()
     serializer_class = QuotationItemSerializer

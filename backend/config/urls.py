@@ -10,7 +10,7 @@ from apps.users.views import (
     RefreshViewSet,
     UserViewSet,
     BranchManagerViewSet,
-    StaffManagementViewSet
+    StaffManagementViewSet,
 )
 from apps.products.views import ProductViewSet, DamagedProductViewSet
 from apps.branches.views import (
@@ -69,6 +69,7 @@ router.register(r'client-requirements', ClientRequirementViewSet, basename='clie
 router.register(r'features', FeatureViewSet)
 router.register(r'quotations', QuotationViewSet)
 router.register(r'quotation-items', QuotationItemViewSet)
+
 
 
 urlpatterns = [
@@ -145,4 +146,5 @@ urlpatterns += [
 urlpatterns += [
     path("api/dashboard/", DashboardView.as_view(), name="dashboard"),
     path('api/branch-dashboard/', BranchDashboardView.as_view(), name='branch-dashboard'),
+
 ]
