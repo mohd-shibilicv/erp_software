@@ -3,13 +3,13 @@ import { api } from '@/services/api';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { clientQuotation } from '@/services/crmServiceApi';
+import { Button } from '@/components/ui/button';
 
 const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
   const [clients, setClients] = useState([]);
   const navigate = useNavigate()
   const { id } = useParams();
   const [staffMembers, setStaffMembers] = useState([]);
-
   let sam = id
   const [formData, setFormData] = useState({
     quotation_number: quotation.quotation_number || '',
@@ -35,15 +35,17 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
     }));
   };
 
+  const handleBack = () => {
+    navigate("/admin/quotation");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const dataToSubmit = { ...formData };
       delete dataToSubmit.total_amount;
-      delete dataToSubmit.client_name; // Remove read-only field
-  
+      delete dataToSubmit.client_name;
       let response;
-
       if (isEditMode) {
         console.log("this is updateee")
         response = await clientQuotation.update(sam, dataToSubmit);
@@ -51,20 +53,18 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
         console.log("this is posttt")
         response = await clientQuotation.create(dataToSubmit);
       }
-  
       console.log("Successfully submitted:", response.data);
       navigate('/admin/quotation');
     } catch (error) {
       console.error("Error submitting form:", error.response?.data || error.message);
     }
   };
-  
+
 
   useEffect(() => {
     if (isEditMode) {
       const fetchQuotation = async () => {
         try {
-
           const response = await clientQuotation.get(sam);
           setFormData(prevState => ({
             ...prevState,
@@ -74,7 +74,6 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
           console.error('Error fetching quotation:', error);
         }
       };
-  
       fetchQuotation();
     }
   }, [isEditMode]);
@@ -91,7 +90,6 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
         console.error('Error fetching data:', error);
       }
     };
-
     fetchData();
   }, []);
 
@@ -99,7 +97,7 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
     <div className="bg-gray-100 min-h-screen p-4">
       <div className="bg-white rounded-lg shadow-md p-6 max-w-8xl mx-auto">
         <h2 className="text-2xl font-bold mb-6 text-left">
-        {isEditMode ? 'Edit Quotation' : 'Add New Quotation'}
+          {isEditMode ? 'Edit Quotation' : 'Add New Quotation'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -246,8 +244,17 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
             </label>
           </div>
           <div className="flex justify-end">
+            <div className='mr-4'>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleBack}
+              >
+                Back
+              </Button>
+            </div>
             <button type="submit" className="bg-violet-600 text-white px-4 py-2 rounded-md hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            {isEditMode ? 'Update Quotation' : 'Create Quotation'}
+              {isEditMode ? 'Update Quotation' : 'Create Quotation'}
             </button>
           </div>
         </form>

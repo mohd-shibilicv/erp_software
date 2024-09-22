@@ -10,6 +10,7 @@ from .models import (
     QuotationItem,
 )
 from apps.users.models import User
+import json
 
 
 class ClientRequestSerializer(serializers.ModelSerializer):
@@ -194,11 +195,17 @@ class ClientRequirementSerializer(serializers.ModelSerializer):
         ]
         representation["status"] = instance.status 
 
-        try:
-            representation["custom_features"] = instance.get_custom_features()
-        except Exception:
-            representation["custom_features"] = []
+        custom_features = instance.get_custom_features()
+        representation["custom_features"] = custom_features if isinstance(custom_features, list) else []
         return representation
+
+    def validate_custom_features(self, value):
+        if isinstance(value, list):
+            return value
+        elif isinstance(value, str):
+            return [feature.strip() for feature in value.split(',')]
+        else:
+            raise serializers.ValidationError("Custom features must be a list or a comma-separated string.")
 
 
 

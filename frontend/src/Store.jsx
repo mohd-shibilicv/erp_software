@@ -170,7 +170,6 @@ function Store() {
 
         <Route path="/quotation" element={<QuotationList />} />
         <Route path="/quotation/:id" element={<QuotationDetails />} />
-
         <Route path="/quotation/new" element={<AddEditQuotation />} />
         <Route path="/quotation/new/:id" element={<AddEditQuotation isEditMode={true} />} />
 

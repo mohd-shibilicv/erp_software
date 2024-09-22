@@ -37,6 +37,8 @@ export default function ClientRequirementsList() {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [rowSelection, setRowSelection] = useState({});
+  const [globalFilter, setGlobalFilter] = useState('');
+
   const navigate = useNavigate();
   const [columnVisibility, setColumnVisibility] = useState({
     color_theme: false,
@@ -58,6 +60,11 @@ export default function ClientRequirementsList() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGlobalFilter = (value) => {
+    setGlobalFilter(value);
+    table.setGlobalFilter(value);
   };
 
   const columns = useMemo(
@@ -168,11 +175,19 @@ export default function ClientRequirementsList() {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    globalFilterFn: (row, columnId, filterValue) => {
+      const searchableFields = ['id', 'file_number', 'client.name', 'status'];
+      return searchableFields.some(field => {
+        const value = field === 'client.name' ? row.original.client.name : row.getValue(field);
+        return String(value).toLowerCase().includes(filterValue.toLowerCase());
+      });
+    },
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
+      globalFilter,
     },
   });
 
@@ -190,13 +205,11 @@ export default function ClientRequirementsList() {
       </div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter client names..."
-          value={table.getColumn("client_name")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("client_name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+  placeholder="Search by ID, file number, client name, or status..."
+  value={globalFilter ?? ''}
+  onChange={(event) => handleGlobalFilter(event.target.value)}
+  className="max-w-sm"
+/>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

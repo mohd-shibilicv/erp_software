@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { clientQuotation } from '@/services/crmServiceApi';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-
 const QuotationDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -28,14 +27,11 @@ const QuotationDetails = () => {
         setLoading(false);
       }
     };
-
     fetchQuotationDetails();
   }, [id]);
-
   const handleBackClick = () => {
-    navigate(-1); // Go back to the previous page
+    navigate(-1); 
   };
-
 
   const handleUpdateClick = async () => {
     try {
@@ -64,45 +60,45 @@ const QuotationDetails = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-  <h2 className="text-2xl font-bold mb-6">Quotation Details</h2>
-  {quotation ? (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
-          <span className="font-semibold">Quotation Number:</span> <span>{quotation.quotation_number}</span>
-          <span className="font-semibold">Version:</span> <span>{quotation.version}</span>
-          <span className="font-semibold">Status:</span> <span>{quotation.status}</span>
-          <span className="font-semibold">Created At:</span> <span>{new Date(quotation.created_at).toLocaleString()}</span>
-        </div>
-        <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
-          <span className="font-semibold">Valid Until:</span> <span>{quotation.valid_until}</span>
-          <span className="font-semibold">Customer:</span> <span>{quotation.client_name}</span>
-          <span className="font-semibold">Customer Reference:</span> <span>{quotation.customer_reference}</span>
-          <span className="font-semibold">Assigned To:</span> <span>{quotation.assigned_to?.username || 'N/A'}</span>
-        </div>
-        <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
-          <span className="font-semibold">Subtotal:</span> <span>{quotation.subtotal}</span>
-          <span className="font-semibold">Discount Amount:</span> <span>{quotation.discount_amount}</span>
-          <span className="font-semibold">Total Amount:</span> <span>{quotation.total_amount}</span>
-          <span className="font-semibold">Requires Approval:</span> <span>{quotation.requires_approval ? 'Yes' : 'No'}</span>
-        </div>
-      </div>
+      <h2 className="text-2xl font-bold mb-6">Quotation Details</h2>
+      {quotation ? (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
+              <span className="font-semibold">Quotation Number:</span> <span>{quotation.quotation_number}</span>
+              <span className="font-semibold">Version:</span> <span>{quotation.version}</span>
+              <span className="font-semibold">Status:</span> <span>{quotation.status}</span>
+              <span className="font-semibold">Created At:</span> <span>{new Date(quotation.created_at).toLocaleString()}</span>
+            </div>
+            <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
+              <span className="font-semibold">Valid Until:</span> <span>{quotation.valid_until}</span>
+              <span className="font-semibold">Customer:</span> <span>{quotation.client_name}</span>
+              <span className="font-semibold">Customer Reference:</span> <span>{quotation.customer_reference}</span>
+              <span className="font-semibold">Assigned To:</span> <span>{quotation.assigned_to?.username || 'N/A'}</span>
+            </div>
+            <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
+              <span className="font-semibold">Subtotal:</span> <span>{quotation.subtotal}</span>
+              <span className="font-semibold">Discount Amount:</span> <span>{quotation.discount_amount}</span>
+              <span className="font-semibold">Total Amount:</span> <span>{quotation.total_amount}</span>
+              <span className="font-semibold">Requires Approval:</span> <span>{quotation.requires_approval ? 'Yes' : 'No'}</span>
+            </div>
+          </div>
 
-      <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
-        <span className="font-semibold">Approved By:</span> <span>{quotation.approved_by?.username}</span>
-        <span className="font-semibold">Approved At:</span> <span>{quotation.approved_at ? new Date(quotation.approved_at).toLocaleString() : 'N/A'}</span>
-      </div>
+          <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
+            <span className="font-semibold">Approved By:</span> <span>{quotation.approved_by?.username}</span>
+            <span className="font-semibold">Approved At:</span> <span>{quotation.approved_at ? new Date(quotation.approved_at).toLocaleString() : 'N/A'}</span>
+          </div>
 
-      <div className="space-y-4">
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="font-semibold mb-2">Notes:</h3>
-          <p>{quotation.notes}</p>
-        </div>
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="font-semibold mb-2">Terms and Conditions:</h3>
-          <p>{quotation.terms_and_conditions}</p>
-        </div>
-      </div>
+          <div className="space-y-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-2">Notes:</h3>
+              <p>{quotation.notes}</p>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-2">Terms and Conditions:</h3>
+              <p>{quotation.terms_and_conditions}</p>
+            </div>
+          </div>
           {showDeleteDialog && (
             <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
               <DialogContent>
@@ -130,7 +126,6 @@ const QuotationDetails = () => {
               </DialogContent>
             </Dialog>
           )}
-          {/* New buttons */}
           <div className="flex justify-between mt-8">
             <button
               onClick={handleBackClick}

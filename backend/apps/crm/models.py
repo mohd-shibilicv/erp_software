@@ -144,14 +144,20 @@ class ClientRequirement(models.Model):
     def set_custom_features(self, features):
         if isinstance(features, list):
             self.custom_features = json.dumps(features)
+        elif isinstance(features, str):
+            # Handle the case where features might be a comma-separated string
+            self.custom_features = json.dumps(features.split(','))
         else:
-            raise ValueError("Features must be a list")
+            raise ValueError("Features must be a list or a comma-separated string")
     
     def get_custom_features(self):
-        try:
-            return json.loads(self.custom_features) if self.custom_features else []
-        except json.JSONDecodeError:
+        if not self.custom_features:
             return []
+        try:
+            return json.loads(self.custom_features)
+        except json.JSONDecodeError:
+            # If JSON parsing fails, try treating it as a comma-separated string
+            return [feature.strip() for feature in self.custom_features.split(',')]
 
 
 class RequirementImage(models.Model):
