@@ -5,6 +5,7 @@ from apps.products.models import Product
 from django.db import models
 from django.core.validators import MinValueValidator
 
+
 class Client(models.Model):
     name = models.CharField(max_length=255)
     mobile_number = models.CharField(max_length=20)
@@ -145,7 +146,6 @@ class ClientRequirement(models.Model):
         if isinstance(features, list):
             self.custom_features = json.dumps(features)
         elif isinstance(features, str):
-            # Handle the case where features might be a comma-separated string
             self.custom_features = json.dumps(features.split(','))
         else:
             raise ValueError("Features must be a list or a comma-separated string")
@@ -156,7 +156,6 @@ class ClientRequirement(models.Model):
         try:
             return json.loads(self.custom_features)
         except json.JSONDecodeError:
-            # If JSON parsing fails, try treating it as a comma-separated string
             return [feature.strip() for feature in self.custom_features.split(',')]
 
 
@@ -185,8 +184,8 @@ class Quotation(models.Model):
     valid_until = models.DateField()    
     customer = models.ForeignKey(Client, on_delete=models.PROTECT)
     customer_reference = models.CharField(max_length=100, blank=True, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_created')
-    last_updated_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_updated')
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_created',null=True,blank=True)
+    last_updated_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_updated',null=True,blank=True)
     assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_quotations')
     subtotal = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
     discount_amount = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
@@ -203,11 +202,28 @@ class Quotation(models.Model):
     def __str__(self):
         return f"Quotation {self.quotation_number} - {self.customer}"
     
+    def calculate_subtotal(self):
+        return sum(item.subtotal for item in self.items.all())
+
+    def calculate_discount_amount(self):
+        return sum(item.subtotal * (item.discount_percentage / 100) for item in self.items.all())
+
     def calculate_total(self):
-        return self.subtotal - self.discount_amount
+        subtotal = self.calculate_subtotal()
+        discount_amount = self.calculate_discount_amount()
+        return subtotal - discount_amount
+
+    def update_totals(self):
+        self.subtotal = self.calculate_subtotal()
+        self.discount_amount = self.calculate_discount_amount()
+        self.total_amount = self.calculate_total()
+        super(Quotation, self).save(update_fields=['subtotal', 'discount_amount', 'total_amount'])
 
     def save(self, *args, **kwargs):
-        self.total_amount = self.calculate_total()
+        if self.pk is None:
+            self.subtotal = 0
+            self.discount_amount = 0
+            self.total_amount = 0
         super(Quotation, self).save(*args, **kwargs)
 
 class QuotationItem(models.Model):
@@ -222,4 +238,9 @@ class QuotationItem(models.Model):
 
     def __str__(self):
         return f"{self.product}"
+    
+    def save(self, *args, **kwargs):
+        self.subtotal = self.quantity * self.unit_price
+        super(QuotationItem, self).save(*args, **kwargs)
+        self.quotation.update_totals()
 
