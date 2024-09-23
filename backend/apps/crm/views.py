@@ -70,7 +70,6 @@ class ClientRelationshipViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
@@ -84,12 +83,9 @@ class ClientRequirementViewSet(viewsets.ModelViewSet):
     queryset = ClientRequirement.objects.select_related('client').all()
     serializer_class = ClientRequirementSerializer
 
-
-
 class QuotationViewSet(viewsets.ModelViewSet):
     queryset = Quotation.objects.all()
     serializer_class = QuotationSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user, last_updated_by=self.request.user)
@@ -97,11 +93,7 @@ class QuotationViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(last_updated_by=self.request.user)
 
-    
-
-
 class QuotationItemViewSet(viewsets.ModelViewSet):
     queryset = QuotationItem.objects.all()
     serializer_class = QuotationItemSerializer
-    permission_classes = [permissions.IsAuthenticated]
 

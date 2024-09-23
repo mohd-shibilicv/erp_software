@@ -19,6 +19,7 @@ const QuotationDetails = () => {
     const fetchQuotationDetails = async () => {
       try {
         const response = await api.get(`/quotations/${id}/`);
+        console.log("Received quotation data:", response.data);
         setQuotation(response.data);
         setLoading(false);
       } catch (error) {
@@ -30,9 +31,8 @@ const QuotationDetails = () => {
     fetchQuotationDetails();
   }, [id]);
   const handleBackClick = () => {
-    navigate(-1); 
+    navigate(-1);
   };
-
   const handleUpdateClick = async () => {
     try {
       navigate(`/admin/quotation/new/${id}`);
@@ -40,7 +40,6 @@ const QuotationDetails = () => {
       setError("Error updating client requirement.");
     }
   };
-
   const handleDelete = async () => {
     setIsLoading(true);
     try {
@@ -55,6 +54,12 @@ const QuotationDetails = () => {
     }
   };
 
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'QAR',
+    }).format(value);
+  };
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -74,21 +79,20 @@ const QuotationDetails = () => {
               <span className="font-semibold">Valid Until:</span> <span>{quotation.valid_until}</span>
               <span className="font-semibold">Customer:</span> <span>{quotation.client_name}</span>
               <span className="font-semibold">Customer Reference:</span> <span>{quotation.customer_reference}</span>
-              <span className="font-semibold">Assigned To:</span> <span>{quotation.assigned_to?.username || 'N/A'}</span>
+              <span className="font-semibold">Assigned To:</span> <span>{quotation.assigned_to_user || 'N/A'}</span>
             </div>
             <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
-              <span className="font-semibold">Subtotal:</span> <span>{quotation.subtotal}</span>
-              <span className="font-semibold">Discount Amount:</span> <span>{quotation.discount_amount}</span>
-              <span className="font-semibold">Total Amount:</span> <span>{quotation.total_amount}</span>
+              <span className="font-semibold">Subtotal:</span> <span>{formatCurrency(quotation.subtotal)}</span>
+              <span className="font-semibold">Discount Amount:</span> <span>{formatCurrency(quotation.discount_amount)}</span>
+              <span className="font-semibold">Total Amount:</span> <span>{formatCurrency(quotation.total_amount)}</span>
               <span className="font-semibold">Requires Approval:</span> <span>{quotation.requires_approval ? 'Yes' : 'No'}</span>
             </div>
           </div>
-
           <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
+            <span className="font-semibold">Created By:</span> <span>{quotation.created_by_username}</span>
             <span className="font-semibold">Approved By:</span> <span>{quotation.approved_by?.username}</span>
             <span className="font-semibold">Approved At:</span> <span>{quotation.approved_at ? new Date(quotation.approved_at).toLocaleString() : 'N/A'}</span>
           </div>
-
           <div className="space-y-4">
             <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-semibold mb-2">Notes:</h3>

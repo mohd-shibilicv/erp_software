@@ -6,6 +6,8 @@ from .models import (
     RequirementImage,
     Feature,
     Client,
+    Quotation,
+    QuotationItem
 )
 
 admin.site.register(Client)
@@ -13,6 +15,10 @@ admin.site.register(ClientRequest)
 admin.site.register(ClientRelationship)
 admin.site.register(ClientRequirement)
 admin.site.register(RequirementImage)
+admin.site.register(Quotation)
+admin.site.register(QuotationItem)
+
+
 
 
 @admin.register(Feature)
