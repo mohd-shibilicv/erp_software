@@ -77,8 +77,8 @@ const QuotationDetails = () => {
             </div>
             <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
               <span className="font-semibold">Valid Until:</span> <span>{quotation.valid_until}</span>
-              <span className="font-semibold">Customer:</span> <span>{quotation.client_name}</span>
-              <span className="font-semibold">Customer Reference:</span> <span>{quotation.customer_reference}</span>
+              <span className="font-semibold">Client:</span> <span>{quotation.client_name}</span>
+              <span className="font-semibold">Client Reference:</span> <span>{quotation.client_reference}</span>
               <span className="font-semibold">Assigned To:</span> <span>{quotation.assigned_to_user || 'N/A'}</span>
             </div>
             <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">

@@ -97,9 +97,9 @@ export default function QuotationList() {
         cell: ({ row }) => <div>{row.getValue("client_name")}</div>,
       },
       {
-        accessorKey: "customer_reference",
-        header: "Customer Reference",
-        cell: ({ row }) => <div>{row.getValue("customer_reference")}</div>,
+        accessorKey: "client_reference",
+        header: "Client Reference",
+        cell: ({ row }) => <div>{row.getValue("client_reference")}</div>,
       },
       {
         accessorKey: "status",
@@ -190,7 +190,7 @@ export default function QuotationList() {
       </div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Search by ID, quotation number, customer, or status..."
+          placeholder="Search by ID, quotation number, client, or status..."
           value={globalFilter ?? ""}
           onChange={(event) => {
             const value = event.target.value;

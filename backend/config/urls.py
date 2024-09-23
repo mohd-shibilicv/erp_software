@@ -37,7 +37,16 @@ from apps.reports.views import (
     DashboardView,
     BranchDashboardView,
 )
-from apps.crm.views import ClientRequestViewSet, ClientViewSet, ClientRelationshipViewSet,ClientRequirementViewSet,FeatureViewSet,QuotationItemViewSet,QuotationViewSet
+from apps.crm.views import (
+    ClientRequestViewSet,
+    ClientViewSet,
+    ClientRelationshipViewSet,
+    ClientRequirementViewSet,
+    FeatureViewSet,
+    QuotationItemViewSet,
+    QuotationViewSet,
+    AgreementViewSet,
+)
 
 
 router = DefaultRouter()
@@ -47,9 +56,9 @@ router.register(r"users", UserViewSet, basename="users")
 router.register(r"register", UserRegisterViewSet, basename="register")
 router.register(r"login", LoginViewSet, basename="login")
 router.register(r"refresh", RefreshViewSet, basename="refresh")
-router.register(r'staff', StaffManagementViewSet, basename='staff')
-router.register(r'branch-managers', BranchManagerViewSet, basename='branch-managers')
- 
+router.register(r"staff", StaffManagementViewSet, basename="staff")
+router.register(r"branch-managers", BranchManagerViewSet, basename="branch-managers")
+
 router.register(r"products", ProductViewSet, basename="products")
 router.register(r"damaged-products", DamagedProductViewSet, basename="damaged_products")
 router.register(r"suppliers", SupplierViewSet, basename="suppliers")
@@ -62,13 +71,18 @@ router.register(r"branch-products", BranchProductViewSet, basename="branch_produ
 router.register(r"product-requests", ProductRequestViewSet, basename="product_requests")
 
 # CRM
-router.register(r'clients', ClientViewSet, basename="clients")
-router.register(r'client-requests', ClientRequestViewSet, basename="client_requests")
-router.register(r'client-relationships', ClientRelationshipViewSet, basename="client_relationships")
-router.register(r'client-requirements', ClientRequirementViewSet, basename='client_requirements')
-router.register(r'features', FeatureViewSet)
-router.register(r'quotations', QuotationViewSet)
-router.register(r'quotation-items', QuotationItemViewSet)
+router.register(r"clients", ClientViewSet, basename="clients")
+router.register(r"client-requests", ClientRequestViewSet, basename="client_requests")
+router.register(
+    r"client-relationships", ClientRelationshipViewSet, basename="client_relationships"
+)
+router.register(
+    r"client-requirements", ClientRequirementViewSet, basename="client_requirements"
+)
+router.register(r"features", FeatureViewSet, basename="features")
+router.register(r"quotations", QuotationViewSet, basename="quotations")
+router.register(r"quotation-items", QuotationItemViewSet, basename="quotation_items")
+router.register(r"agreements", AgreementViewSet, basename="agreements")
 
 
 
@@ -146,5 +160,4 @@ urlpatterns += [
 urlpatterns += [
     path("api/dashboard/", DashboardView.as_view(), name="dashboard"),
     path('api/branch-dashboard/', BranchDashboardView.as_view(), name='branch-dashboard'),
-
 ]

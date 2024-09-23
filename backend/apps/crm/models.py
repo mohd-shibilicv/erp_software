@@ -1,9 +1,10 @@
-from django.db import models
-from apps.users.models import User
 import json
-from apps.products.models import Product
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.contrib.postgres.fields import ArrayField
+from apps.users.models import User
+from apps.products.models import Product
+
 
 
 class Client(models.Model):
@@ -171,7 +172,7 @@ class Quotation(models.Model):
         ('DRAFT', 'Draft'),
         ('PENDING_APPROVAL', 'Pending Approval'),
         ('APPROVED', 'Approved'),
-        ('SENT', 'Sent to Customer'),
+        ('SENT', 'Sent to Client'),
         ('ACCEPTED', 'Accepted'),
         ('REJECTED', 'Rejected'),
         ('EXPIRED', 'Expired'),
@@ -181,11 +182,15 @@ class Quotation(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='DRAFT')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    valid_until = models.DateField()    
-    customer = models.ForeignKey(Client, on_delete=models.PROTECT)
-    customer_reference = models.CharField(max_length=100, blank=True, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_created',null=True,blank=True)
-    last_updated_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_updated',null=True,blank=True)
+    valid_until = models.DateField()
+
+    # Client Information
+    client = models.ForeignKey(Client, on_delete=models.PROTECT)
+    client_reference = models.CharField(max_length=100, blank=True, null=True)
+
+    # User Information
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_created')
+    last_updated_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_updated')
     assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_quotations')
     subtotal = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
     discount_amount = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
@@ -200,7 +205,7 @@ class Quotation(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"Quotation {self.quotation_number} - {self.customer}"
+        return f"Quotation {self.quotation_number} - {self.client}"
     
     def calculate_subtotal(self):
         return sum(item.subtotal for item in self.items.all())
@@ -226,6 +231,7 @@ class Quotation(models.Model):
             self.total_amount = 0
         super(Quotation, self).save(*args, **kwargs)
 
+
 class QuotationItem(models.Model):
     quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
@@ -244,3 +250,27 @@ class QuotationItem(models.Model):
         super(QuotationItem, self).save(*args, **kwargs)
         self.quotation.update_totals()
 
+
+class Agreement(models.Model):
+    quotation = models.ForeignKey(Quotation, on_delete=models.SET_NULL, null=True)
+    tc_file = models.FileField(upload_to='terms_conditions/', null=True, blank=True)
+    signed_agreement = models.FileField(upload_to='signed_agreements/', null=True, blank=True)
+    client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)
+    company_name = models.CharField(max_length=255)
+    company_address = models.CharField(max_length=255, blank=True)
+    cr_number = models.CharField(max_length=50)
+    baladiya = models.CharField(max_length=255, blank=True)
+    project_name = models.CharField(max_length=255)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateField()
+    project_start_date = models.DateField()
+    project_end_date = models.DateField()
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class PaymentTerm(models.Model):
+    agreement = models.ForeignKey(Agreement, related_name='payment_terms', on_delete=models.CASCADE)
+    date = models.DateField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)

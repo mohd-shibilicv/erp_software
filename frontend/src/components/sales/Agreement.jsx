@@ -1,7 +1,15 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { CalendarIcon, Plus, Trash2, Printer, Save } from "lucide-react";
+import {
+  CalendarIcon,
+  Plus,
+  Trash2,
+  Printer,
+  Save,
+  ChevronsUpDown,
+  Check,
+  PlusCircle,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -20,13 +28,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import {
   Popover,
@@ -44,57 +45,150 @@ import {
 } from "../ui/full-dialog";
 import { Tooltip, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { TooltipContent } from "@radix-ui/react-tooltip";
+import { useToast } from "@/components/ui/use-toast";
+import { api } from "@/services/api";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../ui/command";
+import { clientService } from "@/services/crmServiceApi";
 
 const Agreement = () => {
+  const { toast } = useToast();
   const [tcFile, setTcFile] = useState(null);
   const [signedAgreement, setSignedAgreement] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [viewingFile, setViewingFile] = useState(null);
+  const [quotations, setQuotations] = useState([]);
+  const [clients, setClients] = useState([]);
 
-  const { register, control, watch, setValue, handleSubmit } = useForm({
-    defaultValues: {
-      totalAmount: 0,
-      paymentTerms: [],
-      totalPaidAmount: 0,
-    },
+  const [formData, setFormData] = useState({
+    quotation_id: "",
+    clientName: "",
+    company_name: "",
+    cr_number: "",
+    baladiya: "",
+    project_name: "",
+    total_amount: 0,
+    payment_date: null,
+    project_start_date: null,
+    project_end_date: null,
+    payment_terms: [],
   });
 
-  const watchedFields = watch();
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "paymentTerms",
-  });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const total = watchedFields.paymentTerms.reduce(
-      (sum, term) => sum + (parseFloat(term.amount) || 0),
-      0
-    );
-    setValue("totalPaidAmount", total);
-  }, [watchedFields.paymentTerms, setValue]);
+    const fetchQuotations = async () => {
+      try {
+        const response = await api.get("/quotations/");
+        setQuotations(response.data.results);
+      } catch (error) {
+        console.error("Error fetching quotations:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch quotations",
+          variant: "destructive",
+        });
+      }
+    };
+    fetchClients();
+    fetchQuotations();
+  }, []);
 
-  useEffect(() => {
-    if (watchedFields.totalAmount && fields.length === 0) {
-      append({ date: "", amount: "" });
+  const fetchClients = async () => {
+    try {
+      const response = await clientService.getAll();
+      setClients(response.data.results);
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch clients. Please try again.",
+        variant: "destructive",
+      });
     }
-  }, [watchedFields.totalAmount, fields.length, append]);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleDateChange = (date, fieldName) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [fieldName]: date,
+    }));
+  };
+
+  const handlePaymentTermChange = (index, field, value) => {
+    const updatedTerms = [...formData.payment_terms];
+    updatedTerms[index] = { ...updatedTerms[index], [field]: value };
+    setFormData((prevData) => ({
+      ...prevData,
+      payment_terms: updatedTerms,
+    }));
+  };
 
   const addPaymentTerm = () => {
-    append({ date: "", amount: 0 });
+    setFormData((prevData) => ({
+      ...prevData,
+      payment_terms: [...prevData.payment_terms, { date: null, amount: 0 }],
+    }));
   };
 
-  const remainingAmount =
-    watchedFields.totalAmount - watchedFields.totalPaidAmount;
+  const removePaymentTerm = (index) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      payment_terms: prevData.payment_terms.filter((_, i) => i !== index),
+    }));
+  };
 
-  const savePaymentTerm = (index) => {
-    if (index === fields.length - 1 && remainingAmount > 0) {
-      addPaymentTerm();
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.quotation_id)
+      newErrors.quotation_id = "Quotation is required";
+    if (!formData.clientName) newErrors.clientName = "Client name is required";
+    if (!formData.company_name)
+      newErrors.company_name = "Company name is required";
+    if (!formData.cr_number) newErrors.cr_number = "CR number is required";
+    if (!formData.project_name)
+      newErrors.project_name = "Project name is required";
+    if (!formData.total_amount)
+      newErrors.total_amount = "Total amount is required";
+    if (!formData.payment_date)
+      newErrors.payment_date = "Payment date is required";
+    if (!formData.project_start_date)
+      newErrors.project_start_date = "Project start date is required";
+    if (!formData.project_end_date)
+      newErrors.project_end_date = "Project end date is required";
+    if (formData.payment_terms.length === 0)
+      newErrors.payment_terms = "At least one payment term is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    validateForm();
+    e.preventDefault();
+  };
+
+  const handleFileChange = (e, fileType) => {
+    const file = e.target.files[0];
+    if (fileType === "tc_file") {
+      setTcFile(file);
+    } else if (fileType === "signed_agreement") {
+      setSignedAgreement(file);
     }
-  };
-
-  const onSubmit = (data) => {
-    console.log(data);
   };
 
   const handlePrint = () => {
@@ -106,11 +200,11 @@ const Agreement = () => {
     setDialogOpen(true);
   };
 
-  const quotations = [
-    { id: 1, name: "Quotation 1" },
-    { id: 2, name: "Quotation 2" },
-    { id: 3, name: "Quotation 3" },
-  ];
+  const totalPaidAmount = formData.payment_terms.reduce(
+    (sum, term) => sum + parseFloat(term.amount || 0),
+    0
+  );
+  const remainingAmount = formData.total_amount - totalPaidAmount;
 
   return (
     <Card className="w-full mx-auto">
@@ -118,22 +212,64 @@ const Agreement = () => {
         <CardTitle className="text-2xl font-bold">Agreement Form</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="quotation">Select Quotation</Label>
-              <Select onValueChange={(value) => console.log(value)}>
-                <SelectTrigger id="quotation">
-                  <SelectValue placeholder="Select a quotation" />
-                </SelectTrigger>
-                <SelectContent>
-                  {quotations.map((q) => (
-                    <SelectItem key={q.id} value={q.id.toString()}>
-                      {q.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded="false"
+                    className={cn(
+                      "w-full justify-between",
+                      errors.quotation_id && "border-red-500"
+                    )}
+                  >
+                    {quotations.find(
+                      (q) => q.id.toString() === formData.quotation_id
+                    )?.quotation_number || "Select a quotation"}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search quotation..." />
+                    <CommandList>
+                      <CommandEmpty>No quotations found.</CommandEmpty>
+                      <CommandGroup>
+                        {quotations.map((q) => (
+                          <CommandItem
+                            key={q.id}
+                            onSelect={() =>
+                              handleInputChange({
+                                target: {
+                                  name: "quotation_id",
+                                  value: q.id.toString(),
+                                },
+                              })
+                            }
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                formData.quotation_id === q.id.toString()
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            Quotation {q.quotation_number}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {errors.quotation_id && (
+                <p className="text-sm text-red-500">{errors.quotation_id}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="tc-upload">Upload Terms & Conditions</Label>
@@ -141,7 +277,7 @@ const Agreement = () => {
                 id="tc-upload"
                 type="file"
                 accept=".pdf,.doc,.docx"
-                onChange={(e) => setTcFile(e.target.files[0])}
+                onChange={(e) => handleFileChange(e, "tc_file")}
               />
               {tcFile && (
                 <p
@@ -160,7 +296,7 @@ const Agreement = () => {
               id="signed-agreement"
               type="file"
               accept=".pdf,.jpg,.jpeg,.png"
-              onChange={(e) => setSignedAgreement(e.target.files[0])}
+              onChange={(e) => handleFileChange(e, "signed_agreement")}
             />
             {signedAgreement && (
               <p
@@ -175,180 +311,239 @@ const Agreement = () => {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="client-name">Client Name</Label>
-              <Input
-                id="client-name"
-                {...register("clientName", { required: true })}
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded="false"
+                    className={cn(
+                      "w-full justify-between",
+                      errors.clientName && "border-red-500"
+                    )}
+                  >
+                    {clients.find(
+                      (client) => client.id.toString() === formData.clientName
+                    )?.name || "Select a client"}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search client..." />
+                    <CommandList>
+                      <CommandEmpty>No clients found.</CommandEmpty>
+                      <CommandGroup>
+                        {clients.map((client) => (
+                          <CommandItem
+                            key={client.id}
+                            onSelect={() =>
+                              handleInputChange({
+                                target: {
+                                  name: "clientName",
+                                  value: client.id.toString(),
+                                },
+                              })
+                            }
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                formData.clientName === client.id.toString()
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {client.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {errors.clientName && (
+                <p className="text-sm text-red-500">{errors.clientName}</p>
+              )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="company-name">Company Name</Label>
+              <Label htmlFor="company_name">Company Name</Label>
               <Input
-                id="company-name"
-                {...register("companyName", { required: true })}
+                id="company_name"
+                name="company_name"
+                value={formData.company_name}
+                onChange={handleInputChange}
+                className={cn(errors.company_name && "border-red-500")}
               />
+              {errors.company_name && (
+                <p className="text-sm text-red-500">{errors.company_name}</p>
+              )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="cr-number">CR Number</Label>
+              <Label htmlFor="cr_number">CR Number</Label>
               <Input
-                id="cr-number"
-                {...register("crNumber", { required: true })}
+                id="cr_number"
+                name="cr_number"
+                value={formData.cr_number}
+                onChange={handleInputChange}
+                className={cn(errors.cr_number && "border-red-500")}
               />
+              {errors.cr_number && (
+                <p className="text-sm text-red-500">{errors.cr_number}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="baladiya">Baladiya</Label>
               <Input
                 id="baladiya"
-                {...register("baladiya", { required: true })}
+                name="baladiya"
+                value={formData.baladiya}
+                onChange={handleInputChange}
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="our-company">Our Company</Label>
+              <Label htmlFor="project_name">Project Name</Label>
               <Input
-                id="our-company"
-                value="Nasscript Software Innovations"
-                readOnly
+                id="project_name"
+                name="project_name"
+                value={formData.project_name}
+                onChange={handleInputChange}
+                className={cn(errors.project_name && "border-red-500")}
               />
+              {errors.project_name && (
+                <p className="text-sm text-red-500">{errors.project_name}</p>
+              )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="our-cr">Our CR Number</Label>
-              <Input id="our-cr" value="8818818" readOnly />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="project-name">Project Name</Label>
+              <Label htmlFor="total_amount">Total Estimated Amount</Label>
               <Input
-                id="project-name"
-                {...register("projectName", { required: true })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="total-amount">Total Estimated Amount</Label>
-              <Input
-                id="total-amount"
+                id="total_amount"
+                name="total_amount"
                 type="number"
-                {...register("totalAmount", {
-                  required: true,
-                  valueAsNumber: true,
-                  min: 0,
-                })}
+                value={formData.total_amount}
+                onChange={handleInputChange}
+                className={cn(errors.total_amount && "border-red-500")}
               />
+              {errors.total_amount && (
+                <p className="text-sm text-red-500">{errors.total_amount}</p>
+              )}
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <Controller
-              name="paymentDate"
-              control={control}
-              render={({ field }) => (
-                <div className="space-y-2">
-                  <Label htmlFor="payment-date">Payment Final Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) => date < new Date()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
+            <div className="space-y-2">
+              <Label htmlFor="payment_date">Payment Final Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formData.payment_date && "text-muted-foreground",
+                      errors.payment_date && "border-red-500"
+                    )}
+                  >
+                    {formData.payment_date ? (
+                      format(formData.payment_date, "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.payment_date}
+                    onSelect={(date) => handleDateChange(date, "payment_date")}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              {errors.payment_date && (
+                <p className="text-sm text-red-500">{errors.payment_date}</p>
               )}
-            />
-            <Controller
-              name="projectStartDate"
-              control={control}
-              render={({ field }) => (
-                <div className="space-y-2">
-                  <Label htmlFor="start-date">Project Start Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) => date < new Date()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="project_start_date">Project Start Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formData.project_start_date && "text-muted-foreground",
+                      errors.project_start_date && "border-red-500"
+                    )}
+                  >
+                    {formData.project_start_date ? (
+                      format(formData.project_start_date, "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.project_start_date}
+                    onSelect={(date) =>
+                      handleDateChange(date, "project_start_date")
+                    }
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              {errors.project_start_date && (
+                <p className="text-sm text-red-500">
+                  {errors.project_start_date}
+                </p>
               )}
-            />
-            <Controller
-              name="projectEndDate"
-              control={control}
-              render={({ field }) => (
-                <div className="space-y-2">
-                  <Label htmlFor="end-date">Project End Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) => date < new Date()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="project_end_date">Project End Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formData.project_end_date && "text-muted-foreground",
+                      errors.project_end_date && "border-red-500"
+                    )}
+                  >
+                    {formData.project_end_date ? (
+                      format(formData.project_end_date, "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.project_end_date}
+                    onSelect={(date) =>
+                      handleDateChange(date, "project_end_date")
+                    }
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              {errors.project_end_date && (
+                <p className="text-sm text-red-500">
+                  {errors.project_end_date}
+                </p>
               )}
-            />
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -363,111 +558,83 @@ const Agreement = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {fields.map((field, index) => (
-                  <TableRow key={field.id}>
+                {formData.payment_terms.map((term, index) => (
+                  <TableRow key={index}>
                     <TableCell>{`Term ${index + 1}`}</TableCell>
                     <TableCell>
-                      <Controller
-                        name={`paymentTerms.${index}.date`}
-                        control={control}
-                        render={({ field }) => (
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-[240px] justify-start text-left font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(new Date(field.value), "PPP")
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-auto p-0"
-                              align="start"
-                            >
-                              <Calendar
-                                mode="single"
-                                selected={new Date(field.value)}
-                                onSelect={field.onChange}
-                                disabled={(date) => date < new Date()}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                        )}
-                      />
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-[240px] justify-start text-left font-normal",
+                              !term.date && "text-muted-foreground"
+                            )}
+                          >
+                            {term.date ? (
+                              format(new Date(term.date), "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={
+                              term.date ? new Date(term.date) : undefined
+                            }
+                            onSelect={(date) =>
+                              handlePaymentTermChange(index, "date", date)
+                            }
+                            disabled={(date) => date < new Date()}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </TableCell>
                     <TableCell>
                       <Input
                         type="number"
-                        {...register(`paymentTerms.${index}.amount`, {
-                          required: true,
-                          valueAsNumber: true,
-                          min: 0,
-                          max: remainingAmount + parseFloat(field.amount) || 0,
-                        })}
+                        value={term.amount}
+                        onChange={(e) =>
+                          handlePaymentTermChange(
+                            index,
+                            "amount",
+                            e.target.value
+                          )
+                        }
                         placeholder="Amount"
                       />
                     </TableCell>
                     <TableCell>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              type="button"
-                              onClick={() => remove(index)}
-                              variant="ghost"
-                              size="sm"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Remove</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              type="button"
-                              onClick={() => savePaymentTerm(index)}
-                              variant="ghost"
-                              size="sm"
-                              disabled={
-                                !watchedFields.paymentTerms[index]?.date ||
-                                !watchedFields.paymentTerms[index]?.amount
-                              }
-                            >
-                              <Save className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Save</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <Button
+                        type="button"
+                        onClick={() => removePaymentTerm(index)}
+                        variant="ghost"
+                        size="sm"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+            <div className="w-full flex justify-center">
+              <Button type="button" variant="outline" onClick={addPaymentTerm}>
+                <PlusCircle />
+              </Button>
+            </div>
           </div>
 
           <div className="flex justify-between items-center">
-            <Label>Total Paid Amount</Label>
+            <Label>Current Amount</Label>
             <Input
               className="w-[200px]"
               type="number"
-              value={watchedFields.totalPaidAmount}
+              value={totalPaidAmount}
               readOnly
             />
           </div>
@@ -482,7 +649,7 @@ const Agreement = () => {
             />
           </div>
 
-          {watchedFields.totalAmount && (
+          {formData.total_amount > 0 && (
             <div
               className={cn(
                 "p-4 rounded-md",
@@ -501,7 +668,7 @@ const Agreement = () => {
         </form>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
-        <Button type="submit" onClick={handleSubmit(onSubmit)}>
+        <Button type="submit" onClick={handleSubmit}>
           Save Agreement
         </Button>
         <Button variant="outline" onClick={handlePrint}>

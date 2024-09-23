@@ -8,6 +8,8 @@ from .models import (
     Feature,
     Quotation,
     QuotationItem,
+    PaymentTerm,
+    Agreement,
 )
 from apps.users.models import User
 
@@ -210,7 +212,6 @@ class ClientRequirementSerializer(serializers.ModelSerializer):
                 "Custom features must be a list or a comma-separated string."
             )
 
-
 class QuotationItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
@@ -228,7 +229,7 @@ class QuotationItemSerializer(serializers.ModelSerializer):
 
 class QuotationSerializer(serializers.ModelSerializer):
     items = QuotationItemSerializer(many=True)
-    client_name = serializers.CharField(source="customer.name", read_only=True)
+    client_name = serializers.CharField(source="client.name", read_only=True)
     assigned_to_user = serializers.CharField(
         source="assigned_to.username", read_only=True
     )
@@ -244,8 +245,8 @@ class QuotationSerializer(serializers.ModelSerializer):
             "version",
             "status",
             "valid_until",
-            "customer",
-            "customer_reference",
+            "client",
+            "client_reference",
             "client_name",
             "created_by_username",
             "assigned_to",
@@ -279,4 +280,37 @@ class QuotationSerializer(serializers.ModelSerializer):
                 QuotationItem.objects.create(quotation=instance, **item_data)
 
         instance.update_totals()
+        return instance
+
+
+class PaymentTermSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentTerm
+        fields = ["id", "date", "amount"]
+
+
+class AgreementSerializer(serializers.ModelSerializer):
+    payment_terms = PaymentTermSerializer(many=True)
+
+    class Meta:
+        model = Agreement
+        fields = "__all__"
+        read_only_fields = ["created_by", "created_at", "updated_at"]
+
+    def create(self, validated_data):
+        payment_terms_data = validated_data.pop("payment_terms")
+        agreement = Agreement.objects.create(**validated_data)
+        for payment_term_data in payment_terms_data:
+            PaymentTerm.objects.create(agreement=agreement, **payment_term_data)
+        return agreement
+
+    def update(self, instance, validated_data):
+        payment_terms_data = validated_data.pop("payment_terms", None)
+        instance = super().update(instance, validated_data)
+
+        if payment_terms_data is not None:
+            instance.payment_terms.all().delete()
+            for payment_term_data in payment_terms_data:
+                PaymentTerm.objects.create(agreement=instance, **payment_term_data)
+
         return instance

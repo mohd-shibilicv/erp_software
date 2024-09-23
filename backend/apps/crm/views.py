@@ -1,8 +1,27 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Client, ClientRequest, ClientRelationship,ClientRequirement, Feature, Quotation, QuotationItem
-from .serializers import ClientSerializer, ClientRequestSerializer, ClientRelationshipSerializer, ClientRequirementSerializer, FeatureSerializer, QuotationItemSerializer,QuotationSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
+from .models import (
+    Client,
+    ClientRequest,
+    ClientRelationship,
+    ClientRequirement,
+    Feature,
+    Quotation,
+    QuotationItem,
+    Agreement,
+)
+from .serializers import (
+    ClientSerializer,
+    ClientRequestSerializer,
+    ClientRelationshipSerializer,
+    ClientRequirementSerializer,
+    FeatureSerializer,
+    QuotationItemSerializer,
+    QuotationSerializer,
+    AgreementSerializer,
+)
 from django.contrib.auth import get_user_model
 from .utils import create_google_calendar_event, send_calendar_invite_email
 
@@ -74,14 +93,16 @@ class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
 
+
 class FeatureViewSet(viewsets.ModelViewSet):
     queryset = Feature.objects.all()
     serializer_class = FeatureSerializer
 
 
 class ClientRequirementViewSet(viewsets.ModelViewSet):
-    queryset = ClientRequirement.objects.select_related('client').all()
+    queryset = ClientRequirement.objects.select_related("client").all()
     serializer_class = ClientRequirementSerializer
+
 
 class QuotationViewSet(viewsets.ModelViewSet):
     queryset = Quotation.objects.all()
@@ -93,7 +114,28 @@ class QuotationViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(last_updated_by=self.request.user)
 
+
 class QuotationItemViewSet(viewsets.ModelViewSet):
     queryset = QuotationItem.objects.all()
     serializer_class = QuotationItemSerializer
 
+
+class AgreementViewSet(viewsets.ModelViewSet):
+    queryset = Agreement.objects.all()
+    serializer_class = AgreementSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save()

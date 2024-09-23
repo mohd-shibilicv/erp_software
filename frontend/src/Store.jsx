@@ -159,6 +159,7 @@ function Store() {
         } />
 
         <Route path="/client-request" element={<DemoRequestTable />} />
+
         <Route path="/client-relationship" element={<ClientRelationshipList />} />
         <Route path="/client-relationship/new" element={<ClientRelationshipDetails />} />
         <Route path="/client-relationship/:id" element={<ClientRelationshipDetails />} />
