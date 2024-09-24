@@ -73,7 +73,7 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
         ...formData,
         items: quotationItems.map(item => ({
           product: item.product.id,
-          description: item.description,
+          description: item.description || "",
           quantity: item.quantity,
           unit_price: item.unitPrice,
           discount_percentage: item.discount,
@@ -104,9 +104,14 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
             ...response.data,
           }));
           setQuotationItems(response.data.items.map((item, index) => ({
-            ...item,
             id: index + 1,
             product: products.find(p => p.id === item.product),
+            sku: item.product_sku, 
+            quantity: parseFloat(item.quantity),
+            discount: parseFloat(item.discount_percentage),
+            unitPrice: parseFloat(item.unit_price),
+            taxRate: parseFloat(item.tax_percentage),
+            total: parseFloat(item.subtotal),
           })));
         } catch (error) {
           console.error('Error fetching quotation:', error);
@@ -161,14 +166,14 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Customer</label>
+                <label className="block text-sm font-medium text-gray-700">Client</label>
                 <select
-                  name="customer"
-                  value={formData.customer}
+                  name="client"
+                  value={formData.client}
                   onChange={handleChange}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                 >
-                  <option value="">Select a customer</option>
+                  <option value="">Select a Client</option>
                   {clients.map(client => (
                     <option key={client.id} value={client.id}>
                       {client.name} - {client.city}, {client.country}
@@ -187,7 +192,7 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                   <option value="DRAFT">Draft</option>
                   <option value="PENDING_APPROVAL">Pending Approval</option>
                   <option value="APPROVED">Approved</option>
-                  <option value="SENT">Sent to Customer</option>
+                  <option value="SENT">Sent to client</option>
                   <option value="ACCEPTED">Accepted</option>
                   <option value="REJECTED">Rejected</option>
                   <option value="EXPIRED">Expired</option>
@@ -214,11 +219,11 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Customer Reference</label>
+                <label className="block text-sm font-medium text-gray-700">Client Reference</label>
                 <input
                   type="text"
-                  name="customer_reference"
-                  value={formData.customer_reference}
+                  name="client_reference"
+                  value={formData.client_reference}
                   onChange={handleChange}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                 />
@@ -244,6 +249,7 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
               onTotalsUpdate={handleTotalsUpdate}
               items={quotationItems}
               setItems={setQuotationItems}
+              isEditMode={isEditMode}
             />
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
