@@ -213,6 +213,8 @@ class ClientRequirementSerializer(serializers.ModelSerializer):
             )
 
 class QuotationItemSerializer(serializers.ModelSerializer):
+    product_sku = serializers.CharField(source='product.sku', read_only=True)
+
     class Meta:
         model = QuotationItem
         fields = [
@@ -220,6 +222,7 @@ class QuotationItemSerializer(serializers.ModelSerializer):
             "product",
             "description",
             "quantity",
+            "product_sku",
             "unit_price",
             "discount_percentage",
             "tax_percentage",

@@ -5,7 +5,7 @@ import { Trash2, Save, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { clientQuotation } from '@/services/crmServiceApi';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from "@/components/ui/table";
 const QuotationDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -82,16 +82,13 @@ const QuotationDetails = () => {
               <span className="font-semibold">Assigned To:</span> <span>{quotation.assigned_to_user || 'N/A'}</span>
             </div>
             <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
-              <span className="font-semibold">Subtotal:</span> <span>{formatCurrency(quotation.subtotal)}</span>
-              <span className="font-semibold">Discount Amount:</span> <span>{formatCurrency(quotation.discount_amount)}</span>
-              <span className="font-semibold">Total Amount:</span> <span>{formatCurrency(quotation.total_amount)}</span>
               <span className="font-semibold">Requires Approval:</span> <span>{quotation.requires_approval ? 'Yes' : 'No'}</span>
+              <span className="font-semibold">Approved By:</span> <span>{quotation.approved_by?.username}</span>
+              <span className="font-semibold">Approved At:</span> <span>{quotation.approved_at ? new Date(quotation.approved_at).toLocaleString() : 'N/A'}</span>
             </div>
           </div>
           <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
             <span className="font-semibold">Created By:</span> <span>{quotation.created_by_username}</span>
-            <span className="font-semibold">Approved By:</span> <span>{quotation.approved_by?.username}</span>
-            <span className="font-semibold">Approved At:</span> <span>{quotation.approved_at ? new Date(quotation.approved_at).toLocaleString() : 'N/A'}</span>
           </div>
           <div className="space-y-4">
             <div className="bg-gray-50 p-4 rounded-lg">
@@ -103,6 +100,50 @@ const QuotationDetails = () => {
               <p>{quotation.terms_and_conditions}</p>
             </div>
           </div>
+          
+          {/* Items Table with Integrated Totals */}
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold mb-4">Items</h3>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Product SKU</TableHead>
+                  <TableHead>Quantity</TableHead>
+                  <TableHead>Unit Price</TableHead>
+                  <TableHead>Discount %</TableHead>
+                  <TableHead>Tax %</TableHead>
+                  <TableHead className="text-right">Subtotal</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {quotation.items.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>{item.product_sku}</TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell>{formatCurrency(item.unit_price)}</TableCell>
+                    <TableCell>{item.discount_percentage}%</TableCell>
+                    <TableCell>{item.tax_percentage}%</TableCell>
+                    <TableCell className="text-right">{formatCurrency(item.subtotal)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={5} className="text-right font-semibold">Subtotal:</TableCell>
+                  <TableCell className="text-right">{formatCurrency(quotation.subtotal)}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={5} className="text-right font-semibold">Discount Amount:</TableCell>
+                  <TableCell className="text-right">{formatCurrency(quotation.discount_amount)}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={5} className="text-right font-bold">Total Amount:</TableCell>
+                  <TableCell className="text-right font-bold">{formatCurrency(quotation.total_amount)}</TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </div>
+
           {showDeleteDialog && (
             <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
               <DialogContent>

@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 
-const QuotationProduct = ({ onTotalsUpdate, items, setItems }) => {
+const QuotationProduct = ({ onTotalsUpdate, items, setItems, isEditMode }) => {
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
@@ -64,8 +64,13 @@ const QuotationProduct = ({ onTotalsUpdate, items, setItems }) => {
             if (item.id === id) {
                 let updatedItem = { ...item, [field]: value };
                 if (field === 'product') {
-                    updatedItem.unitPrice = value ? value.price : 0;
-                    updatedItem.sku = value ? value.sku : '';
+                    const selectedProduct = products.find(p => p.id === value);
+                    updatedItem = {
+                        ...updatedItem,
+                        product: selectedProduct,
+                        sku: selectedProduct?.sku || '',
+                        unitPrice: selectedProduct?.price || 0,
+                    };
                 }
                 const subtotal = updatedItem.quantity * updatedItem.unitPrice;
                 const discountAmount = subtotal * (updatedItem.discount / 100);
@@ -78,6 +83,7 @@ const QuotationProduct = ({ onTotalsUpdate, items, setItems }) => {
         });
         setItems(updatedItems);
     };
+
     return (
         <div>
             <Table>
@@ -101,25 +107,18 @@ const QuotationProduct = ({ onTotalsUpdate, items, setItems }) => {
                                 <Input value={item.id} readOnly className="w-12" />
                             </TableCell>
                             <TableCell>
-                                <Input value={item.sku} readOnly className="w-24" />
+                                <Input value={item.sku || item.product?.sku || ''} readOnly className="w-24" />                            
                             </TableCell>
                             <TableCell>
                                 <Select
                                     value={item.product?.id?.toString() || ''}
-                                    onValueChange={(value) =>
-                                        updateItem(
-                                            item.id,
-                                            "product",
-                                            products.find((p) => p.id.toString() === value)
-                                        )}>
+                                    onValueChange={(value) => updateItem(item.id, "product", parseInt(value))}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select Product" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {products.map((product) => (
-                                            <SelectItem
-                                                key={product.id}
-                                                value={product.id.toString()}>
+                                            <SelectItem key={product.id} value={product.id.toString()}>
                                                 {product.name}
                                             </SelectItem>
                                         ))}
@@ -130,50 +129,33 @@ const QuotationProduct = ({ onTotalsUpdate, items, setItems }) => {
                                 <Input
                                     type="number"
                                     value={item.quantity}
-                                    onChange={(e) =>
-                                        updateItem(
-                                            item.id,
-                                            "quantity",
-                                            parseInt(e.target.value) || 0
-                                        )}
-                                    className="w-20" />
+                                    onChange={(e) => updateItem(item.id, "quantity", parseInt(e.target.value) || 0)}
+                                    className="w-20"
+                                />
                             </TableCell>
                             <TableCell>
                                 <Input
                                     type="number"
                                     value={item.discount}
-                                    onChange={(e) =>
-                                        updateItem(
-                                            item.id,
-                                            "discount",
-                                            parseFloat(e.target.value) || 0
-                                        )}
-                                    className="w-20" />
+                                    onChange={(e) => updateItem(item.id, "discount", parseFloat(e.target.value) || 0)}
+                                    className="w-20"
+                                />
                             </TableCell>
                             <TableCell>
                                 <Input
                                     type="number"
                                     value={item.unitPrice}
-                                    onChange={(e) =>
-                                        updateItem(
-                                            item.id,
-                                            "unitPrice",
-                                            parseFloat(e.target.value) || 0
-                                        )
-                                    }
-                                    className="w-24" />
+                                    onChange={(e) => updateItem(item.id, "unitPrice", parseFloat(e.target.value) || 0)}
+                                    className="w-24"
+                                />
                             </TableCell>
                             <TableCell>
                                 <Input
                                     type="number"
                                     value={item.taxRate}
-                                    onChange={(e) =>
-                                        updateItem(
-                                            item.id,
-                                            "taxRate",
-                                            parseFloat(e.target.value) || 0
-                                        )}
-                                    className="w-20" />
+                                    onChange={(e) => updateItem(item.id, "taxRate", parseFloat(e.target.value) || 0)}
+                                    className="w-20"
+                                />
                             </TableCell>
                             <TableCell>
                                 <Input
