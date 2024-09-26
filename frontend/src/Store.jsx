@@ -21,7 +21,7 @@ import AddPaymentTransaction from "./components/sales/AddPaymentTransaction";
 import AddReceipt from "./components/sales/AddReceipt";
 import ClientRelationshipPage from "./pages/storePages/ClientRelationshipPage";
 import ClientRequirementsPage from "./pages/storePages/ClientRequirementsPage";
-import Agreement from "./components/sales/Agreement";
+import AgreementAddEdit from "./pages/storePages/agreement/AgreementAddEdit";
 import Invoice from "./components/sales/Invoice";
 import DeliveryNote from "./components/sales/DeliveryNote";
 import JobOrder from "./components/sales/JobOrder";
@@ -39,6 +39,8 @@ import ClientRequirementsAddEdit from "./pages/storePages/clientRequirements/Cli
 import AddEditQuotation from "./pages/storePages/quotation/AddEditQuotation";
 import QuotationList from "./pages/storePages/quotation/QuotationList";
 import QuotationDetails from "./pages/storePages/quotation/QuotationDetails";
+import ClientAgreementList from "./pages/storePages/agreement/ClientAgreementList";
+import ClientAgreementDetails from "./pages/storePages/agreement/ClientAgreementDetails";
 
 function Store() {
   return (
@@ -175,7 +177,14 @@ function Store() {
         <Route path="/quotation/new/:id" element={<AddEditQuotation isEditMode={true} />} />
 
 
-        <Route path="/agreement" element={<Agreement />} />
+        <Route path="/agreement" element={<ClientAgreementList />} />
+        <Route path="/agreement/new" element={<AgreementAddEdit />} />
+        <Route path="/agreement/new/:id" element={<AgreementAddEdit />} />
+        <Route path="/agreement/:id" element={<ClientAgreementDetails />} />
+
+
+
+
 
         <Route path="*" element={<NotFound404 />} />
       </Routes>

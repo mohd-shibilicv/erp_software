@@ -12,6 +12,11 @@ from .models import (
     Agreement,
 )
 from apps.users.models import User
+from django.db import transaction
+import logging
+import json
+
+logger = logging.getLogger(__name__)
 
 
 class ClientRequestSerializer(serializers.ModelSerializer):
@@ -286,34 +291,93 @@ class QuotationSerializer(serializers.ModelSerializer):
         return instance
 
 
+from django.core.exceptions import ValidationError
+
 class PaymentTermSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentTerm
         fields = ["id", "date", "amount"]
 
-
 class AgreementSerializer(serializers.ModelSerializer):
-    payment_terms = PaymentTermSerializer(many=True)
+    quotation = serializers.PrimaryKeyRelatedField(queryset=Quotation.objects.all(), required=False, allow_null=True)
+    payment_terms = serializers.JSONField(required=False)
+    clientName = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all(), source='client')
+    quotation_number = serializers.SerializerMethodField()
+    quotation_id = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
         model = Agreement
         fields = "__all__"
         read_only_fields = ["created_by", "created_at", "updated_at"]
 
+    def get_quotation_number(self, obj):
+        return obj.quotation.quotation_number if obj.quotation else None
+
+    @transaction.atomic
     def create(self, validated_data):
-        payment_terms_data = validated_data.pop("payment_terms")
+        logger.info(f"Validated data: {validated_data}")
+        payment_terms_data = validated_data.pop("payment_terms", [])
+        quotation_id = validated_data.pop("quotation_id", None)
+        logger.info(f"Quotation ID: {quotation_id}")
+       
+        if quotation_id:
+            try:
+                quotation = Quotation.objects.get(id=quotation_id)
+                validated_data["quotation"] = quotation
+                logger.info(f"Found quotation: {quotation}")
+            except Quotation.DoesNotExist:
+                logger.error(f"Quotation with id {quotation_id} does not exist")
+                raise serializers.ValidationError("Invalid quotation_id")
+
         agreement = Agreement.objects.create(**validated_data)
+        logger.info(f"Created agreement: {agreement}")
+
+        # Parse payment_terms_data if it's a string
+        if isinstance(payment_terms_data, str):
+            try:
+                payment_terms_data = json.loads(payment_terms_data)
+            except json.JSONDecodeError:
+                raise serializers.ValidationError("Invalid payment_terms data")
+
+        # Ensure payment_terms_data is a list
+        if not isinstance(payment_terms_data, list):
+            raise serializers.ValidationError("payment_terms must be a list")
+
         for payment_term_data in payment_terms_data:
-            PaymentTerm.objects.create(agreement=agreement, **payment_term_data)
+            try:
+                PaymentTerm.objects.create(agreement=agreement, **payment_term_data)
+            except ValidationError as e:
+                logger.error(f"Error creating payment term: {e}")
+                raise serializers.ValidationError(f"Invalid payment term data: {e}")
+
         return agreement
 
-    def update(self, instance, validated_data):
-        payment_terms_data = validated_data.pop("payment_terms", None)
-        instance = super().update(instance, validated_data)
 
-        if payment_terms_data is not None:
-            instance.payment_terms.all().delete()
-            for payment_term_data in payment_terms_data:
-                PaymentTerm.objects.create(agreement=instance, **payment_term_data)
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['clientName'] = instance.client.name if instance.client else None
+        representation['quotation_number'] = self.get_quotation_number(instance)
+        representation['quotation_id'] = instance.quotation.id if instance.quotation else None
+        representation['payment_terms'] = PaymentTermSerializer(instance.payment_terms.all(), many=True).data
+        return representation
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        payment_terms_data = validated_data.pop("payment_terms", [])
+        instance = super().update(instance, validated_data)
+        quotation_id = validated_data.pop("quotation_id", None)
+
+        for field in ['tc_file', 'signed_agreement']:
+            if field not in self.initial_data:
+                validated_data.pop(field, None)
+            elif self.initial_data[field] in [None, '', 'null']:
+                validated_data.pop(field, None)
+        logger.info(f"Updating agreement: {instance}")
+        if quotation_id:
+          validated_data["quotation"] = Quotation.objects.get(id=quotation_id)
+        instance.payment_terms.all().delete()
+        for payment_term_data in payment_terms_data:
+            payment_term = PaymentTerm.objects.create(agreement=instance, **payment_term_data)
+            logger.info(f"Created payment term: {payment_term}")
 
         return instance
