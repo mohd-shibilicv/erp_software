@@ -24,7 +24,10 @@ from .serializers import (
 )
 from django.contrib.auth import get_user_model
 from .utils import create_google_calendar_event, send_calendar_invite_email
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+import logging
 
+logger = logging.getLogger(__name__)
 
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
@@ -119,23 +122,56 @@ class QuotationItemViewSet(viewsets.ModelViewSet):
     queryset = QuotationItem.objects.all()
     serializer_class = QuotationItemSerializer
 
+from django.core.files.base import ContentFile
+import json
+from django.http import QueryDict
 
 class AgreementViewSet(viewsets.ModelViewSet):
     queryset = Agreement.objects.all()
     serializer_class = AgreementSerializer
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        logger.info(f"Received data for create: {request.data}")
+        
+        # If request.data is a QueryDict, convert it to a mutable dictionary
+        if isinstance(request.data, QueryDict):
+            data = request.data.dict()
+        else:
+            data = request.data.copy()
+
+        # Handle payment_terms if it's a string
+        if 'payment_terms' in data and isinstance(data['payment_terms'], str):
+            try:
+                data['payment_terms'] = json.loads(data['payment_terms'])
+            except json.JSONDecodeError:
+                return Response({"error": "Invalid payment_terms data"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        logger.info(f"Received data for update: {request.data}")
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        mutable_data = request.data.copy()
+
+        # Handle file fields
+        for field in ['tc_file', 'signed_agreement']:
+            if field in mutable_data:
+                file_data = mutable_data.get(field)
+                if not isinstance(file_data, ContentFile):
+                    mutable_data.pop(field)
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
     def perform_update(self, serializer):
         serializer.save()

@@ -34,3 +34,11 @@ export const clientQuotation = {
 };
 
 
+
+export const clientAgreement = {
+  getAll: () => api.get("/agreements/"),
+  get: (id) => api.get(`/agreements/${id}/`),
+  create: (data) => api.post("/agreements/", data),
+  update: (id, data) => api.patch(`/agreements/${id}/`, data),
+  delete: (id) => api.delete(`/agreements/${id}/`),
+};
