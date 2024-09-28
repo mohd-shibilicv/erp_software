@@ -9,7 +9,8 @@ from .models import (
     Quotation,
     QuotationItem,
     Agreement,
-    PaymentTerm
+    PaymentTerm,
+    Project,
 )
 
 admin.site.register(Client)
@@ -26,3 +27,4 @@ admin.site.register(Quotation)
 admin.site.register(QuotationItem)
 admin.site.register(Agreement)
 admin.site.register(PaymentTerm)
+admin.site.register(Project)

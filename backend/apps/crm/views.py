@@ -11,6 +11,7 @@ from .models import (
     Quotation,
     QuotationItem,
     Agreement,
+    Project
 )
 from .serializers import (
     ClientSerializer,
@@ -21,6 +22,7 @@ from .serializers import (
     QuotationItemSerializer,
     QuotationSerializer,
     AgreementSerializer,
+    ProjectSerializer
 )
 from django.contrib.auth import get_user_model
 from .utils import create_google_calendar_event, send_calendar_invite_email
@@ -175,3 +177,8 @@ class AgreementViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save()
+
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer

@@ -10,6 +10,7 @@ from .models import (
     QuotationItem,
     PaymentTerm,
     Agreement,
+    Project
 )
 from apps.users.models import User
 from django.db import transaction
@@ -381,3 +382,17 @@ class AgreementSerializer(serializers.ModelSerializer):
             logger.info(f"Created payment term: {payment_term}")
 
         return instance
+    
+
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    client = ClientSerializer()  
+    quotations = QuotationSerializer(many=True, source='client.quotations_created', read_only=True)  
+    requirements = ClientRequirementSerializer(many=True)  
+    agreement = AgreementSerializer(many=True)
+    class Meta:
+        model = Project
+        fields = ['project_name', 'project_id', 'client', 'requirements', 'project_description', 'priority_level', 'quotations']
+
+

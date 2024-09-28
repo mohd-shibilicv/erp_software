@@ -269,8 +269,49 @@ class Agreement(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.cr_number
+
 
 class PaymentTerm(models.Model):
     agreement = models.ForeignKey(Agreement, related_name='payment_terms', on_delete=models.CASCADE)
     date = models.DateField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+
+class Project(models.Model):
+    PRIORITY_CHOICES = [
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+    ]
+
+    STATUS_CHOICES = [
+        ('not_started', 'Not Started'),
+        ('in_progress', 'In Progress'),
+        ('on_hold', 'On Hold'),
+        ('completed', 'Completed'),
+    ]
+
+    project_name = models.CharField(max_length=255)
+    project_id = models.CharField(max_length=100, unique=True)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    requirements = models.ForeignKey(ClientRequirement, on_delete=models.CASCADE, related_name='projects')
+    agreement = models.ForeignKey(Agreement, on_delete=models.CASCADE, related_name='project_agreement')
+    project_description = models.TextField(blank=True, null=True)
+    priority_level = models.CharField(max_length=6, choices=PRIORITY_CHOICES)
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default='not_started')  # Status field
+    active = models.BooleanField(default=False)  
+
+    def save(self, *args, **kwargs):
+        if self.status == 'completed':
+            self.active = True
+        else:
+            self.active = False
+        super(Project, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.project_name
+
+

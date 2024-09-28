@@ -46,6 +46,7 @@ from apps.crm.views import (
     QuotationItemViewSet,
     QuotationViewSet,
     AgreementViewSet,
+    ProjectViewSet
 )
 
 
@@ -83,6 +84,9 @@ router.register(r"features", FeatureViewSet, basename="features")
 router.register(r"quotations", QuotationViewSet, basename="quotations")
 router.register(r"quotation-items", QuotationItemViewSet, basename="quotation_items")
 router.register(r"agreements", AgreementViewSet, basename="agreements")
+
+router.register(r'projects', ProjectViewSet, basename='project')
+
 
 
 
