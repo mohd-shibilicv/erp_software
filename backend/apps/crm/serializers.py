@@ -387,12 +387,13 @@ class AgreementSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    client = ClientSerializer()  
+    client = ClientSerializer()
+    client_id = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all()) 
     quotations = QuotationSerializer(many=True, source='client.quotations_created', read_only=True)  
     requirements = ClientRequirementSerializer(many=True)  
     agreement = AgreementSerializer(many=True)
     class Meta:
         model = Project
-        fields = ['project_name', 'project_id', 'client', 'requirements', 'project_description', 'priority_level', 'quotations']
+        fields = ['project_name', 'project_id', 'client','client_id', 'requirements', 'project_description', 'priority_level', 'quotations']
 
 
