@@ -100,21 +100,21 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # if DEBUG:
-#     DATABASES = {
+# DATABASES = {
 #         "default": {
 #             "ENGINE": "django.db.backends.sqlite3",
 #             "NAME": BASE_DIR / "db.sqlite3",
 #         }
-#     }
+# }
 # else:
 DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": "erp",
             "USER": "postgres",
-            "PASSWORD": "1111",
+            "PASSWORD": "koolath9446100107",
             "HOST": "localhost",
-            "PORT": "",
+            "PORT": "5434",
         }
     }
 

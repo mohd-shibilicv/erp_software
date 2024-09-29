@@ -34,6 +34,7 @@ import {
   User,
   UserCog,
   CalendarArrowDown,
+  LayoutList,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 
@@ -41,7 +42,6 @@ const StoreSidebar = () => {
   const location = useLocation();
   const [expandedSections, setExpandedSections] = useState({});
   const { user } = useSelector((state) => state.auth);
-
 
   const isActive = (path) => {
     return location.pathname === path
@@ -124,7 +124,11 @@ const StoreSidebar = () => {
           icon: Replace,
           label: "Material Transfer",
         },
-        { path: "/admin/invoice-generator", icon: FileText, label: "Invoice Generator" },
+        {
+          path: "/admin/invoice-generator",
+          icon: FileText,
+          label: "Invoice Generator",
+        },
       ],
     },
     {
@@ -142,7 +146,11 @@ const StoreSidebar = () => {
         },
         { path: "/admin/invoice", icon: StickyNote, label: "Invoice" },
         { path: "/admin/job-order", icon: SendToBack, label: "Job Order" },
-        { path: "/admin/delivery-note", icon: NotebookPen, label: "Delivery Note" },
+        {
+          path: "/admin/delivery-note",
+          icon: NotebookPen,
+          label: "Delivery Note",
+        },
       ],
     },
     {
@@ -167,11 +175,34 @@ const StoreSidebar = () => {
         { path: "/admin/agreement", icon: Signature, label: "Agreement" },
       ],
     },
+    {
+      section: "Job Order",
+      items: [
+        {
+          path: "/admin/projects",
+          icon: LayoutList,
+          label: "Projects",
+        },
+        // {
+        //   path: "/admin/client-relationship",
+        //   icon: Contact,
+        //   label: "Client Relationship",
+        // },
+        // {
+        //   path: "/admin/client-requirements",
+        //   icon: Headset,
+        //   label: "Client Requirements",
+        // },
+        // { path: "/admin/quotation", icon: Handshake, label: "Quotation" },
+        // { path: "/admin/agreement", icon: Signature, label: "Agreement" },
+      ],
+    },
   ];
 
-  const filteredMenuItems = user?.role === "staff" 
-    ? menuItems.filter(item => item.section === "CRM")
-    : menuItems;
+  const filteredMenuItems =
+    user?.role === "staff"
+      ? menuItems.filter((item) => item.section === "CRM")
+      : menuItems;
 
   const renderMenuItem = (item) => (
     <Link

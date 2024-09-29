@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import { setTokenExpired } from "@/features/slices/authSlice";
 import store from "@/features/store";
 import axios from "axios";
