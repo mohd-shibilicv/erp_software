@@ -178,12 +178,66 @@ class AgreementViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save()
 
+from django_filters import rest_framework as filters
+
+class ProjectFilter(filters.FilterSet):
+    assigned_staff = filters.NumberFilter(field_name='assigned_staffs', method='filter_assigned_staff')
+
+    class Meta:
+        model = Project
+        fields = ['assigned_staff']
+
+    def filter_assigned_staff(self, queryset, name, value):
+        return queryset.filter(assigned_staffs__id=value)
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    filterset_class = ProjectFilter
 
-    @action(detail=False, methods=['GET'])
-    def agreement_project_names(self, request):
-        project_names = Agreement.objects.values_list('project_name', flat=True).distinct()
-        return Response(project_names)
+    def create(self, request, *args, **kwargs):
+        print("--- Debugging POST request ---")
+        print("Request data:", request.data)
+        
+        serializer = self.get_serializer(data=request.data)
+        print("Serializer initial data:", serializer.initial_data)
+        
+        if serializer.is_valid():
+            print("Serializer is valid")
+            print("Validated data:", serializer.validated_data)
+            self.perform_create(serializer)
+            print("Project created successfully")
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        else:
+            print("Serializer errors:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        print("Performing create...")
+        instance = serializer.save()
+        print("Created instance:", instance)
+
+    def update(self, request, *args, **kwargs):
+        print("--- Debugging PUT/PATCH request ---")
+        print("Request data:", request.data)
+        
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        print("Serializer initial data:", serializer.initial_data)
+        
+        if serializer.is_valid():
+            print("Serializer is valid")
+            print("Validated data:", serializer.validated_data)
+            self.perform_update(serializer)
+            print("Project updated successfully")
+            return Response(serializer.data)
+        else:
+            print("Serializer errors:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_update(self, serializer):
+        print("Performing update...")
+        instance = serializer.save()
+        print("Updated instance:", instance)

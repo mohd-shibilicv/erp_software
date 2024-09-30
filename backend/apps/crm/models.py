@@ -302,6 +302,7 @@ class Project(models.Model):
     project_description = models.TextField(blank=True, null=True)
     priority_level = models.CharField(max_length=6, choices=PRIORITY_CHOICES)
     status = models.CharField(max_length=12, choices=STATUS_CHOICES, default='not_started')  
+    assigned_staffs = models.ManyToManyField(User, related_name='assigned_projects', blank=True)
     active = models.BooleanField(default=False)  
 
     def save(self, *args, **kwargs):

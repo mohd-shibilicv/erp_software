@@ -430,7 +430,6 @@ class ProjectSerializer(serializers.ModelSerializer):
                 validated_data['client'] = agreement.client
                 validated_data['agreement'] = agreement
                 
-                # Fetch the corresponding requirement
                 requirement = ClientRequirement.objects.filter(client=agreement.client).first()
                 if requirement:
                     validated_data['requirements'] = requirement
