@@ -1,8 +1,4 @@
-// export default function ProjectsPage() {
-//   return <main className="w-full min-h-screen">
 
-//   </main>;
-// }
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -106,7 +102,7 @@ export default function ProjectsPage() {
           </Button>
         ),
         cell: ({ row }) => {
-          const status = row.original.status;
+          const status = row?.original?.status;
           return <div>{status}</div>;
         },
       },

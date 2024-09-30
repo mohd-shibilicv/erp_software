@@ -26,12 +26,14 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function ProjectDetailPage() {
-  const [selectLoading, setSelectLoading] = useState(false);
+  const [selectLoading] = useState(false);
 
   const { id } = useParams();
   const [data, setData] = useState({});
   useEffect(() => {
-    projectApi.get(id).then(({ data }) => {});
+    projectApi.get(id).then(({ data }) => {
+      console.log(data);
+    });
   }, [id]);
   selectLoading;
   //   const fetchClientDetails = async () => {
@@ -462,7 +464,12 @@ export default function ProjectDetailPage() {
                   Tc File
                 </AccordionTrigger>
                 <AccordionContent>
-                  <embed src={"https://res.cloudinary.com/dzaoju6lr/image/upload/v1716364272/basys_Sr._Full-Stack_Engineer__React___Node__Hiring_Test_jiqotx.pdf"} className="w-full min-h-[500px]" />
+                  <embed
+                    src={
+                      "https://res.cloudinary.com/dzaoju6lr/image/upload/v1716364272/basys_Sr._Full-Stack_Engineer__React___Node__Hiring_Test_jiqotx.pdf"
+                    }
+                    className="w-full min-h-[500px]"
+                  />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -472,7 +479,12 @@ export default function ProjectDetailPage() {
                   Signed Agreement
                 </AccordionTrigger>
                 <AccordionContent className="">
-                  <embed src={"https://res.cloudinary.com/dzaoju6lr/image/upload/v1716364272/basys_Sr._Full-Stack_Engineer__React___Node__Hiring_Test_jiqotx.pdf"} className="w-full border min-h-[500px]" />
+                  <embed
+                    src={
+                      "https://res.cloudinary.com/dzaoju6lr/image/upload/v1716364272/basys_Sr._Full-Stack_Engineer__React___Node__Hiring_Test_jiqotx.pdf"
+                    }
+                    className="w-full border min-h-[500px]"
+                  />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -490,7 +502,8 @@ export default function ProjectDetailPage() {
           }}
         >
           {" "}
-          <ChevronLeft className="w-5 mt-[0px]" /> <span className="text-sm">Previous</span>
+          <ChevronLeft className="w-5 mt-[0px]" />{" "}
+          <span className="text-sm">Previous</span>
         </Button>
         <Button
           className={`items-center h-8 p-2 gap-1 ${
@@ -504,8 +517,10 @@ export default function ProjectDetailPage() {
           onClick={() => {
             setTab(detailTabs[detailTabs.indexOf(tabs) + 1]);
           }}
-        > <span className="text-sm">Next</span>
-           <ChevronRight className="w-4 mt-[0px]" /> 
+        >
+          {" "}
+          <span className="text-sm">Next</span>
+          <ChevronRight className="w-4 mt-[0px]" />
         </Button>
       </div>
     </main>
