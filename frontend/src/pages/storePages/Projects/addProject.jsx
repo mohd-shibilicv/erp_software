@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { clientAgreement } from "@/services/crmServiceApi";
 import { projectApi } from "@/services/project";
-import { Loader2, Loader2Icon, Save } from "lucide-react";
+import { Loader2, Loader2Icon, Save, X } from "lucide-react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
@@ -28,30 +28,38 @@ export default function AddnewProject() {
   const [selectedClient, setSelectedClient] = useState("");
 
   useEffect(() => {
-    setProjectid(uuid().slice(0, 8));
+    setProjectid(uuid().replace(/\D/g, '').slice(0, 8));
   }, []);
   const [selectLoading, setSelectLoading] = useState(false);
   const [clients, setClient] = useState([]);
-  selectLoading;
+  const [agreements, setAgreements] = useState([]);
+  const [staffs, setStaffs] = useState([]);
+  const [selectedStaffs, setSelectedStaffs] = useState([]);
+  const [selectedAgreement, setSelectedAgreement] = useState("");
+  const [requirements, setRequirements] = useState([]);
+  const [selectedRequirement, setSelectedRequirement] = useState("");
   const fetchClientDetails = async () => {
     try {
       setSelectLoading(true);
-      const { data } = await api.get('/clients/');
+      const { data } = await api.get("/clients/");
       const response = await clientAgreement.getAll();
       const req = await clientRequirementService.getAll();
-      const staff = await api.get("/staff/")
-      console.log(staff.data,"This is staff")
-      console.log(req.data.results,"requirement")
-      console.log(response.data.results,"Agreement")
-      console.log(data.results,"Client")
-
+      const staff = await api.get("/staff/");
+      console.log(staff.data, "This is staff");
+      setStaffs(staff.data);
+      console.log(req.data.results, "requirement");
+      setRequirements(req.data.results);
+      console.log(response.data.results, "Agreement");
+      console.log(data.results, "Client");
+      setAgreements(response.data.results);
       setClient(data.results);
-      console.log(data.results,"jahlfdjk")
+      console.log(data.results, "jahlfdjk");
       setSelectLoading(false);
     } catch {
       setSelectLoading(false);
     }
   };
+  useEffect(() => {}, [clients]);
   useEffect(() => {
     fetchClientDetails();
   }, []);
@@ -63,17 +71,31 @@ export default function AddnewProject() {
           description: "Please Select client",
           variant: "destructive",
         });
-        return
+        return;
       }
       setisLoading(true);
-      const formData = new FormData();
-      formData.append("project_id", projectId);
-      formData.append("project_name", projectName);
-      formData.append("status", projectStatus);
-      formData.append("project_description", projectDescription);
-      formData.append("priority_level", projectPriority);
-      formData.append("client_id", selectedClient);
-      await projectApi.create(formData);
+      // const formData = new FormData();
+      // formData.append("project_id", projectId);
+      // formData.append("project_name", projectName);
+      // formData.append("status", projectStatus);
+      // formData.append("project_description", projectDescription);
+      // formData.append("priority_level", projectPriority);
+      // formData.append("client_id", selectedClient);
+      // formData.append("Requirements", selectedRequirement);
+      // formData.append("Agreement", selectedAgreement);
+      // formData.append("staffs", selectedStaffs);
+
+      await projectApi.create({
+        project_id: Number(projectId),
+        project_name: projectName,
+        status: projectStatus,
+        project_description: projectDescription,
+        priority_level: projectPriority,
+        client_id: selectedClient,
+        requirements: Number(selectedRequirement),
+        agreement_project_name: agreements.find(ag=>ag.id==selectedAgreement)?.project_name||selectedAgreement,
+        staffs: selectedStaffs,
+      });
       setisLoading(false);
       return toast({ description: "Project created" });
     } catch (error) {
@@ -92,13 +114,24 @@ export default function AddnewProject() {
       <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
         <div className="flex flex-col gap-1">
           <label htmlFor="" className="text-sm font-semibold">
-            Project name
+            Select Project name
           </label>
-          <Input
-            value={projectName}
-            onChange={(e) => setProjectname(e.target.value)}
-            placeholder="Enter Project name"
-          />
+          <Select
+            onValueChange={(project) => {
+              setProjectname(project);
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select Project" />
+            </SelectTrigger>
+            <SelectContent>
+              {agreements?.map((ag) => (
+                <SelectItem value={ag?.project_name} key={ag?.project_name}>
+                  {ag?.project_name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="" className="text-sm font-semibold">
@@ -143,7 +176,7 @@ export default function AddnewProject() {
           />
         </div>
       </div>
-      <div className="mt-5 w-full grid grid-cols-2 gap-5">
+      <div className="mt-5 w-full grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="flex flex-col gap-1">
           <label htmlFor="" className="text-sm font-semibold">
             Select Client
@@ -180,7 +213,7 @@ export default function AddnewProject() {
             <SelectContent>
               {clients?.map((client) => (
                 <SelectItem key={client?.id} value={client?.id}>
-                  {client?.clientName}
+                  {client?.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -202,6 +235,87 @@ export default function AddnewProject() {
               <SelectItem value="low">Low</SelectItem>
               <SelectItem value="medium">Medium</SelectItem>
               <SelectItem value="high">High</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="" className="text-sm font-semibold">
+            Select agreement
+          </label>
+          <Select
+            onValueChange={(agreement) => {
+              setSelectedAgreement(agreement);
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select Agreement" />
+            </SelectTrigger>
+            <SelectContent>
+              {agreements?.map((ag, i) => (
+                <SelectItem value={ag?.id} key={ag?.baladiya + "" + i}>
+                  {ag?.baladiya}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="" className="text-sm font-semibold">
+            Select requirement
+          </label>
+          <Select
+            onValueChange={(agreement) => {
+              setSelectedRequirement(agreement);
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select requirement" />
+            </SelectTrigger>
+            <SelectContent>
+              {requirements?.map((req, i) => (
+                <SelectItem value={req?.id} key={req?.layout + "" + i}>
+                  {req?.layout}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="mt-5 p-2 border rounded-md flex flex-col gap-1">
+        <label htmlFor="" className="text-sm">
+          Assign staffs
+        </label>
+        <div className=" mt-1 border rounded-md p-2 flex flex-wrap gap-2">
+          {selectedStaffs?.map((staffId) => (
+            <div
+              key={staffId}
+              className="h-8 flex items-center text-sm px-2 gap-2 bg-gray-300 rounded-md"
+            >
+              <X
+                className="w-4 cursor-pointer"
+                onClick={() =>
+                  setSelectedStaffs(
+                    selectedStaffs.filter((id) => id !== staffId)
+                  )
+                }
+              />
+              <span>{staffs.find((staf) => staf.id == staffId)?.name}</span>
+            </div>
+          ))}
+          <Select
+            onValueChange={(staff) => {
+              setSelectedStaffs(staff);
+            }}
+          >
+            <SelectTrigger className="w-[180px] h-8">
+              <SelectValue placeholder="Select Staff and add" />
+            </SelectTrigger>
+            <SelectContent>
+              {staffs?.map((staff) => (
+                <SelectItem value={staff?.id} key={staff?.id}>
+                  {staff?.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

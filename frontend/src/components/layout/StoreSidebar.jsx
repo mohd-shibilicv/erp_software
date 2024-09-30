@@ -35,8 +35,10 @@ import {
   UserCog,
   CalendarArrowDown,
   LayoutList,
+  MenuIcon,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
+import StoreSideBarSheet from "./StoreSidebarSheet";
 
 const StoreSidebar = () => {
   const location = useLocation();
@@ -213,7 +215,7 @@ const StoreSidebar = () => {
       )}`}
     >
       <item.icon className="w-6 h-6" />
-      <span className="hidden md:inline">{item.label}</span>
+      <span className="hidden md:inline ">{item.label}</span>
     </Link>
   );
 
@@ -231,42 +233,47 @@ const StoreSidebar = () => {
         )}
       </button>
       {expandedSections[section.section] && (
-        <ul className="ml-2 space-y-1">{section.items.map(renderMenuItem)}</ul>
+        <ul className="ml-2 space-y-1 transition-all duration-300">
+          {section.items.map(renderMenuItem)}
+        </ul>
       )}
     </div>
   );
 
   return (
-    <div
-      className={
-        "bg-white p-4 h-screen border-r border-gray-300 flex flex-col transition-all duration-300 w-64"
-      }
-    >
-      <div className="flex justify-between items-center mb-8">
-        <Link to="/" className="flex justify-center">
-          <img
-            src="/nasscript_full_banner_logo.png"
-            alt="LOGO"
-            className="h-10"
-          />
-        </Link>
-      </div>
-      <nav className="flex-grow overflow-y-auto custom-scrollbar">
-        {filteredMenuItems.map(renderSection)}
-      </nav>
-      <div className="mt-2">
-        <ul>
-          <Link
-            to="/admin/notifications"
-            className={`flex items-center space-x-2 p-2 rounded ${isActive(
-              "/admin/notifications"
-            )}`}
-          >
-            <Bell className="w-6 h-6" />
-            <span className="hidden sm:inline">Notifications</span>
+    <div className="relative">
+      <StoreSideBarSheet menuItems={menuItems}/>
+      <div
+        className={
+          "bg-white p-4 h-screen border-r border-gray-300 lg:flex flex-col transition-all duration-300 w-64 hidden "
+        }
+      >
+        <div className="flex justify-between items-center mb-8">
+          <Link to="/" className="flex justify-center">
+            <img
+              src="/nasscript_full_banner_logo.png"
+              alt="LOGO"
+              className="h-10"
+            />
           </Link>
-          <LogoutBtn />
-        </ul>
+        </div>
+        <nav className="flex-grow overflow-y-auto custom-scrollbar">
+          {filteredMenuItems.map(renderSection)}
+        </nav>
+        <div className="mt-2">
+          <ul>
+            <Link
+              to="/admin/notifications"
+              className={`flex items-center space-x-2 p-2 rounded ${isActive(
+                "/admin/notifications"
+              )}`}
+            >
+              <Bell className="w-6 h-6" />
+              <span className="hidden sm:inline">Notifications</span>
+            </Link>
+            <LogoutBtn />
+          </ul>
+        </div>
       </div>
     </div>
   );

@@ -1,21 +1,22 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
-import { forwardRef, useEffect, useState } from 'react';
-import * as pdfjsLib from 'pdfjs-dist/build/pdf';
+import { forwardRef, useEffect, useState } from "react";
+import * as pdfjsLib from "pdfjs-dist/build/pdf";
+
 
 const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
-  
-  // State to hold the image representation of the PDF
   const [tcImage, setTcImage] = useState(null);
-  
+
   // Helper function to determine if a file is an image based on its extension
   const isImageFile = (fileUrl) => /\.(jpg|jpeg|png|gif)$/i.test(fileUrl);
   const isPDFFile = (fileUrl) => /\.pdf$/i.test(fileUrl);
-  
+
   // Effect to convert PDF to Image
   useEffect(() => {
     const convertPdfToImage = async (pdfUrl) => {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82/pdf.min.mjs`;
       const loadingTask = pdfjsLib.getDocument(pdfUrl);
+      
       const pdf = await loadingTask.promise;
 
       // Get the first page of the PDF
@@ -24,8 +25,8 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
       const viewport = page.getViewport({ scale });
 
       // Prepare canvas using PDF page dimensions
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
       canvas.width = viewport.width;
       canvas.height = viewport.height;
 
@@ -37,17 +38,17 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
       await page.render(renderContext).promise;
 
       // Convert canvas to image URL
+     
       setTcImage(canvas.toDataURL());
     };
-
     if (agreement.tc_file && isPDFFile(agreement.tc_file)) {
       convertPdfToImage(agreement.tc_file);
     }
   }, [agreement.tc_file]);
 
   useEffect(() => {
-    console.log('Terms & Conditions File:', agreement.tc_file);
-    console.log('Signed Agreement File:', agreement.signed_agreement);
+    console.log("Terms & Conditions File:", agreement.tc_file);
+    console.log("Signed Agreement File:", agreement.signed_agreement);
   }, [agreement]);
 
   return (
@@ -56,19 +57,37 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
       <div className="space-y-4">
         {/* Client Information */}
         <h2 className="text-xl font-semibold">Client Information</h2>
-        <p><strong>Client Name:</strong> {agreement.clientName}</p>
-        <p><strong>Company Name:</strong> {agreement.company_name}</p>
-        <p><strong>CR Number:</strong> {agreement.cr_number}</p>
-        <p><strong>Baladiya:</strong> {agreement.baladiya}</p>
-        <p><strong>Project Name:</strong> {agreement.project_name}</p>
-        
+        <p>
+          <strong>Client Name:</strong> {agreement.clientName}
+        </p>
+        <p>
+          <strong>Company Name:</strong> {agreement.company_name}
+        </p>
+        <p>
+          <strong>CR Number:</strong> {agreement.cr_number}
+        </p>
+        <p>
+          <strong>Baladiya:</strong> {agreement.baladiya}
+        </p>
+        <p>
+          <strong>Project Name:</strong> {agreement.project_name}
+        </p>
+
         {/* Agreement Details */}
         <h2 className="text-xl font-semibold mt-6">Agreement Details</h2>
-        <p><strong>Quotation Number:</strong> {agreement.quotation_number}</p>
-        <p><strong>Payment Date:</strong> {agreement.payment_date}</p>
-        <p><strong>Project Start Date:</strong> {agreement.project_start_date}</p>
-        <p><strong>Project End Date:</strong> {agreement.project_end_date}</p>
-        
+        <p>
+          <strong>Quotation Number:</strong> {agreement.quotation_number}
+        </p>
+        <p>
+          <strong>Payment Date:</strong> {agreement.payment_date}
+        </p>
+        <p>
+          <strong>Project Start Date:</strong> {agreement.project_start_date}
+        </p>
+        <p>
+          <strong>Project End Date:</strong> {agreement.project_end_date}
+        </p>
+
         {/* Payment Terms as Table */}
         <h2 className="text-xl font-semibold mt-6">Payment Terms</h2>
         {agreement.payment_terms && agreement.payment_terms.length > 0 ? (
@@ -91,43 +110,63 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
         ) : (
           <p>No payment terms available.</p>
         )}
-        
+
         {/* Total Amount below the table */}
         {agreement.total_amount && (
-          <p className="mt-4"><strong>Total Amount:</strong> {agreement.total_amount}</p>
+          <p className="mt-4">
+            <strong>Total Amount:</strong> {agreement.total_amount}
+          </p>
         )}
-        
+
         {/* Terms & Conditions and Signed Agreement */}
         <div className="mt-6">
           <h2 className="text-xl font-semibold">Additional Documents</h2>
-          
+
           {/* Displaying Terms & Conditions */}
-          <p><strong>Terms & Conditions:</strong></p>
-  {tcImage ? (
-    <img src={tcImage} alt="Terms & Conditions" className="mt-4" />
-  ) : (
-    <>
-    <embed src={agreement.tc_file} className='w-full min-h-[45px] border' type="" />
-    {/* <a href={agreement.tc_file} className="text-blue-500 underline">Download Terms & Conditions</a> */}
-    </>
-  )}
+          <p>
+            <strong>Terms & Conditions:</strong>
+          </p>
+          {tcImage ? (
+            <>
+              <img src={tcImage} alt="Terms & Conditions" className="mt-4" />
+            </>
+          ) : (
+            <>
+              <iframe
+                src={agreement.tc_file}
+                className="w-full h-[200px] border"
+                type=""
+              />
+              {/* <a href={agreement.tc_file} className="text-blue-500 underline">Download Terms & Conditions</a> */}
+            </>
+          )}
 
           {/* Displaying Signed Agreement */}
-          <p className="mt-6"><strong>Signed Agreement:</strong></p>
+          <p className="mt-6">
+            <strong>Signed Agreement:</strong>
+          </p>
           {isImageFile(agreement.signed_agreement) ? (
-            <img src={agreement.signed_agreement} alt="Signed Agreement" className="mt-4" />
+            <img
+              src={agreement.signed_agreement}
+              alt="Signed Agreement"
+              className="mt-4"
+            />
           ) : isPDFFile(agreement.signed_agreement) ? (
             <iframe
               src={agreement.signed_agreement}
               width="100%"
-              height="500px"
+              height="300px"
               title="Signed Agreement"
               className="mt-4"
             ></iframe>
           ) : (
             <>
-            <embed src={agreement.signed_agreement} className='w-full min-h-[45px] border' type="" />
-            {/* <a href={agreement.signed_agreement} className="text-blue-500 underline">Download Signed Agreement</a> */}
+              <a
+                href={agreement.signed_agreement}
+                className="text-blue-500 underline"
+              >
+                Download Signed Agreement
+              </a>
             </>
           )}
         </div>
