@@ -395,32 +395,60 @@ class ProjectSerializer(serializers.ModelSerializer):
     )
     requirements = ClientRequirementSerializer(read_only=True)
     agreement = AgreementSerializer(read_only=True)
-    quotations = QuotationSerializer(source='client.quotations_created', read_only=True)    
+    quotations = QuotationSerializer(source='client.quotations_created', read_only=True, many=True)
     agreement_project_name = serializers.ChoiceField(
-        choices=[], 
-        write_only=True, 
+        choices=[],
+        write_only=True,
+        required=False
+    )
+    assigned_staffs = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=User.objects.filter(role='staff'),
         required=False
     )
 
     class Meta:
         model = Project
         fields = [
-            'project_name', 'project_id', 'client', 'client_id',
+            'id', 'project_name', 'project_id', 'client', 'client_id',
             'requirements', 'agreement', 'project_description', 'priority_level',
-            'status', 'agreement_project_name', 'quotations'
+            'status', 'agreement_project_name', 'quotations', 'assigned_staffs',
+            'active'
         ]
         extra_kwargs = {
             'project_id': {'read_only': True},
+            'active': {'read_only': True},
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['agreement_project_name'].choices = [
-            (agreement.project_name, agreement.project_name) 
+            (agreement.project_name, agreement.project_name)
             for agreement in Agreement.objects.all()
         ]
 
     def create(self, validated_data):
+        agreement_project_name = validated_data.pop('agreement_project_name', None)
+        assigned_staffs = validated_data.pop('assigned_staffs', [])
+        
+        if agreement_project_name:
+            agreement = Agreement.objects.filter(project_name=agreement_project_name).first()
+            if agreement:
+                validated_data['project_name'] = agreement.project_name
+                validated_data['client'] = agreement.client
+                validated_data['agreement'] = agreement
+                
+                # Fetch the corresponding requirement
+                requirement = ClientRequirement.objects.filter(client=agreement.client).first()
+                if requirement:
+                    validated_data['requirements'] = requirement
+        
+        project = Project.objects.create(**validated_data)
+        project.assigned_staffs.set(assigned_staffs)
+        return project
+
+    def update(self, instance, validated_data):
+        assigned_staffs = validated_data.pop('assigned_staffs', None)
         agreement_project_name = validated_data.pop('agreement_project_name', None)
         
         if agreement_project_name:
@@ -435,5 +463,11 @@ class ProjectSerializer(serializers.ModelSerializer):
                 if requirement:
                     validated_data['requirements'] = requirement
 
-        project = Project.objects.create(**validated_data)
-        return project
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        if assigned_staffs is not None:
+            instance.assigned_staffs.set(assigned_staffs)
+        
+        return instance

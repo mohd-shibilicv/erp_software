@@ -178,12 +178,18 @@ class AgreementViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save()
 
+from django_filters import rest_framework as filters
+class ProjectFilter(filters.FilterSet):
+    assigned_staff = filters.NumberFilter(field_name='assigned_staffs', method='filter_assigned_staff')
+
+    class Meta:
+        model = Project
+        fields = ['assigned_staff']
+
+    def filter_assigned_staff(self, queryset, name, value):
+        return queryset.filter(assigned_staffs__id=value)
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-
-    @action(detail=False, methods=['GET'])
-    def agreement_project_names(self, request):
-        project_names = Agreement.objects.values_list('project_name', flat=True).distinct()
-        return Response(project_names)
+    filterset_class = ProjectFilter
