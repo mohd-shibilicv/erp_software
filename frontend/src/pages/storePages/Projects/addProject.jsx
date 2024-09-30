@@ -75,17 +75,6 @@ export default function AddnewProject() {
         return;
       }
       setisLoading(true);
-      // const formData = new FormData();
-      // formData.append("project_id", projectId);
-      // formData.append("project_name", projectName);
-      // formData.append("status", projectStatus);
-      // formData.append("project_description", projectDescription);
-      // formData.append("priority_level", projectPriority);
-      // formData.append("client_id", selectedClient);
-      // formData.append("Requirements", selectedRequirement);
-      // formData.append("Agreement", selectedAgreement);
-      // formData.append("staffs", selectedStaffs);
-
       await projectApi.create({
         project_id: Number(projectId),
         project_name: projectName,
@@ -241,7 +230,9 @@ export default function AddnewProject() {
             }}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Priority" />
+              <SelectValue
+                placeholder={projectPriority ? projectPriority : "Priority"}
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="low">Low</SelectItem>
@@ -260,7 +251,14 @@ export default function AddnewProject() {
             }}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Agreement" />
+              <SelectValue
+                placeholder={
+                  selectedAgreement
+                    ? agreements.find((ag) => ag.id == selectedAgreement)
+                        .baladiya
+                    : "Select Agreement"
+                }
+              />
             </SelectTrigger>
             <SelectContent>
               {agreements?.map((ag, i) => (
@@ -276,12 +274,19 @@ export default function AddnewProject() {
             Select requirement
           </label>
           <Select
-            onValueChange={(agreement) => {
-              setSelectedRequirement(agreement);
+            onValueChange={(requirement) => {
+              setSelectedRequirement(requirement);
             }}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select requirement" />
+              <SelectValue
+                placeholder={
+                  selectedRequirement
+                    ? requirements.find((re) => re.id == selectedRequirement)
+                        .file_number
+                    : "Select requirement"
+                }
+              />
             </SelectTrigger>
             <SelectContent>
               {requirements?.map((req, i) => (
