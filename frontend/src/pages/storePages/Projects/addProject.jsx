@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { clientAgreement } from "@/services/crmServiceApi";
 import { projectApi } from "@/services/project";
-import { Loader2, Loader2Icon, Save, X } from "lucide-react";
+import { Loader2, Loader2Icon, Save } from "lucide-react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
@@ -125,7 +125,9 @@ export default function AddnewProject() {
             }}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Project" />
+              <SelectValue
+                placeholder={projectName ? projectName : "Select Project"}
+              />
             </SelectTrigger>
             <SelectContent>
               {agreements?.map((ag) => (
@@ -156,7 +158,9 @@ export default function AddnewProject() {
             }}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Project status" />
+              <SelectValue
+                placeholder={projectStatus ? projectStatus : "Project status"}
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="in_progress">In progress</SelectItem>
@@ -201,7 +205,12 @@ export default function AddnewProject() {
                       </>
                     ) : (
                       <>
-                        <span>Choose client</span>
+                        <span>
+                          {selectedClient
+                            ? clients.find((cl) => cl.id == selectedClient)
+                                ?.name
+                            : "Choose client"}
+                        </span>
                       </>
                     )}
                     {selectLoading && (
@@ -284,48 +293,9 @@ export default function AddnewProject() {
           </Select>
         </div>
       </div>
-      {/* <div className="mt-5 p-2 border rounded-md flex flex-col gap-1">
-        <label htmlFor="" className="text-sm">
-          Assign staffs
-        </label>
-        <div className=" mt-1 border rounded-md p-2 flex flex-wrap gap-2">
-          {selectedStaffs?.map((staffId) => (
-            <div
-              key={staffId}
-              className="h-8 flex items-center text-sm px-2 gap-2 bg-gray-300 rounded-md"
-            >
-              <X
-                className="w-4 cursor-pointer"
-                onClick={() =>
-                  setSelectedStaffs(
-                    selectedStaffs.filter((id) => id !== staffId)
-                  )
-                }
-              />
-              <span>{staffs.find((staf) => staf.id == staffId)?.username}</span>
-            </div>
-          ))}
-          <Select
-            onValueChange={(staff) => {
-              setSelectedStaffs((prev) => [...prev, staff]);
-            }}
-          >
-            <SelectTrigger className="w-[180px] h-8">
-              <SelectValue placeholder="Select Staff and add" />
-            </SelectTrigger>
-            <SelectContent>
-              {staffs?.map((staff) => (
-                <SelectItem value={staff?.id} key={staff?.id}>
-                  {staff?.username}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div> */}
       <div className="mt-5 p-2 border rounded-md flex flex-col gap-1">
         <label htmlFor="" className="text-sm">
-          Select check box to assign staff
+          Select check-box to assign staff
         </label>
         <div className=" mt-1 border rounded-md p-2 flex flex-wrap gap-2">
           {staffs?.map((staf, I) => (

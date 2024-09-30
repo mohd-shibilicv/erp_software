@@ -203,7 +203,7 @@ const AgreementAddEdit = () => {
   };
   const isValidPaymentTerm = (term) => {
     if(term.amount<=0){
-      return false
+      return true
     }
     return term.date && term.amount && !isNaN(parseFloat(term.amount)) && parseFloat(term.amount) >= 0;
   };

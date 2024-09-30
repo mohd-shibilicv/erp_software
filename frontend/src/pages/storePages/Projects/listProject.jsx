@@ -181,6 +181,13 @@ export default function ProjectsPage() {
               >
                 View details
               </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  navigate(`/admin/project/${row.original.project_id}`)
+                }
+              >
+                Edit Project
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ),
