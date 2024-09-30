@@ -27,7 +27,7 @@ export default function StoreSideBarSheet({ menuItems }) {
             <div className="custom-scrollbar w-full px-2 h-screen overflow-auto pb-28">
               {menuItems.map((item, i) => (
                 <div key={i} className="w-full">
-                  <div className="w-full h-8 flex items-center text-black border-y py-3">
+                  <div className="w-full h-10 flex items-center text-black border-y py-3">
                     {item.section}
                   </div>
                   <div className="ml-2 flex flex-col">
