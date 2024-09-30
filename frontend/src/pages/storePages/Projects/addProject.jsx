@@ -309,6 +309,7 @@ export default function AddnewProject() {
               className="flex gap-2 h-8 items-center px-2 bg-gray-200 border rounded-md "
             >
               <Checkbox
+                checked={selectedStaffs.includes(staf.id)}
                 onCheckedChange={(value) => {
                   if (value) {
                     setSelectedStaffs((prev) => [...prev, staf.id]);

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -31,34 +30,19 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { projectApi } from "@/services/project";
-import { useToast } from "@/components/ui/use-toast";
+
+import { useGetAllProject } from "@/hooks/useGetProjects";
+import { QueryClient } from "@tanstack/react-query";
 
 export default function ProjectsPage() {
-  const [loading, setLoading] = useState(false);
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [projects, setProjects] = useState([]);
-  useEffect(() => {
-    setLoading(true)
-    projectApi
-    .getAll()
-    .then(({ data }) => {
-        setLoading(false)
-        setProjects(data.results);
-        console.log(data.results)
-      })
-      .catch((er) => {
-        setLoading(false)
-        toast({
-          variant: "destructive",
-          description: er.message,
-        });
-      });
-  }, []);
+
+  const { data: projects, isLoading: loading } = useGetAllProject();
+
   const columns = useMemo(
     () => [
       {
@@ -164,33 +148,43 @@ export default function ProjectsPage() {
       },
       {
         id: "actions",
-        cell: ({ row }) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigate(`/admin/project/${row.original.project_id}`)
-                }
-              >
-                View details
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigate(`/admin/project/${row.original.project_id}`)
-                }
-              >
-                Edit Project
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ),
+        cell: ({ row }) => {
+          const queryClient = new QueryClient();
+          const handleDeleteProject = async () => {
+            await projectApi.delete(row.original.project_id);
+            queryClient.invalidateQueries(["projects"])
+          };
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={() =>
+                    navigate(`/admin/project/${row.original.project_id}`)
+                  }
+                >
+                  View details
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    navigate(`/admin/project/${row.original.project_id}`)
+                  }
+                >
+                  Edit Project
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDeleteProject}>
+                  Delete Project
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
       },
     ],
     [navigate]

@@ -23,7 +23,7 @@ const Staff = () => {
 
   useEffect(() => {
     const search = searchTerm.toLowerCase();
-    const filtered = staff.filter(
+    const filtered = staff?.filter(
       (staff) =>
         staff.username.toLowerCase().includes(search) ||
         staff.email.toLowerCase().includes(search) ||
@@ -241,7 +241,7 @@ const Staff = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredStaff.map((staff) => (
+            {filteredStaff?.map((staff) => (
               <tr key={staff.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {staff.id}
