@@ -295,13 +295,13 @@ class Project(models.Model):
     ]
 
     project_name = models.CharField(max_length=255)
-    project_id = models.CharField(max_length=100, unique=True)
+    project_id = models.CharField(max_length=100, unique=True,null=True,blank=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    requirements = models.ForeignKey(ClientRequirement, on_delete=models.CASCADE, related_name='projects')
-    agreement = models.ForeignKey(Agreement, on_delete=models.CASCADE, related_name='project_agreement')
+    requirements = models.ForeignKey(ClientRequirement, on_delete=models.CASCADE, related_name='projects',null=True,blank=True)
+    agreement = models.ForeignKey(Agreement, on_delete=models.CASCADE, related_name='project_agreement',null=True,blank=True)
     project_description = models.TextField(blank=True, null=True)
     priority_level = models.CharField(max_length=6, choices=PRIORITY_CHOICES)
-    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default='not_started')  # Status field
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default='not_started')  
     active = models.BooleanField(default=False)  
 
     def save(self, *args, **kwargs):

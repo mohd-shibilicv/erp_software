@@ -385,15 +385,28 @@ class AgreementSerializer(serializers.ModelSerializer):
     
 
 
-
 class ProjectSerializer(serializers.ModelSerializer):
-    client = ClientSerializer()
-    client_id = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all()) 
-    quotations = QuotationSerializer(source='client.quotations_created', read_only=True)  
-    requirements = ClientRequirementSerializer()  
-    agreement = AgreementSerializer()
+    client = ClientSerializer(read_only=True)
+    client_id = serializers.PrimaryKeyRelatedField(
+        queryset=Client.objects.all(), 
+        source='client',
+        write_only=True
+    )
+    requirements = ClientRequirementSerializer(read_only=True)
+    agreement = AgreementSerializer(read_only=True)
+    quotations = QuotationSerializer(source='client.quotations_created', read_only=True)
+    
     class Meta:
         model = Project
-        fields = ['project_name', 'project_id', 'client','client_id', 'requirements', 'project_description', 'priority_level', 'agreement','quotations']
+        fields = [
+            'project_name', 'project_id', 'client', 'client_id', 
+            'requirements', 'project_description', 'priority_level', 
+            'status', 'agreement', 'quotations'
+        ]
+        extra_kwargs = {
+            'project_id': {'read_only': True},
+        }
 
-
+    def create(self, validated_data):
+        project = Project.objects.create(**validated_data)
+        return project
