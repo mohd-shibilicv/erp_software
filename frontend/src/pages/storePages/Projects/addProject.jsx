@@ -17,6 +17,7 @@ import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { api } from "@/services/api";
 import { clientRequirementService } from "@/services/crmServiceApi";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function AddnewProject() {
   const [projectId, setProjectid] = useState("");
@@ -28,7 +29,7 @@ export default function AddnewProject() {
   const [selectedClient, setSelectedClient] = useState("");
 
   useEffect(() => {
-    setProjectid(uuid().replace(/\D/g, '').slice(0, 8));
+    setProjectid(uuid().replace(/\D/g, "").slice(0, 8));
   }, []);
   const [selectLoading, setSelectLoading] = useState(false);
   const [clients, setClient] = useState([]);
@@ -93,7 +94,9 @@ export default function AddnewProject() {
         priority_level: projectPriority,
         client_id: selectedClient,
         requirements: Number(selectedRequirement),
-        agreement_project_name: agreements.find(ag=>ag.id==selectedAgreement)?.project_name||selectedAgreement,
+        agreement_project_name:
+          agreements.find((ag) => ag.id == selectedAgreement)?.project_name ||
+          selectedAgreement,
         staffs: selectedStaffs,
       });
       setisLoading(false);
@@ -274,14 +277,14 @@ export default function AddnewProject() {
             <SelectContent>
               {requirements?.map((req, i) => (
                 <SelectItem value={req?.id} key={req?.layout + "" + i}>
-                  {req?.layout}
+                  {req?.file_number}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
       </div>
-      <div className="mt-5 p-2 border rounded-md flex flex-col gap-1">
+      {/* <div className="mt-5 p-2 border rounded-md flex flex-col gap-1">
         <label htmlFor="" className="text-sm">
           Assign staffs
         </label>
@@ -299,12 +302,12 @@ export default function AddnewProject() {
                   )
                 }
               />
-              <span>{staffs.find((staf) => staf.id == staffId)?.name}</span>
+              <span>{staffs.find((staf) => staf.id == staffId)?.username}</span>
             </div>
           ))}
           <Select
             onValueChange={(staff) => {
-              setSelectedStaffs(staff);
+              setSelectedStaffs((prev) => [...prev, staff]);
             }}
           >
             <SelectTrigger className="w-[180px] h-8">
@@ -313,11 +316,37 @@ export default function AddnewProject() {
             <SelectContent>
               {staffs?.map((staff) => (
                 <SelectItem value={staff?.id} key={staff?.id}>
-                  {staff?.name}
+                  {staff?.username}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+        </div>
+      </div> */}
+      <div className="mt-5 p-2 border rounded-md flex flex-col gap-1">
+        <label htmlFor="" className="text-sm">
+          Select check box to assign staff
+        </label>
+        <div className=" mt-1 border rounded-md p-2 flex flex-wrap gap-2">
+          {staffs?.map((staf, I) => (
+            <div
+              key={I}
+              className="flex gap-2 h-8 items-center px-2 bg-gray-200 border rounded-md "
+            >
+              <Checkbox
+                onCheckedChange={(value) => {
+                  if (value) {
+                    setSelectedStaffs((prev) => [...prev, staf.id]);
+                  } else {
+                    setSelectedStaffs((prev) =>
+                      prev.filter((st) => st !== staf.id)
+                    );
+                  }
+                }}
+              />{" "}
+              <span>{staf?.username}</span>
+            </div>
+          ))}
         </div>
       </div>
       <div className="mt-5 w-full flex justify-end">

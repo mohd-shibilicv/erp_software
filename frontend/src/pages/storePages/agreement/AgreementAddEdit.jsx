@@ -202,7 +202,10 @@ const AgreementAddEdit = () => {
     }));
   };
   const isValidPaymentTerm = (term) => {
-    return term.date && term.amount && !isNaN(parseFloat(term.amount)) && parseFloat(term.amount) > 0;
+    if(term.amount<=0){
+      return false
+    }
+    return term.date && term.amount && !isNaN(parseFloat(term.amount)) && parseFloat(term.amount) >= 0;
   };
   const removePaymentTerm = (index) => {
     setFormData((prevData) => ({
