@@ -53,6 +53,7 @@ export default function ProjectsPage() {
     .then(({ data }) => {
         setLoading(false)
         setProjects(data.results);
+        console.log(data.results)
       })
       .catch((er) => {
         setLoading(false)

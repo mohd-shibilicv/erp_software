@@ -104,7 +104,10 @@ const AgreementAddEdit = () => {
             ...formData,
             ...agreementData,
             clientName: agreementData.client,
-            payment_terms: agreementData.payment_terms || [],
+            payment_terms: agreementData.payment_terms ? agreementData.payment_terms.map(term => ({
+              ...term,
+              date: term.date ? new Date(term.date) : null
+            })) : [],
             payment_date: agreementData.payment_date ? new Date(agreementData.payment_date) : null,
             project_start_date: agreementData.project_start_date ? new Date(agreementData.project_start_date) : null,
             project_end_date: agreementData.project_end_date ? new Date(agreementData.project_end_date) : null,
@@ -240,44 +243,49 @@ const AgreementAddEdit = () => {
 
     if (validateForm()) {
       try {
-        const dataToSend = {
-          quotation_id: formData.quotation_id,
-          clientName: formData.clientName,
-          tc_file: formData.tc_file,
-          signed_agreement: formData.signed_agreement,
-          company_name: formData.company_name,
-          cr_number: formData.cr_number,
-          baladiya: formData.baladiya || '',
-          project_name: formData.project_name,
-          total_amount: formData.total_amount.toString(),
-          payment_date: formatDateForBackend(formData.payment_date),
-          project_start_date: formatDateForBackend(formData.project_start_date),
-          project_end_date: formatDateForBackend(formData.project_end_date),
-          payment_terms: formData.payment_terms
-          .filter(isValidPaymentTerm)
-          .map(term => ({
-            ...term,
-            date: formatDateForBackend(new Date(term.date)) 
-          })),
-      };
+        const formDataToSend = new FormData();
+        
+        Object.keys(formData).forEach(key => {
+          if (key !== 'tc_file' && key !== 'signed_agreement') {
+            if (key === 'payment_terms') {
+              const formattedPaymentTerms = formData[key].map(term => ({
+                ...term,
+                date: formatDateForBackend(new Date(term.date))
+              }));
+              formDataToSend.append(key, JSON.stringify(formattedPaymentTerms));
+            } else {
+              formDataToSend.append(key, formData[key]);
+            }
+          }
+        });
+
+        if (tcFile && tcFileChanged) {
+          formDataToSend.append('tc_file', tcFile);
+        }
+        if (signedAgreement && signedAgreementChanged) {
+          formDataToSend.append('signed_agreement', signedAgreement);
+        }
+
+        formDataToSend.set('payment_date', formatDateForBackend(formData.payment_date));
+        formDataToSend.set('project_start_date', formatDateForBackend(formData.project_start_date));
+        formDataToSend.set('project_end_date', formatDateForBackend(formData.project_end_date));
+        formDataToSend.set('total_amount', formData.total_amount.toString());
 
         let response;
         if (id) {
-          response = await clientAgreement.update(id, dataToSend);
+          response = await clientAgreement.update(id, formDataToSend);
         } else {
-          response = await clientAgreement.create(dataToSend);
-          console.log("Raw request:", response.config.data);
-          console.log(dataToSend,"submitted form")
+          response = await clientAgreement.create(formDataToSend);
         }
-  
+
         console.log('Server response:', response);
-  
+
         toast({
           title: "Success",
           description: id ? "Agreement updated successfully" : "Agreement created successfully",
           variant: "success",
         });
-  
+
         navigate("/admin/agreement");
       } catch (error) {
         console.error("Error saving agreement:", error);
@@ -299,13 +307,14 @@ const AgreementAddEdit = () => {
       if (fileType === "tc_file") {
         setTcFile(file);
         setTcFileChanged(true);
+        setFormData(prevData => ({ ...prevData, tc_file: file }));
       } else if (fileType === "signed_agreement") {
         setSignedAgreement(file);
         setSignedAgreementChanged(true);
+        setFormData(prevData => ({ ...prevData, signed_agreement: file }));
       }
     }
   };
-
   const openDialog = (file, fileUrl) => {
     if (file instanceof File) {
       const url = URL.createObjectURL(file);

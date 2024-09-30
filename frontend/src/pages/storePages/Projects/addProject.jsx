@@ -15,6 +15,8 @@ import { Loader2, Loader2Icon, Save } from "lucide-react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
+import { api } from "@/services/api";
+
 export default function AddnewProject() {
   const [projectId, setProjectid] = useState("");
   const [projectName, setProjectname] = useState("");
@@ -33,8 +35,9 @@ export default function AddnewProject() {
   const fetchClientDetails = async () => {
     try {
       setSelectLoading(true);
-      const { data } = await clientAgreement.getAll();
+      const { data } = await api.get('/clients/');
       setClient(data.results);
+      console.log(data.results,"jahlfdjk")
       setSelectLoading(false);
     } catch {
       setSelectLoading(false);
@@ -50,7 +53,6 @@ export default function AddnewProject() {
         toast({
           description: "Please Select client",
           variant: "destructive",
-          
         });
         return
       }
@@ -61,7 +63,7 @@ export default function AddnewProject() {
       formData.append("status", projectStatus);
       formData.append("project_description", projectDescription);
       formData.append("priority_level", projectPriority);
-      formData.append("client", selectedClient);
+      formData.append("client_id", selectedClient);
       await projectApi.create(formData);
       setisLoading(false);
       return toast({ description: "Project created" });
