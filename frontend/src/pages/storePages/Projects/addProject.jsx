@@ -17,6 +17,7 @@ import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { api } from "@/services/api";
 import { clientRequirementService } from "@/services/crmServiceApi";
+import { clientQuotation } from "@/services/crmServiceApi";
 
 export default function AddnewProject() {
   const [projectId, setProjectid] = useState("");
@@ -37,12 +38,12 @@ export default function AddnewProject() {
     try {
       setSelectLoading(true);
       const { data } = await api.get('/clients/');
-      const response = await clientAgreement.getAll();
+      const response = await clientQuotation.getAll();
       const req = await clientRequirementService.getAll();
       const staff = await api.get("/staff/")
       console.log(staff.data,"This is staff")
       console.log(req.data.results,"requirement")
-      console.log(response.data.results,"Agreement")
+      console.log(response.data.results,"Quotation")
       console.log(data.results,"Client")
 
       setClient(data.results);
