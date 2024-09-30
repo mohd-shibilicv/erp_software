@@ -1,13 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { projectApi } from "@/services/project";
+
 export const useGetAllProject = (state) => {
   return useQuery({
-    queryKey: ["projects"],
+    queryKey: ["projects", state], // Add state to the queryKey
     queryFn: async () => {
-      state
       const { data } = await projectApi.getAll();
-      return data.results;
+      if (state === "all") {
+        return data.results;
+      } else if (state === "active") {
+        return data?.results?.filter((project) => project.active);
+      } else {
+        return data?.results?.filter((project) => !project.active);
+      }
     },
     onError: (error) => {
       // Display error toast when there's an error
