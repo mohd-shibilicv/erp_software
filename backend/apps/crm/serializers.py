@@ -385,28 +385,55 @@ class AgreementSerializer(serializers.ModelSerializer):
     
 
 
+
 class ProjectSerializer(serializers.ModelSerializer):
     client = ClientSerializer(read_only=True)
     client_id = serializers.PrimaryKeyRelatedField(
-        queryset=Client.objects.all(), 
+        queryset=Client.objects.all(),
         source='client',
         write_only=True
     )
     requirements = ClientRequirementSerializer(read_only=True)
     agreement = AgreementSerializer(read_only=True)
-    quotations = QuotationSerializer(source='client.quotations_created', read_only=True)
-    
+    quotations = QuotationSerializer(source='client.quotations_created', read_only=True)    
+    agreement_project_name = serializers.ChoiceField(
+        choices=[], 
+        write_only=True, 
+        required=False
+    )
+
     class Meta:
         model = Project
         fields = [
-            'project_name', 'project_id', 'client', 'client_id', 
-            'requirements', 'project_description', 'priority_level', 
-            'status', 'agreement', 'quotations'
+            'project_name', 'project_id', 'client', 'client_id',
+            'requirements', 'agreement', 'project_description', 'priority_level',
+            'status', 'agreement_project_name', 'quotations'
         ]
         extra_kwargs = {
             'project_id': {'read_only': True},
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['agreement_project_name'].choices = [
+            (agreement.project_name, agreement.project_name) 
+            for agreement in Agreement.objects.all()
+        ]
+
     def create(self, validated_data):
+        agreement_project_name = validated_data.pop('agreement_project_name', None)
+        
+        if agreement_project_name:
+            agreement = Agreement.objects.filter(project_name=agreement_project_name).first()
+            if agreement:
+                validated_data['project_name'] = agreement.project_name
+                validated_data['client'] = agreement.client
+                validated_data['agreement'] = agreement
+                
+                # Fetch the corresponding requirement
+                requirement = ClientRequirement.objects.filter(client=agreement.client).first()
+                if requirement:
+                    validated_data['requirements'] = requirement
+
         project = Project.objects.create(**validated_data)
         return project

@@ -182,3 +182,8 @@ class AgreementViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+
+    @action(detail=False, methods=['GET'])
+    def agreement_project_names(self, request):
+        project_names = Agreement.objects.values_list('project_name', flat=True).distinct()
+        return Response(project_names)
