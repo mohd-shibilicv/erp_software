@@ -5,6 +5,14 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
 import { Textarea } from "@/components/ui/textarea";
@@ -41,6 +49,12 @@ export default function ProjectDetailPage() {
   //   }, []);
   //   const { toast } = useToast();
   const [tabs, setTab] = useState("Project detail");
+  const detailTabs = [
+    "Project detail",
+    "Client Details",
+    "Client requirements",
+    "Dealings and agreements",
+  ];
   return (
     <main className="w-full h-full bg-white rounded-xl border shadow-sm p-5">
       <div className="w-full">
@@ -69,7 +83,7 @@ export default function ProjectDetailPage() {
               "text-[#6f42c1]": tabs == "Client requirements",
             })}
           >
-            Project requirements
+            Client requirements
           </span>
           <ChevronRight className="w-4 mt-1" />
           <span
@@ -85,15 +99,15 @@ export default function ProjectDetailPage() {
       {tabs == "Project detail" ? (
         <>
           <>
-            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-5 mt-5 overflow-y-auto">
               <div className="flex flex-col gap-1">
                 <label htmlFor="" className="text-sm font-semibold">
                   Project name
                 </label>
                 <Input
-                  className="pointer-events-none"
+                  className="pointer-events-none shadow-md"
                   // onChange={(e) => setProjectname(e.target.value)}
-                  placeholder="Enter Project name"
+                  //   placeholder="Enter Project name"
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -103,15 +117,15 @@ export default function ProjectDetailPage() {
                 <Input
                   // value={projectId}
 
-                  placeholder="Enter Project name"
-                  className="pointer-events-none"
+                  //   placeholder="Enter Project name"
+                  className="pointer-events-none shadow-md"
                 />
               </div>
               <div className="flex flex-col gap-1">
                 <label htmlFor="" className="text-sm font-semibold">
                   Project Status
                 </label>
-                <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+                <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                   Completed
                 </div>
               </div>
@@ -122,17 +136,17 @@ export default function ProjectDetailPage() {
                   Project Description
                 </label>
                 <Textarea
-                  className="w-full pointer-events-none"
+                  className="w-full pointer-events-none shadow-md"
                   placeholder="enter project description "
                 />
               </div>
             </div>
-            <div className="mt-5 w-full grid grid-cols-2 gap-5">
-              <div className="flex flex-col gap-1">
+            <div className="mt-5 w-full grid md:grid-cols-2 grid-cols-1 gap-5">
+              <div className="flex flex-col gap-1 ">
                 <label htmlFor="" className="text-sm font-semibold">
                   Client
                 </label>
-                <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+                <div className="w-full shadow-md h-10 rounded-md border bg-white px-4 flex items-center">
                   Client1
                 </div>
               </div>
@@ -140,7 +154,7 @@ export default function ProjectDetailPage() {
                 <label htmlFor="" className="text-sm font-semibold">
                   Select Priority
                 </label>
-                <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+                <div className="w-full shadow-md h-10 rounded-md border bg-white px-4 flex items-center">
                   Medium
                 </div>
               </div>
@@ -154,7 +168,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Client id
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 2
               </div>
             </div>
@@ -162,7 +176,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Client name
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 tester
               </div>
             </div>
@@ -170,7 +184,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Mobile Number
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 2390340
               </div>
             </div>
@@ -178,7 +192,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Whatsapp Number
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 2390340
               </div>
             </div>
@@ -186,7 +200,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Email address
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 2390340
               </div>
             </div>
@@ -194,7 +208,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Country and City
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 India, Delhi
               </div>
             </div>
@@ -207,7 +221,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 File Number
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 23490
               </div>
             </div>
@@ -215,7 +229,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Color Theme
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 Dark
               </div>
             </div>
@@ -225,7 +239,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Layout
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 Sidebar
               </div>
             </div>
@@ -233,7 +247,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 additional requirements
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 Sample
               </div>
             </div>
@@ -241,16 +255,16 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Status
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 Confirmed
               </div>
             </div>
           </div>
-          <div className="w-full mt-5 flex flex-col p-2 border rounded-md">
+          <div className="w-full mt-5 flex flex-col p-2 border rounded-md ">
             <label htmlFor="" className="text-sm font-semibold">
               Predefined Features
             </label>
-            <div className="flex flex-wrap gap-2 mt-2 border rounded-md p-2">
+            <div className="flex flex-wrap gap-2 mt-2 border rounded-md p-2 shadow-md">
               <div className="h-8 px-2 rounded-lg bg-gray-200 flex justify-center items-center text-sm">
                 Dashboard
               </div>
@@ -263,7 +277,7 @@ export default function ProjectDetailPage() {
             <label htmlFor="" className="text-sm font-semibold">
               Custome Features
             </label>
-            <div className="flex flex-wrap gap-2 mt-2 border rounded-md p-2">
+            <div className="flex flex-wrap gap-2 mt-2 border shadow-md rounded-md p-2">
               <div className="h-8 px-2 rounded-lg bg-gray-200 flex justify-center items-center text-sm">
                 Dashboard
               </div>
@@ -276,16 +290,33 @@ export default function ProjectDetailPage() {
             <label htmlFor="" className="text-sm font-semibold">
               Images
             </label>
-            <div className="flex flex-wrap gap-2 mt-2 border rounded-md p-2">
-              <div className="h-48 w-48 border rounded-md overflow-hidden cursor-pointer">
-                <img
-                  src={
-                    "https://img.freepik.com/free-vector/user-panel-business-dashboard_23-2148358960.jpg?t=st=1727530081~exp=1727533681~hmac=b1ee56a1b2333842cdc82c4007681d1018b2961538f112c1e36afae7f309073d&w=1060"
-                  }
-                  className="w-full h-full object-contain"
-                  alt=""
-                />
-              </div>
+            <div className="flex flex-wrap gap-2 mt-2 border rounded-md p-2 ">
+              <Dialog>
+                <DialogTrigger>
+                  <div className="h-48 w-48 border rounded-md overflow-hidden cursor-pointer shadow-md">
+                    <img
+                      src={
+                        "https://img.freepik.com/free-vector/user-panel-business-dashboard_23-2148358960.jpg?t=st=1727530081~exp=1727533681~hmac=b1ee56a1b2333842cdc82c4007681d1018b2961538f112c1e36afae7f309073d&w=1060"
+                      }
+                      className="w-full h-full object-contain"
+                      alt=""
+                    />
+                  </div>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogDescription className="h-[500px] overflow-y-auto">
+                      <img
+                        src={
+                          "https://img.freepik.com/free-vector/user-panel-business-dashboard_23-2148358960.jpg?t=st=1727530081~exp=1727533681~hmac=b1ee56a1b2333842cdc82c4007681d1018b2961538f112c1e36afae7f309073d&w=1060"
+                        }
+                        className="w-full h-full object-contain"
+                        alt=""
+                      />
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </section>
@@ -296,7 +327,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Agreement Id
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 23
               </div>
             </div>
@@ -304,7 +335,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Quotation Id
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 21
               </div>
             </div>
@@ -313,7 +344,7 @@ export default function ProjectDetailPage() {
             <div className="w-full">
               <h1>Payment Terms</h1>
             </div>
-            <div className="w-full mt-2 flex gap-2 border p-2 rounded-md ">
+            <div className="w-full mt-2 flex gap-2 border p-2 rounded-md  shadow-md">
               <div className="size-10 text-sm flex justify-center items-center bg-gray-200 rounded-md">
                 1
               </div>
@@ -331,7 +362,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Quotation Number
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 1223
               </div>
             </div>
@@ -339,7 +370,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Client Name
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 newrelation software
               </div>
             </div>
@@ -349,7 +380,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Company Name
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 abd solutions
               </div>
             </div>
@@ -357,7 +388,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Company Address
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 newrelation software, Qatar
               </div>
             </div>
@@ -367,7 +398,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Cr Number
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 232
               </div>
             </div>
@@ -375,7 +406,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Baladiya
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 234
               </div>
             </div>
@@ -385,7 +416,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Project Name
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 232
               </div>
             </div>
@@ -393,7 +424,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Total Amount
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 234
               </div>
             </div>
@@ -403,7 +434,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Project Start Date
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 232
               </div>
             </div>
@@ -411,7 +442,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Project End date
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 234
               </div>
             </div>
@@ -419,7 +450,7 @@ export default function ProjectDetailPage() {
               <label htmlFor="" className="text-sm font-semibold">
                 Payment Date
               </label>
-              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center">
+              <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
                 234
               </div>
             </div>
@@ -427,30 +458,54 @@ export default function ProjectDetailPage() {
           <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-5">
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
-                <AccordionTrigger>tc_file</AccordionTrigger>
+                <AccordionTrigger className="shadow-md px-3 border rounded-md">
+                  Tc File
+                </AccordionTrigger>
                 <AccordionContent>
-                  Yes. It adheres to the WAI-ARIA design pattern.
+                  <embed src={"https://res.cloudinary.com/dzaoju6lr/image/upload/v1716364272/basys_Sr._Full-Stack_Engineer__React___Node__Hiring_Test_jiqotx.pdf"} className="w-full min-h-[500px]" />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
-                <AccordionTrigger>Signed Agreement</AccordionTrigger>
-                <AccordionContent>
-                  Yes. It adheres to the WAI-ARIA design pattern.
+                <AccordionTrigger className="shadow-md px-3 border rounded-md">
+                  Signed Agreement
+                </AccordionTrigger>
+                <AccordionContent className="">
+                  <embed src={"https://res.cloudinary.com/dzaoju6lr/image/upload/v1716364272/basys_Sr._Full-Stack_Engineer__React___Node__Hiring_Test_jiqotx.pdf"} className="w-full border min-h-[500px]" />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
           </div>
         </section>
       )}
-      <div className="w-full mt-5  justify-between hidden">
-        <Button className="items-center">
+      <div className="w-full mt-5  justify-between flex items-center">
+        <Button
+          className={`items-center h-8 p-2 gap-1 ${
+            detailTabs.indexOf(tabs) == 0 ? "pointer-events-none" : ""
+          }`}
+          variant={`${detailTabs.indexOf(tabs) == 0 ? "secondary" : ""}`}
+          onClick={() => {
+            setTab(detailTabs[detailTabs.indexOf(tabs) - 1]);
+          }}
+        >
           {" "}
-          <ChevronLeft className="w-5 mt-[3px]" /> Previous
+          <ChevronLeft className="w-5 mt-[0px]" /> <span className="text-sm">Previous</span>
         </Button>
-        <Button className="items-center">
-          Next <ChevronRight className="w-5 mt-[3px]" />
+        <Button
+          className={`items-center h-8 p-2 gap-1 ${
+            detailTabs.indexOf(tabs) == detailTabs.length - 1
+              ? "pointer-events-none"
+              : ""
+          }`}
+          variant={`${
+            detailTabs.indexOf(tabs) == detailTabs.length - 1 ? "secondary" : ""
+          }`}
+          onClick={() => {
+            setTab(detailTabs[detailTabs.indexOf(tabs) + 1]);
+          }}
+        > <span className="text-sm">Next</span>
+           <ChevronRight className="w-4 mt-[0px]" /> 
         </Button>
       </div>
     </main>
