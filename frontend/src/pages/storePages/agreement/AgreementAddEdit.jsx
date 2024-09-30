@@ -799,7 +799,7 @@ const AgreementAddEdit = () => {
         <Button type="submit" onClick={handleSubmit}>
           Save Agreement
         </Button>
-        <Button variant="outline" onClick="">
+        <Button variant="outline" onClick="" className="hidden">
           <Printer className="mr-2 h-4 w-4" /> Print Agreement
         </Button>
       </CardFooter>

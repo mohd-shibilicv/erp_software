@@ -1,7 +1,10 @@
+/* eslint-disable react/display-name */
+/* eslint-disable react/prop-types */
 import { forwardRef, useEffect, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 
 const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
+  
   // State to hold the image representation of the PDF
   const [tcImage, setTcImage] = useState(null);
   
@@ -103,7 +106,10 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
   {tcImage ? (
     <img src={tcImage} alt="Terms & Conditions" className="mt-4" />
   ) : (
-    <a href={agreement.tc_file} className="text-blue-500 underline">Download Terms & Conditions</a>
+    <>
+    <embed src={agreement.tc_file} className='w-full min-h-[45px] border' type="" />
+    {/* <a href={agreement.tc_file} className="text-blue-500 underline">Download Terms & Conditions</a> */}
+    </>
   )}
 
           {/* Displaying Signed Agreement */}
@@ -119,7 +125,10 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
               className="mt-4"
             ></iframe>
           ) : (
-            <a href={agreement.signed_agreement} className="text-blue-500 underline">Download Signed Agreement</a>
+            <>
+            <embed src={agreement.signed_agreement} className='w-full min-h-[45px] border' type="" />
+            {/* <a href={agreement.signed_agreement} className="text-blue-500 underline">Download Signed Agreement</a> */}
+            </>
           )}
         </div>
       </div>
