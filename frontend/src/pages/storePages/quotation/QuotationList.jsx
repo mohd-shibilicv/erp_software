@@ -181,7 +181,7 @@ export default function QuotationList() {
     },
   });
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 bg-white rounded-xl shadow-sm border">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Quotations</h1>
         <Button onClick={() => navigate("/admin/quotation/new")}>

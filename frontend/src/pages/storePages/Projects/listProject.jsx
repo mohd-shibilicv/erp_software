@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +20,7 @@ export default function ProjectsPage() {
     return <div>Loading...</div>;
   }
   return (
-    <div className="container mx-auto py-10 bg-white rounded-md">
+    <div className="container mx-auto py-10 bg-white rounded-lg shadow-sm">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Project list</h1>
         <Button onClick={() => navigate("/admin/project/new")}>

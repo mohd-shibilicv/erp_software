@@ -203,7 +203,7 @@ export default function ClientAgreementList() {
     }
   
     return (
-      <div className="container mx-auto py-10">
+      <div className="container mx-auto py-10 bg-white rounded-lg border shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">Client Agreements List</h1>
           <Button onClick={() => navigate("/admin/agreement/new")}>

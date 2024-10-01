@@ -20,7 +20,7 @@ import { clientRequirementService } from "@/services/crmServiceApi";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast as Hotoast } from "react-hot-toast";
-export default function AddnewProject() {
+export default function ProjectAddandUpdate() {
   const [projectId, setProjectid] = useState("");
   const [projectName, setProjectname] = useState("");
   const [projectStatus, setProjectStatus] = useState("");
