@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Table,
@@ -41,7 +41,8 @@ export default function ProjectsPage() {
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
 
-  const { data: projects, isLoading: loading } = useGetAllProject();
+  const [showState,setShowState]=useState("all")
+  const { data: projects=[], isLoading: loading } = useGetAllProject(showState);
 
 
   const columns = useMemo(
@@ -223,10 +224,11 @@ export default function ProjectsPage() {
         </Button>
       </div>
       <div className="flex items-center py-4"></div>
-      <Tabs defaultValue="active" className="w-[400px]">
+      <Tabs defaultValue={showState} className="">
         <TabsList>
-          <TabsTrigger value="active">active</TabsTrigger>
-          <TabsTrigger value="inactive">Inactive</TabsTrigger>
+          <TabsTrigger type="button" className="mr-1" onClick={()=>setShowState("all")} value="all">All</TabsTrigger>
+          <TabsTrigger type="button" className="mr-1" onClick={()=>setShowState("active")} value="active">active</TabsTrigger>
+          <TabsTrigger type="button" className="mr-1"  onClick={()=>setShowState("inactive")} value="inactive">Inactive</TabsTrigger>
         </TabsList>
         <TabsContent value="active"></TabsContent>
         <TabsContent value="inactive"></TabsContent>
