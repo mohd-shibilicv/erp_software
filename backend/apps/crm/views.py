@@ -189,7 +189,6 @@ class ProjectFilter(filters.FilterSet):
 
     def filter_assigned_staff(self, queryset, name, value):
         return queryset.filter(assigned_staffs__id=value)
-
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -198,6 +197,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         print("--- Debugging POST request ---")
         print("Request data:", request.data)
+        
+        # Convert assigned_staffs to a list of integers if it's a string
+        if 'assigned_staffs' in request.data and isinstance(request.data['assigned_staffs'], str):
+            request.data['assigned_staffs'] = [int(id) for id in request.data['assigned_staffs'].split(',') if id.isdigit()]
         
         serializer = self.get_serializer(data=request.data)
         print("Serializer initial data:", serializer.initial_data)
@@ -222,6 +225,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         print("--- Debugging PUT/PATCH request ---")
         print("Request data:", request.data)
+        
+        # Convert assigned_staffs to a list of integers if it's a string
+        if 'assigned_staffs' in request.data and isinstance(request.data['assigned_staffs'], str):
+            request.data['assigned_staffs'] = [int(id) for id in request.data['assigned_staffs'].split(',') if id.isdigit()]
         
         partial = kwargs.pop('partial', False)
         instance = self.get_object()

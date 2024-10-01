@@ -383,7 +383,6 @@ class AgreementSerializer(serializers.ModelSerializer):
 
         return instance
     
-
 class ProjectSerializer(serializers.ModelSerializer):
     client = ClientSerializer(read_only=True)
     client_id = serializers.PrimaryKeyRelatedField(
@@ -410,11 +409,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(),
         required=False
     )
-    staffs = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True,
-        required=False
-    )
 
     class Meta:
         model = Project
@@ -422,7 +416,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             'id', 'project_name', 'project_id', 'client', 'client_id',
             'requirements', 'requirements_id', 'agreement', 'project_description', 
             'priority_level', 'status', 'agreement_project_name', 'quotations',
-            'active', 'assigned_staffs', 'staffs'
+            'active', 'assigned_staffs'
         ]
 
     def __init__(self, *args, **kwargs):
@@ -435,7 +429,6 @@ class ProjectSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         assigned_staffs = validated_data.pop('assigned_staffs', [])
         agreement_project_name = validated_data.pop('agreement_project_name', None)
-        project_id = validated_data.get('project_id')
         
         if agreement_project_name:
             agreement = Agreement.objects.filter(project_name=agreement_project_name).first()
@@ -450,12 +443,9 @@ class ProjectSerializer(serializers.ModelSerializer):
                         validated_data['requirements'] = requirement
 
         project = Project.objects.create(**validated_data)
-        if project_id:
-            project.project_id = project_id
-            project.save()
         
         if assigned_staffs:
-            project.assigned_staffs.set(User.objects.filter(id__in=assigned_staffs))
+            project.assigned_staffs.set(assigned_staffs)
         
         return project
     
@@ -464,6 +454,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         instance = super().update(instance, validated_data)
         
         if assigned_staffs is not None:
-            instance.assigned_staffs.set(User.objects.filter(id__in=assigned_staffs))
+            instance.assigned_staffs.set(assigned_staffs)
         
         return instance
