@@ -8,11 +8,11 @@ export const useGetAllProject = (state) => {
     queryFn: async () => {
       const { data } = await projectApi.getAll();
       if (state === "all") {
-        return data.results;
+        return data;
       } else if (state === "active") {
-        return data?.results?.filter((project) => project.active);
+        return data?.filter((project) => project.active);
       } else {
-        return data?.results?.filter((project) => !project.active);
+        return data?.filter((project) => !project.active);
       }
     },
     onError: (error) => {
