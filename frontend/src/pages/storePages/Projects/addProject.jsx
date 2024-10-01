@@ -47,15 +47,15 @@ export default function AddnewProject() {
       const response = await clientAgreement.getAll();
       const req = await clientRequirementService.getAll();
       const staff = await api.get("/staff/");
-      console.log(staff.data, "This is staff");
+
       setStaffs(staff.data);
-      console.log(req.data.results, "requirement");
+
       setRequirements(req.data.results);
-      console.log(response.data.results, "Agreement");
-      console.log(data.results, "Client");
+      console.log("🚀 ~ fetchClientDetails ~ response:", response.data.results);
+
       setAgreements(response.data.results);
       setClient(data.results);
-      console.log(data.results, "jahlfdjk");
+
       setSelectLoading(false);
     } catch {
       setSelectLoading(false);
@@ -66,16 +66,47 @@ export default function AddnewProject() {
   useEffect(() => {
     fetchClientDetails();
   }, []);
-  
+
   const { toast } = useToast();
   const handleSubmit = async () => {
     try {
+      
+      if (!projectName) {
+        return toast({
+          description: "Please Enter ProjectName",
+          variant: "destructive",
+        });
+      }
       if (!selectedClient) {
         toast({
           description: "Please Select client",
           variant: "destructive",
         });
         return;
+      }
+      if(!projectStatus){
+        return toast({
+          description: "Please Select Project Status",
+          variant: "destructive",
+        });
+      }
+      if(!projectPriority){
+        return toast({
+          description: "Please Select Project Priority",
+          variant: "destructive",
+        });
+      }
+      if(!selectedAgreement){
+        return toast({
+          description: "Please Select Agreement",
+          variant: "destructive",
+        });
+      }
+      if(!selectedRequirement){
+        return toast({
+          description: "Please Select Requirement",
+          variant: "destructive",
+        });
       }
       setisLoading(true);
       if (!id) {
@@ -91,10 +122,11 @@ export default function AddnewProject() {
             agreements.find((ag) => ag.id == selectedAgreement)?.project_name ||
             selectedAgreement,
           assigned_staffs: selectedStaffs,
+          agreement: selectedAgreement,
         });
         setisLoading(false);
         toast({ description: "Project created" });
-        return navigate('/admin/projects')
+        return navigate("/admin/projects");
       } else {
         await projectApi.update(id, {
           project_id: Number(projectId),
@@ -105,13 +137,14 @@ export default function AddnewProject() {
           client_id: selectedClient,
           requirements: Number(selectedRequirement),
           agreement_project_name:
-          agreements.find((ag) => ag.id == selectedAgreement)?.project_name ||
-          selectedAgreement,
+            agreements.find((ag) => ag.id == selectedAgreement)?.project_name ||
+            selectedAgreement,
           assigned_staffs: selectedStaffs,
+          agreement: selectedAgreement,
         });
         setisLoading(false);
         toast({ description: "Project updated" });
-        return navigate('/admin/projects')
+        return navigate("/admin/projects");
       }
     } catch (error) {
       setisLoading(false);
@@ -126,6 +159,8 @@ export default function AddnewProject() {
       projectApi
         .get(id)
         .then(({ data }) => {
+          console.log("🚀 ~ .then ~ data:", data);
+
           setProjectname(data?.project_name);
           setProjectid(data?.project_id);
           setProjectStatus(data?.status);
