@@ -204,6 +204,7 @@ export default function ProjectTable({ data, showState, setShowState }) {
               >
                 Edit Project
               </DropdownMenuItem>
+
               <Button className="bg-transparent h-8 w-full flex justify-start p-0 text-black hover:bg-gray-200">
                 <AlertDialog>
                   <AlertDialogTrigger className=" h-full pl-2 items-center flex justify-start w-full ">
@@ -211,8 +212,8 @@ export default function ProjectTable({ data, showState, setShowState }) {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Are you absolutely sure?
+                      <AlertDialogTitle className="font-semibold text-lg">
+                        Confirm Deletion
                       </AlertDialogTitle>
                       <AlertDialogDescription>
                         This action cannot be undone. This will permanently
@@ -239,7 +240,7 @@ export default function ProjectTable({ data, showState, setShowState }) {
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
-  
+
   const table = useReactTable({
     data,
     columns,
@@ -260,18 +261,17 @@ export default function ProjectTable({ data, showState, setShowState }) {
       columnFilters,
       columnVisibility,
       rowSelection,
-      
     },
   });
   return (
     <main>
       <>
-        <div className="w-full flex justify-between mb-4">
-          <Tabs defaultValue={showState} className="">
-            <TabsList className="bg-gray-200">
+        <div className="w-full flex justify-between mb-4 flex-col md:flex-row gap-5">
+          <Tabs defaultValue={showState} className="w-full md:w-auto">
+            <TabsList className="bg-gray-200 w-full">
               <TabsTrigger
                 type="button"
-                className="mr-1"
+                className="mr-1 w-full"
                 onClick={() => setShowState("all")}
                 value="all"
               >
@@ -279,7 +279,7 @@ export default function ProjectTable({ data, showState, setShowState }) {
               </TabsTrigger>
               <TabsTrigger
                 type="button"
-                className="mr-1"
+                className="mr-1 w-full"
                 onClick={() => setShowState("active")}
                 value="active"
               >
@@ -287,7 +287,7 @@ export default function ProjectTable({ data, showState, setShowState }) {
               </TabsTrigger>
               <TabsTrigger
                 type="button"
-                className="mr-1"
+                className="mr-1 w-full"
                 onClick={() => setShowState("inactive")}
                 value="inactive"
               >
@@ -300,7 +300,7 @@ export default function ProjectTable({ data, showState, setShowState }) {
           <Input
             placeholder="Filter Projects"
             value={table.getColumn("project_name")?.getFilterValue() ?? ""}
-            className="w-full md:w-[300px]"
+            className="w-full md:w-[300px] shadow-sm"
             onChange={(event) =>
               table
                 .getColumn("project_name")

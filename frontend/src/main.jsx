@@ -4,13 +4,16 @@ import App from "./App.jsx";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "./components/ui/them-provider.jsx";
 
 const queryClient = new QueryClient();
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <Toaster position="top-center"/>
-      <App />
+      <Toaster position="top-center" />
+      <ThemeProvider defaultTheme="light">
+        <App />
+      </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>
 );
