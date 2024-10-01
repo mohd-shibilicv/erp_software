@@ -34,6 +34,17 @@ import { projectApi } from "@/services/project";
 
 import { useGetAllProject } from "@/hooks/useGetProjects";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function ProjectsPage() {
   const [sorting, setSorting] = useState([]);
@@ -182,9 +193,27 @@ export default function ProjectsPage() {
                 >
                   Edit Project
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDeleteProject}>
-                  Delete Project
-                </DropdownMenuItem>
+                <Button className="bg-transparent h-8 w-full flex justify-start p-0 text-black hover:bg-gray-200">
+                  <AlertDialog>
+                    <AlertDialogTrigger className=" h-full pl-2 items-center flex justify-start w-full ">Delete Project</AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete your account and remove project data from our
+                          servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteProject}>Continue</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </Button>
               </DropdownMenuContent>
             </DropdownMenu>
           );
