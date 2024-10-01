@@ -87,15 +87,21 @@ export default function ProjectDetailPage() {
             Client Details
           </span>
           <ChevronRight className="w-4 mt-1" />
-          <span
-            onClick={() => setTab("Client requirements")}
-            className={cn("cursor-pointer", {
-              "text-[#6f42c1]": tabs == "Client requirements",
-            })}
-          >
-            Client requirements
-          </span>
-          <ChevronRight className="w-4 mt-1" />
+          {data?.requirements && (
+            <>
+              <>
+                <span
+                  onClick={() => setTab("Client requirements")}
+                  className={cn("cursor-pointer", {
+                    "text-[#6f42c1]": tabs == "Client requirements",
+                  })}
+                >
+                  Client requirements
+                </span>
+                <ChevronRight className="w-4 mt-1" />
+              </>
+            </>
+          )}
           <span
             onClick={() => setTab("Dealings and agreements")}
             className={cn("cursor-pointer", {
