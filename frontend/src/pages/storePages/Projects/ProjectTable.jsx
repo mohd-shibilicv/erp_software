@@ -41,11 +41,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function ProjectTable({ data,showState, setShowState }) {
+export default function ProjectTable({ data, showState, setShowState }) {
   const columns = [
     {
       id: "select",
@@ -77,7 +77,7 @@ export default function ProjectTable({ data,showState, setShowState }) {
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           ID
-          {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
+          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => <div>{row.getValue("project_id")}</div>,
@@ -90,7 +90,7 @@ export default function ProjectTable({ data,showState, setShowState }) {
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Project Name
-          {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
+          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => {
@@ -106,7 +106,7 @@ export default function ProjectTable({ data,showState, setShowState }) {
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Project Status
-          {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
+          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => {
@@ -122,7 +122,7 @@ export default function ProjectTable({ data,showState, setShowState }) {
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Project priority
-          {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
+          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => {
@@ -165,7 +165,7 @@ export default function ProjectTable({ data,showState, setShowState }) {
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Client
-          {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
+          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => <div>{row.getValue("client")?.name}</div>,
@@ -239,17 +239,22 @@ export default function ProjectTable({ data,showState, setShowState }) {
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
+  
   const table = useReactTable({
     data,
     columns,
+    // pageCount: Math.ceil(data.length / pagination.pageSize), // Calculate total pages
+    // manualPagination: true, // This ensures pagination is handled manually
+    // onPaginationChange: setPagination, // Handle pagination state change
     onSortingChange: setSorting,
+    getPaginationRowModel: getPaginationRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+
     state: {
       sorting,
       columnFilters,
@@ -277,7 +282,7 @@ export default function ProjectTable({ data,showState, setShowState }) {
                 onClick={() => setShowState("active")}
                 value="active"
               >
-                active
+                Active
               </TabsTrigger>
               <TabsTrigger
                 type="button"
@@ -292,7 +297,7 @@ export default function ProjectTable({ data,showState, setShowState }) {
             <TabsContent value="inactive"></TabsContent>
           </Tabs>
           <Input
-            placeholder="filter Projects"
+            placeholder="Filter Projects"
             value={table.getColumn("project_name")?.getFilterValue() ?? ""}
             className="w-full md:w-[300px]"
             onChange={(event) =>
@@ -367,10 +372,14 @@ export default function ProjectTable({ data,showState, setShowState }) {
             >
               Previous
             </Button>
+            <span className="text-sm font-medium">
+              Page {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()}
+            </span>
             <Button
               variant="outline"
               size="sm"
-                onClick={() => table.nextPage()}
+              onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
               Next

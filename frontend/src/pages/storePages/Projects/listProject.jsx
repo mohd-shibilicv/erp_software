@@ -8,7 +8,7 @@ import { Plus } from "lucide-react";
 
 import { useGetAllProject } from "@/hooks/useGetProjects";
 
-import ProjectTable from "./ProjectTab";
+import ProjectTable from "./ProjectTable";
 
 export default function ProjectsPage() {
   const navigate = useNavigate();
