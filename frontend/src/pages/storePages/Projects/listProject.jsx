@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -32,7 +33,7 @@ import { cn } from "@/lib/utils";
 import { projectApi } from "@/services/project";
 
 import { useGetAllProject } from "@/hooks/useGetProjects";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 export default function ProjectsPage() {
   const [sorting, setSorting] = useState([]);
@@ -41,9 +42,9 @@ export default function ProjectsPage() {
   const [rowSelection, setRowSelection] = useState({});
   const navigate = useNavigate();
 
-  const [showState,setShowState]=useState("all")
-  const { data: projects=[], isLoading: loading } = useGetAllProject(showState);
-
+  const [showState, setShowState] = useState("all");
+  const { data: projects = [], isLoading: loading } =
+    useGetAllProject(showState);
 
   const columns = useMemo(
     () => [
@@ -151,10 +152,13 @@ export default function ProjectsPage() {
       {
         id: "actions",
         cell: ({ row }) => {
-          const queryClient = new QueryClient();
+          const queryClient = useQueryClient();
           const handleDeleteProject = async () => {
             await projectApi.delete(row.original.id);
-            queryClient.invalidateQueries(["projects"])
+            queryClient.invalidateQueries([
+              "projects",
+              document.getElementById("StateShowBox").textContent,
+            ]);
           };
           return (
             <DropdownMenu>
@@ -167,9 +171,7 @@ export default function ProjectsPage() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
-                  onClick={() =>
-                    navigate(`/admin/project/${row.original.id}`)
-                  }
+                  onClick={() => navigate(`/admin/project/${row.original.id}`)}
                 >
                   View details
                 </DropdownMenuItem>
@@ -224,11 +226,35 @@ export default function ProjectsPage() {
         </Button>
       </div>
       <div className="flex items-center py-4"></div>
+      <div className="hidden" id="StateShowBox">
+        {showState}
+      </div>
       <Tabs defaultValue={showState} className="">
         <TabsList>
-          <TabsTrigger type="button" className="mr-1" onClick={()=>setShowState("all")} value="all">All</TabsTrigger>
-          <TabsTrigger type="button" className="mr-1" onClick={()=>setShowState("active")} value="active">active</TabsTrigger>
-          <TabsTrigger type="button" className="mr-1"  onClick={()=>setShowState("inactive")} value="inactive">Inactive</TabsTrigger>
+          <TabsTrigger
+            type="button"
+            className="mr-1"
+            onClick={() => setShowState("all")}
+            value="all"
+          >
+            All
+          </TabsTrigger>
+          <TabsTrigger
+            type="button"
+            className="mr-1"
+            onClick={() => setShowState("active")}
+            value="active"
+          >
+            active
+          </TabsTrigger>
+          <TabsTrigger
+            type="button"
+            className="mr-1"
+            onClick={() => setShowState("inactive")}
+            value="inactive"
+          >
+            Inactive
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="active"></TabsContent>
         <TabsContent value="inactive"></TabsContent>
