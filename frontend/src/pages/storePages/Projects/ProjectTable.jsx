@@ -260,6 +260,7 @@ export default function ProjectTable({ data, showState, setShowState }) {
       columnFilters,
       columnVisibility,
       rowSelection,
+      
     },
   });
   return (

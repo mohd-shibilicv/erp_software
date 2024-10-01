@@ -163,7 +163,7 @@ export default function ProjectDetailPage() {
                       Project Description
                     </label>
                     <Textarea
-                      className="w-full pointer-events-none shadow-md"
+                      className="w-full pointer-events-none shadow-md resize-none"
                       placeholder="enter project description "
                       value={data?.project_description}
                     />
@@ -342,7 +342,7 @@ export default function ProjectDetailPage() {
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogDescription className="h-[500px] overflow-y-auto">
+                          <DialogDescription className="h-[500px] overflow-y-auto mt-4">
                             <img
                               src={img?.image}
                               className="w-full h-full object-contain"

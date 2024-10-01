@@ -248,7 +248,7 @@ const StoreSidebar = () => {
           "bg-white p-4 h-screen border-r border-gray-300 lg:flex flex-col transition-all duration-300 w-64 hidden "
         }
       >
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-8 ">
           <Link to="/" className="flex justify-center">
             <img
               src="/nasscript_full_banner_logo.png"
@@ -260,7 +260,7 @@ const StoreSidebar = () => {
         <nav className="flex-grow overflow-y-auto custom-scrollbar">
           {filteredMenuItems.map(renderSection)}
         </nav>
-        <div className="mt-2">
+        <div className="mt-2 pb-5">
           <ul>
             <Link
               to="/admin/notifications"

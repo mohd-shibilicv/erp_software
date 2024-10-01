@@ -15,7 +15,16 @@ export default function ProjectsPage() {
   const [showState, setShowState] = useState("all");
   const { data: projects = [], isLoading: loading } =
     useGetAllProject(showState);
-
+  // const [datas, setDatas] = useState([]);
+  // useEffect(() => {
+  //   if (showState == "all") {
+  //     setDatas(projects);
+  //   } else if (showState == "acitve") {
+  //     setDatas(projects?.filter((project) => !project.active));
+  //   } else {
+  //     setDatas(projects?.filter((project) => project.active));
+  //   }
+  // }, [projects, showState]);
   if (loading) {
     return <div>Loading...</div>;
   }
