@@ -189,44 +189,35 @@ class ProjectFilter(filters.FilterSet):
 
     def filter_assigned_staff(self, queryset, name, value):
         return queryset.filter(assigned_staffs__id=value)
+    
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     filterset_class = ProjectFilter
 
-    def create(self, request, *args, **kwargs):
-        print("--- Debugging POST request ---")
-        print("Request data:", request.data)
-        
-        # Convert assigned_staffs to a list of integers if it's a string
+    def list(self, request, *args, **kwargs):
+        queryset = Project.objects.all()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):        
         if 'assigned_staffs' in request.data and isinstance(request.data['assigned_staffs'], str):
             request.data['assigned_staffs'] = [int(id) for id in request.data['assigned_staffs'].split(',') if id.isdigit()]
         
         serializer = self.get_serializer(data=request.data)
-        print("Serializer initial data:", serializer.initial_data)
         
         if serializer.is_valid():
-            print("Serializer is valid")
-            print("Validated data:", serializer.validated_data)
             instance = self.perform_create(serializer)
-            print("Project created successfully")
             headers = self.get_success_headers(serializer.data)
             return Response(self.get_serializer(instance).data, status=status.HTTP_201_CREATED, headers=headers)
         else:
-            print("Serializer errors:", serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
-        print("Performing create...")
         instance = serializer.save()
-        print("Created instance:", instance)
         return instance
 
-    def update(self, request, *args, **kwargs):
-        print("--- Debugging PUT/PATCH request ---")
-        print("Request data:", request.data)
-        
-        # Convert assigned_staffs to a list of integers if it's a string
+    def update(self, request, *args, **kwargs):        
         if 'assigned_staffs' in request.data and isinstance(request.data['assigned_staffs'], str):
             request.data['assigned_staffs'] = [int(id) for id in request.data['assigned_staffs'].split(',') if id.isdigit()]
         
@@ -236,16 +227,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         print("Serializer initial data:", serializer.initial_data)
         
         if serializer.is_valid():
-            print("Serializer is valid")
             print("Validated data:", serializer.validated_data)
             self.perform_update(serializer)
-            print("Project updated successfully")
             return Response(serializer.data)
         else:
-            print("Serializer errors:", serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_update(self, serializer):
-        print("Performing update...")
         instance = serializer.save()
-        print("Updated instance:", instance)

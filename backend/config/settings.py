@@ -112,7 +112,7 @@ DATABASES = {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": "erp",
             "USER": "postgres",
-            "PASSWORD": "1111",
+            "PASSWORD": env.str("DB_PASSWORD"),
             "HOST": "localhost",
             "PORT": "",
         }
