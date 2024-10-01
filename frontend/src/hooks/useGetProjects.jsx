@@ -7,6 +7,7 @@ export const useGetAllProject = (state) => {
     queryFn: async () => {
       state
       const { data } = await projectApi.getAll();
+      console.log(data.results,"dataaa")
       return data.results;
     },
     onError: (error) => {

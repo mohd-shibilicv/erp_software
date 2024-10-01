@@ -205,10 +205,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             print("Serializer is valid")
             print("Validated data:", serializer.validated_data)
-            self.perform_create(serializer)
+            instance = self.perform_create(serializer)
             print("Project created successfully")
             headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            return Response(self.get_serializer(instance).data, status=status.HTTP_201_CREATED, headers=headers)
         else:
             print("Serializer errors:", serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -217,6 +217,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         print("Performing create...")
         instance = serializer.save()
         print("Created instance:", instance)
+        return instance
 
     def update(self, request, *args, **kwargs):
         print("--- Debugging PUT/PATCH request ---")
