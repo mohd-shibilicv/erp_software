@@ -146,14 +146,14 @@ export default function ProjectsPage() {
             {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
           </Button>
         ),
-        cell: ({ row }) => <div>{row.getValue("client")?.id}</div>,
+        cell: ({ row }) => <div>{row.getValue("client")?.name}</div>,
       },
       {
         id: "actions",
         cell: ({ row }) => {
           const queryClient = new QueryClient();
           const handleDeleteProject = async () => {
-            await projectApi.delete(row.original.project_id);
+            await projectApi.delete(row.original.id);
             queryClient.invalidateQueries(["projects"])
           };
           return (
@@ -168,14 +168,14 @@ export default function ProjectsPage() {
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
                   onClick={() =>
-                    navigate(`/admin/project/${row.original.project_id}`)
+                    navigate(`/admin/project/${row.original.id}`)
                   }
                 >
                   View details
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() =>
-                    navigate(`/admin/project/${row.original.project_id}`)
+                    navigate(`/admin/project/edit/${row.original.id}`)
                   }
                 >
                   Edit Project

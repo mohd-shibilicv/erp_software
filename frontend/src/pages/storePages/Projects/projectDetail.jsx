@@ -23,17 +23,26 @@ import { projectApi } from "@/services/project";
 import { Calendar, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 
 export default function ProjectDetailPage() {
   const [selectLoading] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const [data, setData] = useState({});
   useEffect(() => {
-    projectApi.get(id).then(({ data }) => {
-      console.log(data);
-    });
+    setLoading(true);
+    projectApi
+      .get(id)
+      .then(({ data }) => {
+        setLoading(false);
+        setData(data);
+      })
+      .catch((er) => {
+        setLoading(false);
+        toast.error(er.message);
+      });
   }, [id]);
   selectLoading;
   //   const fetchClientDetails = async () => {
@@ -108,6 +117,7 @@ export default function ProjectDetailPage() {
                 </label>
                 <Input
                   className="pointer-events-none shadow-md"
+                  value={data?.project_name}
                   // onChange={(e) => setProjectname(e.target.value)}
                   //   placeholder="Enter Project name"
                 />
@@ -117,6 +127,7 @@ export default function ProjectDetailPage() {
                   Project id
                 </label>
                 <Input
+                  value={data?.project_id}
                   // value={projectId}
 
                   //   placeholder="Enter Project name"
@@ -128,7 +139,7 @@ export default function ProjectDetailPage() {
                   Project Status
                 </label>
                 <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                  Completed
+                  {data?.status}
                 </div>
               </div>
             </div>
@@ -140,6 +151,7 @@ export default function ProjectDetailPage() {
                 <Textarea
                   className="w-full pointer-events-none shadow-md"
                   placeholder="enter project description "
+                  value={data?.project_description}
                 />
               </div>
             </div>
@@ -149,7 +161,7 @@ export default function ProjectDetailPage() {
                   Client
                 </label>
                 <div className="w-full shadow-md h-10 rounded-md border bg-white px-4 flex items-center">
-                  Client1
+                  {data?.client?.name}
                 </div>
               </div>
               <div className="flex flex-col gap-1">
@@ -157,7 +169,7 @@ export default function ProjectDetailPage() {
                   Select Priority
                 </label>
                 <div className="w-full shadow-md h-10 rounded-md border bg-white px-4 flex items-center">
-                  Medium
+                  {data?.priority_level}
                 </div>
               </div>
             </div>
@@ -171,7 +183,7 @@ export default function ProjectDetailPage() {
                 Client id
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                2
+                {data?.client?.id}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -179,7 +191,7 @@ export default function ProjectDetailPage() {
                 Client name
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                tester
+                {data?.client?.name}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -187,7 +199,7 @@ export default function ProjectDetailPage() {
                 Mobile Number
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                2390340
+                {data?.client?.mobile_number}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -195,7 +207,7 @@ export default function ProjectDetailPage() {
                 Whatsapp Number
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                2390340
+                {data?.client?.whatsapp_number}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -203,7 +215,7 @@ export default function ProjectDetailPage() {
                 Email address
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                2390340
+                {data?.client?.email}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -211,7 +223,7 @@ export default function ProjectDetailPage() {
                 Country and City
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                India, Delhi
+                {data?.client?.country} , {data?.client?.city}
               </div>
             </div>
           </div>
@@ -224,7 +236,7 @@ export default function ProjectDetailPage() {
                 File Number
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                23490
+                {data?.requirements?.file_number}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -232,7 +244,7 @@ export default function ProjectDetailPage() {
                 Color Theme
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                Dark
+                {data?.requirements?.color_theme}
               </div>
             </div>
           </div>
@@ -242,7 +254,7 @@ export default function ProjectDetailPage() {
                 Layout
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                Sidebar
+                {data?.requirements?.layout}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -250,7 +262,7 @@ export default function ProjectDetailPage() {
                 additional requirements
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                Sample
+                {data?.requirements?.additional_requirements}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -258,24 +270,34 @@ export default function ProjectDetailPage() {
                 Status
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                Confirmed
+                {data?.requirements?.status}
               </div>
             </div>
           </div>
           <div className="w-full mt-5 flex flex-col p-2 border rounded-md ">
             <label htmlFor="" className="text-sm font-semibold">
-              Predefined Features
+              Features
             </label>
             <div className="flex flex-wrap gap-2 mt-2 border rounded-md p-2 shadow-md">
-              <div className="h-8 px-2 rounded-lg bg-gray-200 flex justify-center items-center text-sm">
-                Dashboard
-              </div>
-              <div className="h-8 px-2 rounded-lg bg-gray-200 flex justify-center items-center text-sm">
-                Reports
-              </div>
+              {data?.requirements?.predefined_features?.map((feature) => (
+                <div
+                  key={feature?.id}
+                  className="h-8 px-2 rounded-lg bg-gray-200 flex justify-center items-center text-sm"
+                >
+                  {feature?.name}
+                </div>
+              ))}
+              {data?.requirements?.custom_features?.map((feature) => (
+                <div
+                  key={feature?.id}
+                  className="h-8 px-2 rounded-lg bg-gray-200 flex justify-center items-center text-sm"
+                >
+                  {feature?.name}
+                </div>
+              ))}
             </div>
           </div>
-          <div className="w-full mt-5 flex flex-col p-2 border rounded-md">
+          <div className="w-full mt-5 flex flex-col p-2 border rounded-md hidden">
             <label htmlFor="" className="text-sm font-semibold">
               Custome Features
             </label>
@@ -293,32 +315,30 @@ export default function ProjectDetailPage() {
               Images
             </label>
             <div className="flex flex-wrap gap-2 mt-2 border rounded-md p-2 ">
-              <Dialog>
-                <DialogTrigger>
-                  <div className="h-48 w-48 border rounded-md overflow-hidden cursor-pointer shadow-md">
-                    <img
-                      src={
-                        "https://img.freepik.com/free-vector/user-panel-business-dashboard_23-2148358960.jpg?t=st=1727530081~exp=1727533681~hmac=b1ee56a1b2333842cdc82c4007681d1018b2961538f112c1e36afae7f309073d&w=1060"
-                      }
-                      className="w-full h-full object-contain"
-                      alt=""
-                    />
-                  </div>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogDescription className="h-[500px] overflow-y-auto">
+              {data?.requirements?.images?.map((img) => (
+                <Dialog key={img?.id}>
+                  <DialogTrigger>
+                    <div className="h-48 w-48 border rounded-md overflow-hidden cursor-pointer shadow-md">
                       <img
-                        src={
-                          "https://img.freepik.com/free-vector/user-panel-business-dashboard_23-2148358960.jpg?t=st=1727530081~exp=1727533681~hmac=b1ee56a1b2333842cdc82c4007681d1018b2961538f112c1e36afae7f309073d&w=1060"
-                        }
+                        src={img?.image}
                         className="w-full h-full object-contain"
                         alt=""
                       />
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogDescription className="h-[500px] overflow-y-auto">
+                        <img
+                          src={img?.image}
+                          className="w-full h-full object-contain"
+                          alt=""
+                        />
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              ))}
             </div>
           </div>
         </section>
@@ -330,7 +350,7 @@ export default function ProjectDetailPage() {
                 Agreement Id
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                23
+                {data?.agreement?.id}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -338,7 +358,7 @@ export default function ProjectDetailPage() {
                 Quotation Id
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                21
+                {data?.agreement?.quotation}
               </div>
             </div>
           </div>
@@ -346,18 +366,23 @@ export default function ProjectDetailPage() {
             <div className="w-full">
               <h1>Payment Terms</h1>
             </div>
-            <div className="w-full mt-2 flex gap-2 border p-2 rounded-md  shadow-md">
-              <div className="size-10 text-sm flex justify-center items-center bg-gray-200 rounded-md">
-                1
+            {data?.agreement?.payment_terms?.map((pt) => (
+              <div
+                key={pt?.id}
+                className="w-full mt-2 flex gap-2 border p-2 rounded-md  shadow-md"
+              >
+                <div className="size-10 text-sm flex justify-center items-center bg-gray-200 rounded-md">
+                  1
+                </div>
+                <div className="h-10 text-sm px-2 flex justify-center items-center bg-gray-200 rounded-md gap-2">
+                  <Calendar className="w-4" />
+                  {pt?.date}
+                </div>
+                <div className="h-10 text-sm px-2 flex justify-center items-center bg-gray-200 rounded-md">
+                  {pt?.amount} QAR
+                </div>
               </div>
-              <div className="h-10 text-sm px-2 flex justify-center items-center bg-gray-200 rounded-md gap-2">
-                <Calendar className="w-4" />
-                2024-09-26
-              </div>
-              <div className="h-10 text-sm px-2 flex justify-center items-center bg-gray-200 rounded-md">
-                40 QAR
-              </div>
-            </div>
+            ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
             <div className="flex flex-col gap-1">
@@ -365,7 +390,7 @@ export default function ProjectDetailPage() {
                 Quotation Number
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                1223
+                {data?.agreement?.quotation_number}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -373,7 +398,7 @@ export default function ProjectDetailPage() {
                 Client Name
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                newrelation software
+                {data?.agreement?.clientName}
               </div>
             </div>
           </div>
@@ -383,7 +408,7 @@ export default function ProjectDetailPage() {
                 Company Name
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                abd solutions
+                {data?.agreement?.company_name}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -391,7 +416,7 @@ export default function ProjectDetailPage() {
                 Company Address
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                newrelation software, Qatar
+                {data?.agreement?.company_address}
               </div>
             </div>
           </div>
@@ -401,6 +426,7 @@ export default function ProjectDetailPage() {
                 Cr Number
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
+                {data?.agreement?.cr_number}
                 232
               </div>
             </div>
@@ -409,7 +435,7 @@ export default function ProjectDetailPage() {
                 Baladiya
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                234
+                {data?.agreement?.baladiya}
               </div>
             </div>
           </div>
@@ -419,7 +445,7 @@ export default function ProjectDetailPage() {
                 Project Name
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                232
+                {data?.agreement?.project_name}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -427,7 +453,7 @@ export default function ProjectDetailPage() {
                 Total Amount
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                234
+                {data?.agreement?.total_amount} QAR
               </div>
             </div>
           </div>
@@ -437,7 +463,7 @@ export default function ProjectDetailPage() {
                 Project Start Date
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                232
+                {data?.agreement?.project_start_date}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -445,7 +471,7 @@ export default function ProjectDetailPage() {
                 Project End date
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                234
+                {data?.agreement?.project_end_date}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -453,7 +479,7 @@ export default function ProjectDetailPage() {
                 Payment Date
               </label>
               <div className="w-full h-10 rounded-md border bg-white px-4 flex items-center shadow-md">
-                234
+                {data?.agreement?.payment_date}
               </div>
             </div>
           </div>
@@ -465,11 +491,9 @@ export default function ProjectDetailPage() {
                 </AccordionTrigger>
                 <AccordionContent>
                   <embed
-                    src={
-                      "https://res.cloudinary.com/dzaoju6lr/image/upload/v1716364272/basys_Sr._Full-Stack_Engineer__React___Node__Hiring_Test_jiqotx.pdf"
-                    }
+                    src={data?.agreement?.tc_file}
                     className="w-full min-h-[500px]"
-                  />
+                    />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -480,9 +504,7 @@ export default function ProjectDetailPage() {
                 </AccordionTrigger>
                 <AccordionContent className="">
                   <embed
-                    src={
-                      "https://res.cloudinary.com/dzaoju6lr/image/upload/v1716364272/basys_Sr._Full-Stack_Engineer__React___Node__Hiring_Test_jiqotx.pdf"
-                    }
+                    src={data?.agreement?.signed_agreement}
                     className="w-full border min-h-[500px]"
                   />
                 </AccordionContent>

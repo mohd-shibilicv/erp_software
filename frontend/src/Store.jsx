@@ -245,6 +245,14 @@ function Store() {
           }
         />
         <Route
+          path="/project/edit/:id"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <AddnewProject />
+            </StoreProtectedRoute>
+          }
+        />
+        <Route
           path="/project/:id"
           element={
             <StoreProtectedRoute allowedRoles={["admin"]}>

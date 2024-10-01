@@ -433,7 +433,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        staffs = validated_data.pop('staffs', [])
+        assigned_staffs = validated_data.pop('assigned_staffs', [])
         agreement_project_name = validated_data.pop('agreement_project_name', None)
         project_id = validated_data.get('project_id')
         
@@ -454,16 +454,16 @@ class ProjectSerializer(serializers.ModelSerializer):
             project.project_id = project_id
             project.save()
         
-        if staffs:
-            project.assigned_staffs.set(User.objects.filter(id__in=staffs))
+        if assigned_staffs:
+            project.assigned_staffs.set(User.objects.filter(id__in=assigned_staffs))
         
         return project
     
     def update(self, instance, validated_data):
-        staffs = validated_data.pop('staffs', None)
+        assigned_staffs = validated_data.pop('assigned_staffs', None)
         instance = super().update(instance, validated_data)
         
-        if staffs is not None:
-            instance.assigned_staffs.set(User.objects.filter(id__in=staffs))
+        if assigned_staffs is not None:
+            instance.assigned_staffs.set(User.objects.filter(id__in=assigned_staffs))
         
         return instance

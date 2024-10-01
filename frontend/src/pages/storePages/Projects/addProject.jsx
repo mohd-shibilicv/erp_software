@@ -18,7 +18,8 @@ import { v4 as uuid } from "uuid";
 import { api } from "@/services/api";
 import { clientRequirementService } from "@/services/crmServiceApi";
 import { Checkbox } from "@/components/ui/checkbox";
-
+import { useNavigate, useParams } from "react-router-dom";
+import { toast as Hotoast } from "react-hot-toast";
 export default function AddnewProject() {
   const [projectId, setProjectid] = useState("");
   const [projectName, setProjectname] = useState("");
@@ -27,7 +28,7 @@ export default function AddnewProject() {
   const [projectPriority, setProjectPriority] = useState("");
   const [isLoading, setisLoading] = useState(false);
   const [selectedClient, setSelectedClient] = useState("");
-
+  const { id } = useParams();
   useEffect(() => {
     setProjectid(uuid().replace(/\D/g, "").slice(0, 8));
   }, []);
@@ -61,9 +62,11 @@ export default function AddnewProject() {
     }
   };
   useEffect(() => {}, [clients]);
+  const navigate = useNavigate();
   useEffect(() => {
     fetchClientDetails();
   }, []);
+  
   const { toast } = useToast();
   const handleSubmit = async () => {
     try {
@@ -75,21 +78,41 @@ export default function AddnewProject() {
         return;
       }
       setisLoading(true);
-      await projectApi.create({
-        project_id: Number(projectId),
-        project_name: projectName,
-        status: projectStatus,
-        project_description: projectDescription,
-        priority_level: projectPriority,
-        client_id: selectedClient,
-        requirements: Number(selectedRequirement),
-        agreement_project_name:
+      if (!id) {
+        await projectApi.create({
+          project_id: Number(projectId),
+          project_name: projectName,
+          status: projectStatus,
+          project_description: projectDescription,
+          priority_level: projectPriority,
+          client_id: selectedClient,
+          requirements: Number(selectedRequirement),
+          agreement_project_name:
+            agreements.find((ag) => ag.id == selectedAgreement)?.project_name ||
+            selectedAgreement,
+          assigned_staffs: selectedStaffs,
+        });
+        setisLoading(false);
+        toast({ description: "Project created" });
+        return navigate('/admin/projects')
+      } else {
+        await projectApi.update(id, {
+          project_id: Number(projectId),
+          project_name: projectName,
+          status: projectStatus,
+          project_description: projectDescription,
+          priority_level: projectPriority,
+          client_id: selectedClient,
+          requirements: Number(selectedRequirement),
+          agreement_project_name:
           agreements.find((ag) => ag.id == selectedAgreement)?.project_name ||
           selectedAgreement,
-        staffs: selectedStaffs,
-      });
-      setisLoading(false);
-      return toast({ description: "Project created" });
+          assigned_staffs: selectedStaffs,
+        });
+        setisLoading(false);
+        toast({ description: "Project updated" });
+        return navigate('/admin/projects')
+      }
     } catch (error) {
       setisLoading(false);
       return toast({
@@ -98,10 +121,32 @@ export default function AddnewProject() {
       });
     }
   };
+  useEffect(() => {
+    if (id) {
+      projectApi
+        .get(id)
+        .then(({ data }) => {
+          setProjectname(data?.project_name);
+          setProjectid(data?.project_id);
+          setProjectStatus(data?.status);
+          setProjectDescription(data?.project_description);
+          setSelectedClient(data?.client.id);
+          setProjectPriority(data?.priority_level);
+          setSelectedAgreement(data?.agreement?.id);
+          setSelectedRequirement(data?.requirements?.id);
+          setSelectedStaffs(data?.assigned_staffs);
+        })
+        .catch((er) => {
+          Hotoast.error(er.message);
+        });
+    }
+  }, [id]);
   return (
     <main className="w-full h-full bg-white rounded-xl border shadow-sm p-5">
       <div className="w-full">
-        <h1 className="font-bold text-[21px]">Add new Project</h1>
+        <h1 className="font-bold text-[21px]">
+          {id ? "Updated Project" : "Add new Project"}
+        </h1>
       </div>
       <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
         <div className="flex flex-col gap-1">
@@ -255,7 +300,7 @@ export default function AddnewProject() {
                 placeholder={
                   selectedAgreement
                     ? agreements.find((ag) => ag.id == selectedAgreement)
-                        .baladiya
+                        ?.baladiya
                     : "Select Agreement"
                 }
               />
@@ -283,7 +328,7 @@ export default function AddnewProject() {
                 placeholder={
                   selectedRequirement
                     ? requirements.find((re) => re.id == selectedRequirement)
-                        .file_number
+                        ?.file_number
                     : "Select requirement"
                 }
               />
@@ -325,7 +370,10 @@ export default function AddnewProject() {
           ))}
         </div>
       </div>
-      <div className="mt-5 w-full flex justify-end">
+      <div className="mt-5 w-full flex justify-between">
+        <Button variant="outline" onClick={() => navigate("/admin/projects")}>
+          Back
+        </Button>
         <Button
           variant="default"
           type="submit"
