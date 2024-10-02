@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, Link } from "react-router-dom";
 import {
@@ -10,7 +10,6 @@ import {
   ArrowDownToDot,
   ArrowUpFromDot,
   Layers3,
-  Container,
   HeartCrack,
   PhoneIncoming,
   Sheet,
@@ -22,7 +21,6 @@ import {
   FileText,
   ChevronDown,
   ChevronRight,
-  Menu,
   CreditCard,
   ReceiptText,
   Contact,
@@ -35,16 +33,20 @@ import {
   UserCog,
   CalendarArrowDown,
   LayoutList,
-  MenuIcon,
+ 
+  Sun,
+  Moon,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 import StoreSideBarSheet from "./StoreSidebarSheet";
+import {  Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import { useTheme } from "../ui/them-provider";
 
 const StoreSidebar = () => {
   const location = useLocation();
   const [expandedSections, setExpandedSections] = useState({});
   const { user } = useSelector((state) => state.auth);
-
+  const { theme, setTheme } = useTheme();
   const isActive = (path) => {
     return location.pathname === path
       ? "bg-[#6f42c1] text-white"
@@ -242,13 +244,13 @@ const StoreSidebar = () => {
 
   return (
     <div className="relative">
-      <StoreSideBarSheet menuItems={menuItems}/>
+      <StoreSideBarSheet menuItems={menuItems} />
       <div
         className={
-          "bg-white p-4 h-screen border-r border-gray-300 lg:flex flex-col transition-all duration-300 w-64 hidden "
+          "bg-background  dark:bg-background p-4 h-screen border-r border-gray-300 lg:flex flex-col transition-all duration-300 w-64 hidden "
         }
       >
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-8 ">
           <Link to="/" className="flex justify-center">
             <img
               src="/nasscript_full_banner_logo.png"
@@ -260,8 +262,28 @@ const StoreSidebar = () => {
         <nav className="flex-grow overflow-y-auto custom-scrollbar">
           {filteredMenuItems.map(renderSection)}
         </nav>
-        <div className="mt-2">
+        <div className="mt-2 pb-5">
           <ul>
+            <Tabs defaultValue={theme} className="w-full mb-2 hidden ">
+              <TabsList className="bg-gray-200 w-full px-1 ">
+                <TabsTrigger
+                  onClick={() => setTheme("light")}
+                  className="w-full flex items-center gap-2 h-[95%]"
+                  value="light"
+                >
+                  <Sun className="w-4" />
+                  Light
+                </TabsTrigger>
+                <TabsTrigger
+                  onClick={() => setTheme("dark")}
+                  className="w-full flex items-center gap-2 h-[95%]"
+                  value="dark"
+                >
+                  <Moon className="w-4" />
+                  Dark
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
             <Link
               to="/admin/notifications"
               className={`flex items-center space-x-2 p-2 rounded ${isActive(

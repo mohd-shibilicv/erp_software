@@ -19,17 +19,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 import { projectApi } from "@/services/project";
-import { Calendar, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import {
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  CircleArrowLeft,
+  Loader2,
+} from "lucide-react";
 import { useEffect } from "react";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function ProjectDetailPage() {
   const [selectLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const [data, setData] = useState({});
+  const navigate = useNavigate();
   useEffect(() => {
     setLoading(true);
     projectApi
@@ -163,7 +170,7 @@ export default function ProjectDetailPage() {
                       Project Description
                     </label>
                     <Textarea
-                      className="w-full pointer-events-none shadow-md"
+                      className="w-full pointer-events-none shadow-md resize-none"
                       placeholder="enter project description "
                       value={data?.project_description}
                     />
@@ -342,7 +349,7 @@ export default function ProjectDetailPage() {
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogDescription className="h-[500px] overflow-y-auto">
+                          <DialogDescription className="h-[500px] overflow-y-auto mt-4">
                             <img
                               src={img?.image}
                               className="w-full h-full object-contain"
@@ -529,37 +536,48 @@ export default function ProjectDetailPage() {
           )}
         </>
       )}
-      <div className="w-full mt-5  justify-between flex items-center">
+      <div className="w-full mt-5  justify-between flex items-center gap-1">
         <Button
-          className={`items-center h-8 p-2 gap-1 ${
-            detailTabs.indexOf(tabs) == 0 ? "pointer-events-none" : ""
-          }`}
-          variant={`${detailTabs.indexOf(tabs) == 0 ? "secondary" : ""}`}
-          onClick={() => {
-            setTab(detailTabs[detailTabs.indexOf(tabs) - 1]);
-          }}
+          className="items-center h-8 p-2 gap-1"
+          onClick={() => navigate(`/admin/projects`)}
         >
-          {" "}
-          <ChevronLeft className="w-5 mt-[0px]" />{" "}
-          <span className="text-sm">Previous</span>
+          <CircleArrowLeft className="w-5" />
+          <span>Back to page</span>
         </Button>
-        <Button
-          className={`items-center h-8 p-2 gap-1 ${
-            detailTabs.indexOf(tabs) == detailTabs.length - 1
-              ? "pointer-events-none"
-              : ""
-          }`}
-          variant={`${
-            detailTabs.indexOf(tabs) == detailTabs.length - 1 ? "secondary" : ""
-          }`}
-          onClick={() => {
-            setTab(detailTabs[detailTabs.indexOf(tabs) + 1]);
-          }}
-        >
-          {" "}
-          <span className="text-sm">Next</span>
-          <ChevronRight className="w-4 mt-[0px]" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            className={`items-center h-8 p-2 gap-1 ${
+              detailTabs.indexOf(tabs) == 0 ? "pointer-events-none" : ""
+            }`}
+            variant={`${detailTabs.indexOf(tabs) == 0 ? "secondary" : ""}`}
+            onClick={() => {
+              setTab(detailTabs[detailTabs.indexOf(tabs) - 1]);
+            }}
+          >
+            {" "}
+            <ChevronLeft className="w-5 mt-[0px]" />{" "}
+            <span className="text-sm">Previous</span>
+          </Button>
+          <Button
+            className={`items-center h-8 p-2 gap-1 ${
+              detailTabs.indexOf(tabs) == detailTabs.length - 1
+                ? "pointer-events-none"
+                : ""
+            }`}
+            variant={`${
+              detailTabs.indexOf(tabs) == detailTabs.length - 1
+                ? "secondary"
+                : ""
+            }`}
+            onClick={() => {
+              setTab(detailTabs[detailTabs.indexOf(tabs) + 1]);
+            }}
+          >
+            {" "}
+            <span className="text-sm">Next</span>
+            <ChevronRight className="w-4 mt-[0px]" />
+          </Button>
+        </div>
       </div>
     </main>
   );

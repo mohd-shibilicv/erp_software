@@ -3,27 +3,30 @@
 import { MenuIcon } from "lucide-react";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTrigger,
 } from "../ui/sheet";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { NavLink } from "react-router-dom";
+import { useRef, useState } from "react";
 
 export default function StoreSideBarSheet({ menuItems }) {
-    const [sheetState,setSheetState]=useState(false)
+  
+  const sheetCloseRef=useRef()
   return (
-    <Sheet defaultOpen={sheetState} onOpenChange={setSheetState}>
+    <Sheet >
       <SheetTrigger>
         {" "}
-        <button className="lg:hidden absolute left-2 top-2 cursor-pointer p-2 rounded-full bg-white border shadow-md">
+        <button className="lg:hidden absolute left-2 top-1 cursor-pointer p-2 rounded-full bg-white/55 border shadow-md">
           <MenuIcon className="size-6 " />
         </button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetDescription className="p-3 overflow-y-auto">
+          <SheetDescription className="p-3 overflow-y-auto ">
+            <SheetClose ref={sheetCloseRef} className="hidden"></SheetClose>
             <div className="custom-scrollbar w-full px-2 h-screen overflow-auto pb-28">
               {menuItems.map((item, i) => (
                 <div key={i} className="w-full">
@@ -32,14 +35,15 @@ export default function StoreSideBarSheet({ menuItems }) {
                   </div>
                   <div className="ml-2 flex flex-col">
                     {item?.items?.map((it, I) => (
-                      <Link to={it?.path}
-                      onClick={()=>setSheetState(false)}
+                      <NavLink
+                        to={it?.path}
+                        onClick={() => sheetCloseRef?.current?.click()}
                         key={I}
                         className="h-9 flex items-center gap-2 py-3"
                       >
-                        <it.icon className="w-5"/>
+                        <it.icon className="w-5" />
                         {it.label}
-                      </Link>
+                      </NavLink>
                     ))}
                   </div>
                 </div>
