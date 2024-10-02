@@ -383,8 +383,19 @@ class AgreementSerializer(serializers.ModelSerializer):
 
         return instance
 
+
    
+from .models import ProjectAssignedStaffs
+
+class ProjectAssignedStaffsSerializer(serializers.ModelSerializer):
+    staff_name = serializers.CharField(source='staff.username', read_only=True)
     
+    class Meta:
+        model = ProjectAssignedStaffs
+        fields = ['id', 'project_name', 'project_reference_id', 'staff_name', 'assigned_date', 'is_active']
+    
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     client = ClientSerializer(read_only=True)
     requirements = ClientRequirementSerializer(read_only=True)
@@ -394,6 +405,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True
     )
+    staff_assignments = ProjectAssignedStaffsSerializer(many=True, read_only=True)
     agreement = AgreementSerializer(read_only=True)
     agreement_id = serializers.PrimaryKeyRelatedField(
         queryset=Agreement.objects.all(),
@@ -413,7 +425,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             'id', 'project_name', 'project_id', 'client',
             'requirements', 'requirements_id', 'agreement', 'agreement_id',
             'project_description', 'priority_level', 'status',
-            'active', 'assigned_staffs'
+            'active', 'assigned_staffs','staff_assignments'
         ]
         read_only_fields = ['project_name', 'client']
 
@@ -441,18 +453,21 @@ class ProjectSerializer(serializers.ModelSerializer):
         
         if assigned_staffs:
             project.assigned_staffs.set(assigned_staffs)
+            project._assigned_staffs = assigned_staffs  # Set flag for save method
+            project.save()  # This will trigger the update_staff_assignments
         
         return project
-    
+
     def update(self, instance, validated_data):
         assigned_staffs = validated_data.pop('assigned_staffs', None)
         
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         
-        instance.save()
-        
         if assigned_staffs is not None:
             instance.assigned_staffs.set(assigned_staffs)
-        
+            instance._assigned_staffs = assigned_staffs  # Set flag for save method
+            
+        instance.save()  # This will trigger the update_staff_assignments
         return instance
+ 

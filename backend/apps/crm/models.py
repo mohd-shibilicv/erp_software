@@ -312,7 +312,53 @@ class Project(models.Model):
             self.active = False
         super(Project, self).save(*args, **kwargs)
 
+        if hasattr(self, '_assigned_staffs'):
+            self.update_staff_assignments()
+
+    
+    def update_staff_assignments(self):
+        current_assignments = ProjectAssignedStaffs.objects.filter(project=self)
+        current_staff_ids = set(current_assignments.values_list('staff_id', flat=True))
+        new_staff_ids = set(self.assigned_staffs.values_list('id', flat=True))
+
+        # Deactivate removed assignments
+        staff_to_remove = current_staff_ids - new_staff_ids
+        current_assignments.filter(staff_id__in=staff_to_remove).update(is_active=False)
+
+        # Add new assignments
+        staff_to_add = new_staff_ids - current_staff_ids
+        for staff_id in staff_to_add:
+            ProjectAssignedStaffs.objects.create(
+                project=self,
+                staff_id=staff_id,
+                project_name=self.project_name,
+                project_reference_id=self.project_id,
+                is_active=True
+            )
+
+        # Reactivate existing assignments that might have been deactivated
+        staff_to_reactivate = new_staff_ids & current_staff_ids
+        current_assignments.filter(staff_id__in=staff_to_reactivate).update(is_active=True)
+
     def __str__(self):
         return self.project_name
+
+    
+
+class ProjectAssignedStaffs(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='staff_assignments')
+    staff = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project_assignments')
+    project_name = models.CharField(max_length=255)
+    project_reference_id = models.CharField(max_length=100, null=True, blank=True)  # renamed from project_id
+    assigned_date = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Project Assigned Staff'
+        verbose_name_plural = 'Project Assigned Staffs'
+        unique_together = ('project', 'staff')
+
+    def __str__(self):
+        return f"{self.project_name} - {self.staff.username}"
 
 

@@ -201,31 +201,31 @@ class ProjectViewSet(viewsets.ModelViewSet):
             request.data['assigned_staffs'] = [int(id) for id in request.data['assigned_staffs'].split(',') if id.isdigit()]
         
         serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = self.perform_create(serializer)
         
-        if serializer.is_valid():
-            instance = self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            return Response(self.get_serializer(instance).data, status=status.HTTP_201_CREATED, headers=headers)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            self.get_serializer(instance).data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
 
     def perform_create(self, serializer):
-        instance = serializer.save()
-        return instance
+        return serializer.save()
 
-    def update(self, request, *args, **kwargs):
-        if 'assigned_staffs' in request.data and isinstance(request.data['assigned_staffs'], str):
-            request.data['assigned_staffs'] = [int(id) for id in request.data['assigned_staffs'].split(',') if id.isdigit()]
-        
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        
-        if serializer.is_valid():
-            self.perform_update(serializer)
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+from .serializers import ProjectAssignedStaffsSerializer
+from .models import ProjectAssignedStaffs
 
-    def perform_update(self, serializer):
-        instance = serializer.save()
+class ProjectAssignedStaffsViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ProjectAssignedStaffsSerializer
+    pagination_class = None
+    
+    def get_queryset(self):
+        return ProjectAssignedStaffs.objects.filter(is_active=True)
+
+# Add filters if needed
+class ProjectAssignedStaffsFilter(filters.FilterSet):
+    class Meta:
+        model = ProjectAssignedStaffs
+        fields = ['project', 'staff', 'is_active']
