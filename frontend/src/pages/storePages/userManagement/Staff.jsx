@@ -37,8 +37,8 @@ const Staff = () => {
       const response = await api.get("/staff/", {
         params: { search: searchTerm },
       });
-      setStaff(response.data.results);
-      setFilteredStaff(response.data.results);
+      setStaff(response.data);
+      setFilteredStaff(response.data);
     } catch (error) {
       console.error("Error fetching staff:", error);
     }

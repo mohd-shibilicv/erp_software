@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, Link } from "react-router-dom";
 import {
@@ -10,7 +10,6 @@ import {
   ArrowDownToDot,
   ArrowUpFromDot,
   Layers3,
-  Container,
   HeartCrack,
   PhoneIncoming,
   Sheet,
@@ -22,7 +21,6 @@ import {
   FileText,
   ChevronDown,
   ChevronRight,
-  Menu,
   CreditCard,
   ReceiptText,
   Contact,
@@ -35,13 +33,13 @@ import {
   UserCog,
   CalendarArrowDown,
   LayoutList,
-  MenuIcon,
+ 
   Sun,
   Moon,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 import StoreSideBarSheet from "./StoreSidebarSheet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import {  Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { useTheme } from "../ui/them-provider";
 
 const StoreSidebar = () => {
@@ -249,7 +247,7 @@ const StoreSidebar = () => {
       <StoreSideBarSheet menuItems={menuItems} />
       <div
         className={
-          "bg-background p-4 h-screen border-r border-gray-300 lg:flex flex-col transition-all duration-300 w-64 hidden "
+          "bg-background  dark:bg-background p-4 h-screen border-r border-gray-300 lg:flex flex-col transition-all duration-300 w-64 hidden "
         }
       >
         <div className="flex justify-between items-center mb-8 ">
