@@ -194,6 +194,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     filterset_class = ProjectFilter
+    pagination_class = None
 
     def create(self, request, *args, **kwargs):
         if 'assigned_staffs' in request.data and isinstance(request.data['assigned_staffs'], str):
