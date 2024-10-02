@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/table";
 
 
-import { projectApi } from "@/services/project";
 
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -32,6 +31,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { format } from "date-fns";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -61,7 +61,20 @@ export default function TaskTable({ data }) {
       enableHiding: false,
     },
     {
-      accessorKey: "staff",
+      accessorKey: "id",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          ID
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => <div>{row.getValue("id")}</div>,
+    },
+    {
+      accessorKey: "staff_name",
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -71,7 +84,7 @@ export default function TaskTable({ data }) {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue("staff")?.username}</div>,
+      cell: ({ row }) => <div>{row.getValue("staff_name")}</div>,
     },
     {
       accessorKey: "project_name",
@@ -90,23 +103,23 @@ export default function TaskTable({ data }) {
       },
     },
     {
-      accessorKey: "status",
+      accessorKey: "project_reference_id",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Project Status
+          Project Reference
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => {
-        const status = row?.original?.status;
-        return <div>{status}</div>;
+        const refernce = row?.original?.project_reference_id;
+        return <div>{refernce}</div>;
       },
     },
     {
-      accessorKey: "tasks",
+      accessorKey: "assigned_date",
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -117,7 +130,12 @@ export default function TaskTable({ data }) {
         </Button>
       ),
       cell: ({ row }) => {
-        return <div>{row.getValue("tasks")?.length}</div>;
+        return (
+          <div>
+            {row.getValue("assigned_date") &&
+              format(String(row.getValue("assigned_date")), "PPP")}
+          </div>
+        );
       },
     },
 
@@ -125,13 +143,7 @@ export default function TaskTable({ data }) {
       id: "actions",
       cell: ({ row }) => {
         const queryClient = useQueryClient();
-        const handleDeleteProject = async () => {
-          await projectApi.delete(row.original.id);
-          queryClient.invalidateQueries([
-            "projects",
-            document.getElementById("StateShowBox").textContent,
-          ]);
-        };
+        queryClient;
         const navigate = useNavigate();
         return (
           <DropdownMenu>
@@ -194,13 +206,13 @@ export default function TaskTable({ data }) {
         <div className="w-full flex justify-between mb-4 flex-col md:flex-row gap-5">
           <Input
             placeholder="Filter Tasks"
-            //   value={table.getColumn("project_name")?.getFilterValue() ?? ""}
+              value={table.getColumn("staff_name")?.getFilterValue() ?? ""}
             className="w-full md:w-[300px] shadow-sm"
-            //   onChange={(event) =>
-            //     table
-            //       .getColumn("project_name")
-            //       ?.setFilterValue(event.target.value)
-            //   }
+              onChange={(event) =>
+                table
+                  .getColumn("staff_name")
+                  ?.setFilterValue(event.target.value)
+              }
           />
         </div>
         <div className="rounded-md border">

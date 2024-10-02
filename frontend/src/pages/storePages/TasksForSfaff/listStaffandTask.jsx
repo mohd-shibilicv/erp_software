@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import TaskTable from "./TaskTable";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
+import { useGetAllTasksForAdmin } from "@/hooks/useGetAllTaskforAdmin";
 
 export default function ListStaffAndTask() {
   const navigate = useNavigate();
   navigate;
-  const loading = false;
+
+  const { data: tasks, isLoading: loading } = useGetAllTasksForAdmin();
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -16,7 +18,7 @@ export default function ListStaffAndTask() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Tasks for Staff </h1>
         <Button
-          className="gap-2 items-center"
+          className="gap-2 items-center hidden"
           onClick={() => navigate("/admin/tasks/new")}
         >
           <PlusCircle className="w-5" /> <span>Add Task</span>
@@ -24,7 +26,7 @@ export default function ListStaffAndTask() {
       </div>
       <div className="flex items-center py-4"></div>
 
-      <TaskTable data={[]} />
+      <TaskTable data={tasks ? tasks : []} />
     </div>
   );
 }

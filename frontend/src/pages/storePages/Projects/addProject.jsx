@@ -41,7 +41,6 @@ export default function ProjectAddandUpdate() {
   const [requirements, setRequirements] = useState([]);
   const [selectedRequirement, setSelectedRequirement] = useState("");
 
-  
   const fetchClientDetails = async () => {
     try {
       setSelectLoading(true);
@@ -72,7 +71,6 @@ export default function ProjectAddandUpdate() {
   const { toast } = useToast();
   const handleSubmit = async () => {
     try {
-      
       // if (!projectName) {
       //   return toast({
       //     description: "Please Enter ProjectName",
@@ -86,25 +84,25 @@ export default function ProjectAddandUpdate() {
       //   });
       //   return;
       // }
-      if(!projectStatus){
+      if (!projectStatus) {
         return toast({
           description: "Please Select Project Status",
           variant: "destructive",
         });
       }
-      if(!projectPriority){
+      if (!projectPriority) {
         return toast({
           description: "Please Select Project Priority",
           variant: "destructive",
         });
       }
-      if(!selectedAgreement){
+      if (!selectedAgreement) {
         return toast({
           description: "Please Select Agreement",
           variant: "destructive",
         });
       }
-      if(!selectedRequirement){
+      if (!selectedRequirement) {
         return toast({
           description: "Please Select Requirement",
           variant: "destructive",
@@ -112,7 +110,7 @@ export default function ProjectAddandUpdate() {
       }
       setisLoading(true);
       if (!id) {
-        console.log(selectedRequirement,selectedAgreement,"aaaaaaa")
+        console.log(selectedRequirement, selectedAgreement, "aaaaaaa");
         await projectApi.create({
           project_id: Number(projectId),
           // project_name: projectName,
@@ -151,6 +149,13 @@ export default function ProjectAddandUpdate() {
       }
     } catch (error) {
       setisLoading(false);
+      if (error?.response?.data?.non_field_errors) {
+        return toast({
+          description: error?.response?.data?.non_field_errors[0],
+          variant: "destructive",
+        });
+      }
+
       return toast({
         description: error?.message,
         variant: "destructive",
