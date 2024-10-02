@@ -136,7 +136,6 @@ class AgreementViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         logger.info(f"Received data for create: {request.data}")
         
-        # If request.data is a QueryDict, convert it to a mutable dictionary
         if isinstance(request.data, QueryDict):
             data = request.data.dict()
         else:
@@ -224,8 +223,36 @@ class ProjectAssignedStaffsViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return ProjectAssignedStaffs.objects.filter(is_active=True)
 
-# Add filters if needed
 class ProjectAssignedStaffsFilter(filters.FilterSet):
     class Meta:
         model = ProjectAssignedStaffs
         fields = ['project', 'staff', 'is_active']
+
+from .models import ProjectTask
+from .serializers import ProjectTaskSerializer
+
+class ProjectTaskFilter(filters.FilterSet):
+    project = filters.NumberFilter(field_name='project_staff__project')
+    staff = filters.NumberFilter(field_name='project_staff__staff')
+    status = filters.ChoiceFilter(choices=ProjectTask.STATUS_CHOICES)
+    priority = filters.ChoiceFilter(choices=ProjectTask.PRIORITY_CHOICES)
+    deadline_before = filters.DateTimeFilter(field_name='deadline', lookup_expr='lte')
+    deadline_after = filters.DateTimeFilter(field_name='deadline', lookup_expr='gte')
+
+    class Meta:
+        model = ProjectTask
+        fields = ['project', 'staff', 'status', 'priority']
+
+class ProjectTaskViewSet(viewsets.ModelViewSet):
+    queryset = ProjectTask.objects.all()
+    serializer_class = ProjectTaskSerializer
+    parser_classes = (MultiPartParser, FormParser)
+    filterset_class = ProjectTaskFilter
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # Add any additional filtering if needed
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save()

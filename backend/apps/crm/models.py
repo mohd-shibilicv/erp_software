@@ -184,11 +184,9 @@ class Quotation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     valid_until = models.DateField()
 
-    # Client Information
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
     client_reference = models.CharField(max_length=100, blank=True, null=True)
 
-    # User Information
     created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_created')
     last_updated_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_updated')
     assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_quotations')
@@ -320,12 +318,9 @@ class Project(models.Model):
         current_assignments = ProjectAssignedStaffs.objects.filter(project=self)
         current_staff_ids = set(current_assignments.values_list('staff_id', flat=True))
         new_staff_ids = set(self.assigned_staffs.values_list('id', flat=True))
-
-        # Deactivate removed assignments
         staff_to_remove = current_staff_ids - new_staff_ids
         current_assignments.filter(staff_id__in=staff_to_remove).update(is_active=False)
 
-        # Add new assignments
         staff_to_add = new_staff_ids - current_staff_ids
         for staff_id in staff_to_add:
             ProjectAssignedStaffs.objects.create(
@@ -336,7 +331,6 @@ class Project(models.Model):
                 is_active=True
             )
 
-        # Reactivate existing assignments that might have been deactivated
         staff_to_reactivate = new_staff_ids & current_staff_ids
         current_assignments.filter(staff_id__in=staff_to_reactivate).update(is_active=True)
 
@@ -349,7 +343,7 @@ class ProjectAssignedStaffs(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='staff_assignments')
     staff = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project_assignments')
     project_name = models.CharField(max_length=255)
-    project_reference_id = models.CharField(max_length=100, null=True, blank=True)  # renamed from project_id
+    project_reference_id = models.CharField(max_length=100, null=True, blank=True)  
     assigned_date = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
@@ -361,4 +355,61 @@ class ProjectAssignedStaffs(models.Model):
     def __str__(self):
         return f"{self.project_name} - {self.staff.username}"
 
+def task_file_path(instance, filename):
+    return f'uploads/project_{instance.project_staff.project.id}/tasks/{filename}'
 
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+
+class ProjectTask(models.Model):
+    PRIORITY_CHOICES = [
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('on_hold', 'On Hold'),
+    ]
+
+    project_staff = models.ForeignKey(
+        'ProjectAssignedStaffs', 
+        on_delete=models.CASCADE,
+        related_name='tasks'
+    )
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    deadline = models.DateTimeField()
+    attachment = models.FileField(
+        upload_to=task_file_path,
+        null=True,
+        blank=True
+    )
+    priority = models.CharField(
+        max_length=6,
+        choices=PRIORITY_CHOICES,
+        default='medium'
+    )
+    status = models.CharField(
+        max_length=11,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title} - {self.project_staff.staff.username}"
+
+    def clean(self):
+        if self.deadline and self.deadline < timezone.now():
+            raise ValidationError({'deadline': 'Deadline cannot be in the past'})
+        
+        if not self.project_staff.is_active:
+            raise ValidationError('Cannot create task for inactive project assignment')

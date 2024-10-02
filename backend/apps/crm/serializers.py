@@ -333,14 +333,12 @@ class AgreementSerializer(serializers.ModelSerializer):
         agreement = Agreement.objects.create(**validated_data)
         logger.info(f"Created agreement: {agreement}")
 
-        # Parse payment_terms_data if it's a string
         if isinstance(payment_terms_data, str):
             try:
                 payment_terms_data = json.loads(payment_terms_data)
             except json.JSONDecodeError:
                 raise serializers.ValidationError("Invalid payment_terms data")
 
-        # Ensure payment_terms_data is a list
         if not isinstance(payment_terms_data, list):
             raise serializers.ValidationError("payment_terms must be a list")
 
@@ -384,7 +382,7 @@ class AgreementSerializer(serializers.ModelSerializer):
         return instance
 
 
-   
+from django.utils import timezone
 from .models import ProjectAssignedStaffs
 
 class ProjectAssignedStaffsSerializer(serializers.ModelSerializer):
@@ -394,7 +392,7 @@ class ProjectAssignedStaffsSerializer(serializers.ModelSerializer):
         model = ProjectAssignedStaffs
         fields = ['id', 'project_name', 'project_reference_id', 'staff_name', 'assigned_date', 'is_active']
     
-
+from .models import ProjectTask
 
 class ProjectSerializer(serializers.ModelSerializer):
     client = ClientSerializer(read_only=True)
@@ -453,8 +451,8 @@ class ProjectSerializer(serializers.ModelSerializer):
         
         if assigned_staffs:
             project.assigned_staffs.set(assigned_staffs)
-            project._assigned_staffs = assigned_staffs  # Set flag for save method
-            project.save()  # This will trigger the update_staff_assignments
+            project._assigned_staffs = assigned_staffs  
+            project.save() 
         
         return project
 
@@ -466,8 +464,41 @@ class ProjectSerializer(serializers.ModelSerializer):
         
         if assigned_staffs is not None:
             instance.assigned_staffs.set(assigned_staffs)
-            instance._assigned_staffs = assigned_staffs  # Set flag for save method
+            instance._assigned_staffs = assigned_staffs 
             
-        instance.save()  # This will trigger the update_staff_assignments
+        instance.save() 
         return instance
  
+class ProjectTaskSerializer(serializers.ModelSerializer):
+    project_name = serializers.CharField(source='project_staff.project_name', read_only=True)
+    staff_name = serializers.CharField(source='project_staff.staff.username', read_only=True)
+    attachment_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProjectTask
+        fields = [
+            'id', 'project_staff', 'project_name', 'staff_name',
+            'title', 'description', 'deadline', 'attachment',
+            'attachment_url', 'priority', 'status',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['created_at', 'updated_at']
+
+    def get_attachment_url(self, obj):
+        if obj.attachment:
+            return self.context['request'].build_absolute_uri(obj.attachment.url)
+        return None
+
+    def validate_project_staff(self, value):
+        if not value.is_active:
+            raise serializers.ValidationError(
+                "Cannot create task for inactive project assignment"
+            )
+        return value
+
+    def validate_deadline(self, value):
+        if value < timezone.now():
+            raise serializers.ValidationError(
+                "Deadline cannot be in the past"
+            )
+        return value
