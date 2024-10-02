@@ -195,12 +195,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     filterset_class = ProjectFilter
 
-    def list(self, request, *args, **kwargs):
-        queryset = Project.objects.all()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):        
+    def create(self, request, *args, **kwargs):
         if 'assigned_staffs' in request.data and isinstance(request.data['assigned_staffs'], str):
             request.data['assigned_staffs'] = [int(id) for id in request.data['assigned_staffs'].split(',') if id.isdigit()]
         
@@ -217,17 +212,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
         instance = serializer.save()
         return instance
 
-    def update(self, request, *args, **kwargs):        
+    def update(self, request, *args, **kwargs):
         if 'assigned_staffs' in request.data and isinstance(request.data['assigned_staffs'], str):
             request.data['assigned_staffs'] = [int(id) for id in request.data['assigned_staffs'].split(',') if id.isdigit()]
         
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        print("Serializer initial data:", serializer.initial_data)
         
         if serializer.is_valid():
-            print("Validated data:", serializer.validated_data)
             self.perform_update(serializer)
             return Response(serializer.data)
         else:

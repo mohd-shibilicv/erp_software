@@ -40,6 +40,8 @@ export default function ProjectAddandUpdate() {
   const [selectedAgreement, setSelectedAgreement] = useState("");
   const [requirements, setRequirements] = useState([]);
   const [selectedRequirement, setSelectedRequirement] = useState("");
+
+  
   const fetchClientDetails = async () => {
     try {
       setSelectLoading(true);
@@ -110,6 +112,7 @@ export default function ProjectAddandUpdate() {
       }
       setisLoading(true);
       if (!id) {
+        console.log(selectedRequirement,selectedAgreement,"aaaaaaa")
         await projectApi.create({
           project_id: Number(projectId),
           // project_name: projectName,
@@ -160,7 +163,6 @@ export default function ProjectAddandUpdate() {
         .get(id)
         .then(({ data }) => {
           console.log("🚀 ~ .then ~ data:", data);
-
           setProjectname(data?.project_name);
           setProjectid(data?.project_id);
           setProjectStatus(data?.status);
