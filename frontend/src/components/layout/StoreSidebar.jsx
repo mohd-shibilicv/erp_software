@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, Link } from "react-router-dom";
 import {
@@ -33,13 +33,14 @@ import {
   UserCog,
   CalendarArrowDown,
   LayoutList,
- 
   Sun,
   Moon,
+  ClipboardCheck,
+  ListTodo,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 import StoreSideBarSheet from "./StoreSidebarSheet";
-import {  Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { useTheme } from "../ui/them-provider";
 
 const StoreSidebar = () => {
@@ -175,10 +176,23 @@ const StoreSidebar = () => {
           icon: Headset,
           label: "Client Requirements",
         },
+
         { path: "/admin/quotation", icon: Handshake, label: "Quotation" },
         { path: "/admin/agreement", icon: Signature, label: "Agreement" },
       ],
     },
+    user.role == "staff"
+      ? {
+          section: "Tasks",
+          items: [
+            {
+              path: "/admin/staff-tasks",
+              icon: ListTodo,
+              label: "Tasks",
+            },
+          ],
+        }
+      : false,
     {
       section: "Job Order",
       items: [
@@ -186,6 +200,11 @@ const StoreSidebar = () => {
           path: "/admin/projects",
           icon: LayoutList,
           label: "Projects",
+        },
+        {
+          path: "/admin/tasks",
+          icon: ClipboardCheck,
+          label: "Tasks",
         },
         // {
         //   path: "/admin/client-relationship",
@@ -205,41 +224,56 @@ const StoreSidebar = () => {
 
   const filteredMenuItems =
     user?.role === "staff"
-      ? menuItems.filter((item) => item.section === "CRM")
+      ? [
+          ...menuItems.filter((item) => item.section === "CRM"),
+          ...menuItems.filter((item) => item.section === "Tasks"),
+        ]
       : menuItems;
 
   const renderMenuItem = (item) => (
-    <Link
-      key={item.path}
-      to={item.path}
-      className={`flex items-center space-x-2 p-2 rounded ${isActive(
-        item.path
-      )}`}
-    >
-      <item.icon className="w-6 h-6" />
-      <span className="hidden md:inline ">{item.label}</span>
-    </Link>
+    <>
+      {item && (
+        <>
+          <Link
+            key={item.path}
+            to={item.path}
+            className={`flex items-center space-x-2 p-2 rounded ${isActive(
+              item.path
+            )}`}
+          >
+            <item.icon className="w-6 h-6" />
+            <span className="hidden md:inline ">{item.label}</span>
+          </Link>
+        </>
+      )}
+    </>
   );
 
   const renderSection = (section) => (
-    <div key={section.section} className="mb-4 mr-2">
-      <button
-        onClick={() => toggleSection(section.section)}
-        className="flex items-center justify-between w-full p-2 text-left text-gray-600 hover:bg-gray-100 rounded"
-      >
-        <span className={`font-semibold`}>{section.section}</span>
-        {expandedSections[section.section] ? (
-          <ChevronDown className="w-4 h-4" />
-        ) : (
-          <ChevronRight className="w-4 h-4" />
-        )}
-      </button>
-      {expandedSections[section.section] && (
-        <ul className="ml-2 space-y-1 transition-all duration-300">
-          {section.items.map(renderMenuItem)}
-        </ul>
+    <>
+      {section && (
+        <>
+          <div key={section.section} className="mb-4 mr-2">
+            <button
+              onClick={() => toggleSection(section.section)}
+              className="flex items-center justify-between w-full p-2 text-left text-gray-600 hover:bg-gray-100 rounded"
+            >
+              <span className={`font-semibold`}>{section.section}</span>
+              {expandedSections[section.section] ? (
+                <ChevronDown className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </button>
+            {expandedSections[section.section] && (
+              <ul className="ml-2 space-y-1 transition-all duration-300">
+                {section.items.map(renderMenuItem)}
+              </ul>
+            )}
+          </div>
+        </>
       )}
-    </div>
+    </>
   );
 
   return (

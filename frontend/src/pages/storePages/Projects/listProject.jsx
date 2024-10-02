@@ -11,7 +11,6 @@ import ProjectTable from "./ProjectTable";
 
 export default function ProjectsPage() {
   const navigate = useNavigate();
-
   const [showState, setShowState] = useState("all");
   const { data: projects = [], isLoading: loading } =
     useGetAllProject(showState);

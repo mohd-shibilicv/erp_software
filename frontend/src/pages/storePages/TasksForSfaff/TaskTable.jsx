@@ -1,16 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/prop-types */
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTrigger,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -29,8 +19,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+
+
 import { projectApi } from "@/services/project";
 
 import { useQueryClient } from "@tanstack/react-query";
@@ -46,7 +36,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function ProjectTable({ data, showState, setShowState }) {
+export default function TaskTable({ data }) {
   const columns = [
     {
       id: "select",
@@ -71,17 +61,17 @@ export default function ProjectTable({ data, showState, setShowState }) {
       enableHiding: false,
     },
     {
-      accessorKey: "project_id",
+      accessorKey: "staff",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          ID
+          Staff Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue("project_id")}</div>,
+      cell: ({ row }) => <div>{row.getValue("staff")?.username}</div>,
     },
     {
       accessorKey: "project_name",
@@ -116,61 +106,21 @@ export default function ProjectTable({ data, showState, setShowState }) {
       },
     },
     {
-      accessorKey: "priority_level",
+      accessorKey: "tasks",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Project priority
+          Number of Tasks
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => {
-        return (
-          <div className="w-full flex justify-center">
-            <div
-              className={cn(
-                "h-7 gap-2 px-3 text-sm bg-white rounded-xl flex items-center justify-center min-w-20 ",
-                {
-                  "bg-red-400 text-white":
-                    row.getValue("priority_level") == "low",
-                  "bg-green-400 text-white":
-                    row.getValue("priority_level") == "high",
-                  "bg-yellow-400 text-white":
-                    row.getValue("priority_level") == "medium",
-                }
-              )}
-            >
-              <div
-                className={cn("size-[6px] rounded-full", {
-                  "bg-red-600": row.getValue("priority_level") == "low",
-                  "bg-green-600 text-white":
-                    row.getValue("priority_level") == "high",
-                  "bg-yellow-600 text-white":
-                    row.getValue("priority_level") == "medium",
-                })}
-              />
-              {row.getValue("priority_level")}
-            </div>
-          </div>
-        );
+        return <div>{row.getValue("tasks")?.length}</div>;
       },
     },
 
-    {
-      accessorKey: "client",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Client
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => <div>{row.getValue("client")?.name}</div>,
-    },
     {
       id: "actions",
       cell: ({ row }) => {
@@ -203,34 +153,8 @@ export default function ProjectTable({ data, showState, setShowState }) {
                   navigate(`/admin/project/edit/${row.original.id}`)
                 }
               >
-                Edit Project
+                Assign Tasks
               </DropdownMenuItem>
-
-              <Button className="bg-transparent h-8 w-full flex justify-start p-0 text-black hover:bg-gray-200">
-                <AlertDialog>
-                  <AlertDialogTrigger className=" h-full pl-2 items-center flex justify-start w-full ">
-                    Delete Project
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle className="font-semibold text-lg">
-                        Confirm Deletion
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your account and remove project data from our
-                        servers.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDeleteProject}>
-                        Continue
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </Button>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -268,45 +192,15 @@ export default function ProjectTable({ data, showState, setShowState }) {
     <main>
       <>
         <div className="w-full flex justify-between mb-4 flex-col md:flex-row gap-5">
-          <Tabs defaultValue={showState} className="w-full md:w-auto">
-            <TabsList className="bg-gray-200 w-full">
-              <TabsTrigger
-                type="button"
-                className="mr-1 w-full"
-                onClick={() => setShowState("all")}
-                value="all"
-              >
-                All
-              </TabsTrigger>
-              <TabsTrigger
-                type="button"
-                className="mr-1 w-full"
-                onClick={() => setShowState("active")}
-                value="active"
-              >
-                Active
-              </TabsTrigger>
-              <TabsTrigger
-                type="button"
-                className="mr-1 w-full"
-                onClick={() => setShowState("inactive")}
-                value="inactive"
-              >
-                Inactive
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="active"></TabsContent>
-            <TabsContent value="inactive"></TabsContent>
-          </Tabs>
           <Input
-            placeholder="Filter Projects"
-            value={table.getColumn("project_name")?.getFilterValue() ?? ""}
+            placeholder="Filter Tasks"
+            //   value={table.getColumn("project_name")?.getFilterValue() ?? ""}
             className="w-full md:w-[300px] shadow-sm"
-            onChange={(event) =>
-              table
-                .getColumn("project_name")
-                ?.setFilterValue(event.target.value)
-            }
+            //   onChange={(event) =>
+            //     table
+            //       .getColumn("project_name")
+            //       ?.setFilterValue(event.target.value)
+            //   }
           />
         </div>
         <div className="rounded-md border">

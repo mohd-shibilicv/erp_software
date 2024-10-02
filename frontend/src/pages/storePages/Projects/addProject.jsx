@@ -71,19 +71,19 @@ export default function ProjectAddandUpdate() {
   const handleSubmit = async () => {
     try {
       
-      if (!projectName) {
-        return toast({
-          description: "Please Enter ProjectName",
-          variant: "destructive",
-        });
-      }
-      if (!selectedClient) {
-        toast({
-          description: "Please Select client",
-          variant: "destructive",
-        });
-        return;
-      }
+      // if (!projectName) {
+      //   return toast({
+      //     description: "Please Enter ProjectName",
+      //     variant: "destructive",
+      //   });
+      // }
+      // if (!selectedClient) {
+      //   toast({
+      //     description: "Please Select client",
+      //     variant: "destructive",
+      //   });
+      //   return;
+      // }
       if(!projectStatus){
         return toast({
           description: "Please Select Project Status",
@@ -112,17 +112,17 @@ export default function ProjectAddandUpdate() {
       if (!id) {
         await projectApi.create({
           project_id: Number(projectId),
-          project_name: projectName,
+          // project_name: projectName,
           status: projectStatus,
           project_description: projectDescription,
           priority_level: projectPriority,
-          client_id: selectedClient,
-          requirements: Number(selectedRequirement),
-          agreement_project_name:
-            agreements.find((ag) => ag.id == selectedAgreement)?.project_name ||
-            selectedAgreement,
+          // client_id: selectedClient,
+          requirements_id: Number(selectedRequirement),
+          // agreement_project_name:
+          //   agreements.find((ag) => ag.id == selectedAgreement)?.project_name ||
+          //   selectedAgreement,
           assigned_staffs: selectedStaffs,
-          agreement: selectedAgreement,
+          agreement_id: selectedAgreement,
         });
         setisLoading(false);
         toast({ description: "Project created" });
@@ -130,17 +130,17 @@ export default function ProjectAddandUpdate() {
       } else {
         await projectApi.update(id, {
           project_id: Number(projectId),
-          project_name: projectName,
+          // project_name: projectName,
           status: projectStatus,
           project_description: projectDescription,
           priority_level: projectPriority,
-          client_id: selectedClient,
-          requirements: Number(selectedRequirement),
-          agreement_project_name:
-            agreements.find((ag) => ag.id == selectedAgreement)?.project_name ||
-            selectedAgreement,
+          // client_id: selectedClient,
+          requirements_id: Number(selectedRequirement),
+          // agreement_project_name:
+          //   agreements.find((ag) => ag.id == selectedAgreement)?.project_name ||
+          //   selectedAgreement,
           assigned_staffs: selectedStaffs,
-          agreement: selectedAgreement,
+          agreement_id: selectedAgreement,
         });
         setisLoading(false);
         toast({ description: "Project updated" });
@@ -183,8 +183,8 @@ export default function ProjectAddandUpdate() {
           {id ? "Updated Project" : "Add new Project"}
         </h1>
       </div>
-      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
-        <div className="flex flex-col gap-1">
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+        <div className="flex-col gap-1 hidden">
           <label htmlFor="" className="text-sm font-semibold">
             Select Project name
           </label>
@@ -252,8 +252,8 @@ export default function ProjectAddandUpdate() {
           />
         </div>
       </div>
-      <div className="mt-5 w-full grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <div className="flex flex-col gap-1">
+      <div className="mt-5 w-full grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="hidden flex-col gap-1">
           <label htmlFor="" className="text-sm font-semibold">
             Select Client
           </label>

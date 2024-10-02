@@ -15,12 +15,12 @@ import VanSalesComponent from "./components/sales/VanSalesComponent";
 import Packing from "./components/sales/Packing";
 import PhysicalStock from "./components/sales/PhysicalStock";
 import MaterialTransfer from "./components/sales/MaterialTransfer";
-import Quotation from "./components/sales/Quotation";
+// import Quotation from "./components/sales/Quotation";
 import InvoiceGenerator from "./components/invoice/InvoiceGenerator";
 import AddPaymentTransaction from "./components/sales/AddPaymentTransaction";
 import AddReceipt from "./components/sales/AddReceipt";
-import ClientRelationshipPage from "./pages/storePages/ClientRelationshipPage";
-import ClientRequirementsPage from "./pages/storePages/ClientRequirementsPage";
+// import ClientRelationshipPage from "./pages/storePages/ClientRelationshipPage";
+// import ClientRequirementsPage from "./pages/storePages/ClientRequirementsPage";
 import AgreementAddEdit from "./pages/storePages/agreement/AgreementAddEdit";
 import Invoice from "./components/sales/Invoice";
 import DeliveryNote from "./components/sales/DeliveryNote";
@@ -44,6 +44,9 @@ import ClientAgreementDetails from "./pages/storePages/agreement/ClientAgreement
 import ProjectsPage from "./pages/storePages/Projects/listProject";
 import AddnewProject from "./pages/storePages/Projects/addProject";
 import ProjectDetailPage from "./pages/storePages/Projects/projectDetail";
+import ListStaffAndTask from "./pages/storePages/TasksForSfaff/listStaffandTask";
+import TaskAddEdit from "./pages/storePages/TasksForSfaff/TasksAddUpdate";
+import StaffTaskLists from "./pages/staffPages/staffTaskLlist";
 
 function Store() {
   return (
@@ -260,8 +263,25 @@ function Store() {
             </StoreProtectedRoute>
           }
         />
+        <Route
+          path="/tasks"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <ListStaffAndTask />
+            </StoreProtectedRoute>
+          }
+        />
+        <Route
+          path="/tasks/new"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <TaskAddEdit />
+            </StoreProtectedRoute>
+          }
+        />
 
         <Route path="/client-request" element={<DemoRequestTable />} />
+        <Route path="/staff-tasks" element={<StaffTaskLists />} />
 
         <Route
           path="/client-relationship"
