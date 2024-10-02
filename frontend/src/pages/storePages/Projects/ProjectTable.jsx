@@ -112,7 +112,7 @@ export default function ProjectTable({ data, showState, setShowState }) {
       ),
       cell: ({ row }) => {
         const status = row?.original?.status;
-        return <div>{status}</div>;
+        return <div className="capitalize">{status.split("_").join(" ")}</div>;
       },
     },
     {
