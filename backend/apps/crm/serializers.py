@@ -382,27 +382,24 @@ class AgreementSerializer(serializers.ModelSerializer):
             logger.info(f"Created payment term: {payment_term}")
 
         return instance
+
+   
     
 class ProjectSerializer(serializers.ModelSerializer):
     client = ClientSerializer(read_only=True)
-    client_id = serializers.PrimaryKeyRelatedField(
-        queryset=Client.objects.all(),
-        source='client',
-        write_only=True
-    )
     requirements = ClientRequirementSerializer(read_only=True)
     requirements_id = serializers.PrimaryKeyRelatedField(
         queryset=ClientRequirement.objects.all(),
         source='requirements',
         write_only=True,
-        required=False
+        required=True
     )
     agreement = AgreementSerializer(read_only=True)
-    quotations = QuotationSerializer(source='client.quotations_created', read_only=True)    
-    agreement_project_name = serializers.ChoiceField(
-        choices=[], 
-        write_only=True, 
-        required=False
+    agreement_id = serializers.PrimaryKeyRelatedField(
+        queryset=Agreement.objects.all(),
+        source='agreement',
+        write_only=True,
+        required=True
     )
     assigned_staffs = serializers.PrimaryKeyRelatedField(
         many=True, 
@@ -413,35 +410,33 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = [
-            'id', 'project_name', 'project_id', 'client', 'client_id',
-            'requirements', 'requirements_id', 'agreement', 'project_description', 
-            'priority_level', 'status', 'agreement_project_name', 'quotations',
+            'id', 'project_name', 'project_id', 'client',
+            'requirements', 'requirements_id', 'agreement', 'agreement_id',
+            'project_description', 'priority_level', 'status',
             'active', 'assigned_staffs'
         ]
+        read_only_fields = ['project_name', 'client']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['agreement_project_name'].choices = [
-            (agreement.project_name, agreement.project_name) 
-            for agreement in Agreement.objects.all()
-        ]
+    def validate(self, data):
+        agreement = data.get('agreement')
+        requirements = data.get('requirements')
+
+        if not agreement:
+            raise serializers.ValidationError({"agreement_id": "This field is required."})
+        if not requirements:
+            raise serializers.ValidationError({"requirements_id": "This field is required."})
+
+        data['project_name'] = agreement.project_name
+
+        if requirements.client != agreement.client:
+            raise serializers.ValidationError("The selected requirement must belong to the same client as the agreement.")
+
+        data['client'] = agreement.client
+
+        return data
 
     def create(self, validated_data):
         assigned_staffs = validated_data.pop('assigned_staffs', [])
-        agreement_project_name = validated_data.pop('agreement_project_name', None)
-        
-        if agreement_project_name:
-            agreement = Agreement.objects.filter(project_name=agreement_project_name).first()
-            if agreement:
-                validated_data['project_name'] = agreement.project_name
-                validated_data['client'] = agreement.client
-                validated_data['agreement'] = agreement
-                
-                if 'requirements' not in validated_data:
-                    requirement = ClientRequirement.objects.filter(client=agreement.client).first()
-                    if requirement:
-                        validated_data['requirements'] = requirement
-
         project = Project.objects.create(**validated_data)
         
         if assigned_staffs:
@@ -451,7 +446,11 @@ class ProjectSerializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
         assigned_staffs = validated_data.pop('assigned_staffs', None)
-        instance = super().update(instance, validated_data)
+        
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
+        instance.save()
         
         if assigned_staffs is not None:
             instance.assigned_staffs.set(assigned_staffs)
