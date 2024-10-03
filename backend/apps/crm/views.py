@@ -229,7 +229,10 @@ class ProjectAssignedStaffsFilter(filters.FilterSet):
         fields = ['project', 'staff', 'is_active']
 
 from .models import ProjectTask
+import datetime
 from .serializers import ProjectTaskSerializer
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from dateutil.parser import parse
 
 class ProjectTaskFilter(filters.FilterSet):
     project = filters.NumberFilter(field_name='project_staff__project')
@@ -246,13 +249,32 @@ class ProjectTaskFilter(filters.FilterSet):
 class ProjectTaskViewSet(viewsets.ModelViewSet):
     queryset = ProjectTask.objects.all()
     serializer_class = ProjectTaskSerializer
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (JSONParser, MultiPartParser, FormParser)
     filterset_class = ProjectTaskFilter
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        # Add any additional filtering if needed
         return queryset
 
     def perform_create(self, serializer):
         serializer.save()
+
+    def create(self, request, *args, **kwargs):
+        if 'deadline' in request.data and isinstance(request.data['deadline'], str):
+            try:
+                # Parse the deadline string in the format "YYYY-MM-DD HH:MM"
+                deadline = datetime.datetime.strptime(request.data['deadline'], "%Y-%m-%d %H:%M")
+                # Convert to timezone-aware datetime
+                deadline = timezone.make_aware(deadline)
+                request.data['deadline'] = deadline
+            except ValueError as e:
+                return Response(
+                    {'deadline': 'Invalid datetime format. Please use format YYYY-MM-DD HH:MM'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

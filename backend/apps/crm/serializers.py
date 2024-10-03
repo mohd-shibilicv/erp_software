@@ -502,3 +502,9 @@ class ProjectTaskSerializer(serializers.ModelSerializer):
                 "Deadline cannot be in the past"
             )
         return value
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.deadline:
+            representation['deadline'] = instance.deadline.strftime("%Y-%m-%d %H:%M")
+        return representation

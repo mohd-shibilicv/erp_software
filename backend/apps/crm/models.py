@@ -183,10 +183,8 @@ class Quotation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     valid_until = models.DateField()
-
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
     client_reference = models.CharField(max_length=100, blank=True, null=True)
-
     created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_created')
     last_updated_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_updated')
     assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_quotations')
@@ -275,7 +273,6 @@ class PaymentTerm(models.Model):
     agreement = models.ForeignKey(Agreement, related_name='payment_terms', on_delete=models.CASCADE)
     date = models.DateField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-
 
 
 class Project(models.Model):
@@ -375,11 +372,7 @@ class ProjectTask(models.Model):
         ('on_hold', 'On Hold'),
     ]
 
-    project_staff = models.ForeignKey(
-        'ProjectAssignedStaffs', 
-        on_delete=models.CASCADE,
-        related_name='tasks'
-    )
+    project_staff = models.ForeignKey(ProjectAssignedStaffs,on_delete=models.CASCADE,related_name='tasks')
     title = models.CharField(max_length=255)
     description = models.TextField()
     deadline = models.DateTimeField()
