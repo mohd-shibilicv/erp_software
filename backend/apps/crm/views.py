@@ -379,3 +379,43 @@ class StaffProjectAssignmentViewSet(viewsets.ReadOnlyModelViewSet):
         }
         
         return Response(response_data)
+    
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.core.mail import send_mail
+from django.conf import settings
+
+class SendProjectEmailView(APIView):
+    def post(self, request):
+        # Extract data from request
+        deadline = request.data.get('deadline')
+        description = request.data.get("description")
+        staff_id = request.data.get('staff_id')
+        staff_name = request.data.get('staff_name')
+        project_name = request.data.get('project_name')
+        staff_email = request.data.get('staff_email')
+        prev_deadline = request.data.get('prev_deadline')
+        project_reference_id = request.data.get('project_reference_id')
+
+        # Compose email
+        subject = f"Project Update: {project_name}"
+        message = f"""
+        Project Details:
+        Staff ID: {staff_id}
+        Staff Name: {staff_name}
+        Project Name: {project_name}
+        Staff Email: {staff_email}
+        Previous Deadline: {prev_deadline}
+        New Deadline: {deadline}
+        Project Reference ID: {project_reference_id}
+        Reason: {description}
+        """
+        from_email = 'nashirnoor2002@gmail.com'
+        recipient_list = ['nashirnoor1718@gmail.com']
+
+        try:
+            send_mail(subject, message, from_email, recipient_list)
+            return Response({"message": "Email sent successfully"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

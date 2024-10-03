@@ -366,9 +366,9 @@ class ProjectTask(models.Model):
     
     STATUS_CHOICES = [
         ('pending', 'Pending'),
-        ('in_progress', 'In Progress'),
+        ('in progress', 'In Progress'),
         ('completed', 'Completed'),
-        ('on_hold', 'On Hold'),
+        ('on hold', 'On Hold'),
     ]
 
     project_staff = models.ForeignKey(ProjectAssignedStaffs,on_delete=models.CASCADE,related_name='tasks')

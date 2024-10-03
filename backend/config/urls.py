@@ -50,7 +50,8 @@ from apps.crm.views import (
     ProjectAssignedStaffsViewSet,
     ProjectTaskViewSet,
     ProjectIndividualTaskViewSet,
-    StaffProjectAssignmentViewSet
+    StaffProjectAssignmentViewSet,
+    SendProjectEmailView
 )
 
 
@@ -103,7 +104,7 @@ router.register(r'induvidual-listing', StaffProjectAssignmentViewSet, basename='
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
-    # path('api/staff/my-projects/', StaffProjectAssignmentView.as_view(), name='staff-projects'),
+    path('api/send-project-email/', SendProjectEmailView.as_view(), name='send_project_email'),
 
     path("api/logout/", LogoutView.as_view({"post": "logout"}), name="logout"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
