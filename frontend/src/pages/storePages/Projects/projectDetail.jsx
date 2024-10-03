@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { Textarea } from "@/components/ui/textarea";
+import { fetchPdf } from "@/lib/fetchPdf";
 
 import { cn } from "@/lib/utils";
 
@@ -72,6 +73,27 @@ export default function ProjectDetailPage() {
     "Client requirements",
     "Dealings and agreements",
   ];
+  const [tc_file, setTcFile] = useState(null);
+  const [signed_agreement, setSignedAgreement] = useState(null);
+  useEffect(() => {
+    const loadPdfs = async () => {
+      if (
+        data?.agreement?.tc_file &&
+        /\.pdf$/i.test(data?.agreement?.tc_file)
+      ) {
+        const blobUrl = await fetchPdf(data?.agreement?.tc_file);
+        setTcFile(blobUrl);
+      }
+      if (
+        data?.agreement?.signed_agreement &&
+        /\.pdf$/i.test(data?.agreement?.signed_agreement)
+      ) {
+        const blobUrl = await fetchPdf(data?.agreement?.signed_agreement);
+        setSignedAgreement(blobUrl);
+      }
+    };
+    loadPdfs();
+  }, [data]);
   return (
     <main className="w-full h-full bg-white rounded-xl border shadow-sm p-5">
       <div className="w-full">
@@ -512,7 +534,7 @@ export default function ProjectDetailPage() {
                     </AccordionTrigger>
                     <AccordionContent>
                       <embed
-                        src={data?.agreement?.tc_file}
+                        src={tc_file ? tc_file : data?.agreement?.tc_file}
                         className="w-full min-h-[500px]"
                       />
                     </AccordionContent>
@@ -525,8 +547,12 @@ export default function ProjectDetailPage() {
                     </AccordionTrigger>
                     <AccordionContent className="">
                       <embed
-                        src={data?.agreement?.signed_agreement}
-                        className="w-full border min-h-[500px]"
+                        src={
+                          signed_agreement
+                            ? signed_agreement
+                            : data?.agreement?.signed_agreement
+                        }
+                        className="w-full border min-h-[500px] object-contain"
                       />
                     </AccordionContent>
                   </AccordionItem>
