@@ -1,6 +1,17 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/prop-types */
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -26,6 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { adminTaskManage } from "@/services/tasklist";
 
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -39,6 +51,7 @@ import {
 import { format } from "date-fns";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 export default function TaskTable({ data }) {
@@ -151,6 +164,15 @@ export default function TaskTable({ data }) {
         const queryClient = useQueryClient();
         queryClient;
         const navigate = useNavigate();
+        const handleDeleteTask = async () => {
+          try {
+            await adminTaskManage.delete(row?.original?.id);
+            queryClient.invalidateQueries(["adminTasks"]);
+            toast.success("Task deleted")
+          } catch (error) {
+            return toast.error(error.message);
+          }
+        };
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -177,6 +199,31 @@ export default function TaskTable({ data }) {
               >
                 Assign Tasks
               </DropdownMenuItem>
+              <Button className="bg-transparent h-8 w-full flex justify-start p-0 text-black hover:bg-gray-200">
+                <AlertDialog>
+                  <AlertDialogTrigger className=" h-full pl-2 items-center flex justify-start w-full ">
+                    Delete Task
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="font-semibold text-lg">
+                        Confirm Deletion
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete your account and remove project data from our
+                        servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteTask}>
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </Button>
             </DropdownMenuContent>
           </DropdownMenu>
         );
