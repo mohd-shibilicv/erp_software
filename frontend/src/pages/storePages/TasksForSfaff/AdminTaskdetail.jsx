@@ -103,7 +103,7 @@ export default function AdminTaskDetails() {
               <p className="text-sm">{task?.description}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="min-h-10 px-4 flex items-center border rounded-md bg-gray-200 gap-2 flex-wrap justify-between">
+              <div className="min-h-10 max-h-20 px-4 flex items-center border rounded-md bg-gray-200 gap-2 flex-wrap justify-between">
                 <div className="flex gap-2">
                   <CalendarClock className="w-5" />
                   {format(new Date(task?.deadline), "dd-MM-yyyy hh:mm a")}
@@ -151,9 +151,9 @@ export default function AdminTaskDetails() {
                   </AccordionTrigger>
                   <AccordionContent>
                     <embed
-                      src={task?.attachment_url}
                       className="max-h-[500px]"
-                      type=""
+                      src={task?.attachment_url}
+                      
                     />
                   </AccordionContent>
                 </AccordionItem>
