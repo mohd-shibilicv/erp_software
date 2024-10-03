@@ -372,8 +372,8 @@ class ProjectTask(models.Model):
     ]
 
     project_staff = models.ForeignKey(ProjectAssignedStaffs,on_delete=models.CASCADE,related_name='tasks')
-    title = models.CharField(max_length=255)
-    description = models.TextField()
+    title = models.CharField(max_length=255,null=True,blank=True)
+    description = models.TextField(null=True,blank=True)
     deadline = models.DateTimeField()
     attachment = models.FileField(
         upload_to=task_file_path,
@@ -388,7 +388,7 @@ class ProjectTask(models.Model):
     status = models.CharField(
         max_length=11,
         choices=STATUS_CHOICES,
-        default='pending'
+        default='pending',
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
