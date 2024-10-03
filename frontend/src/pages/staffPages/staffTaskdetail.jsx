@@ -25,10 +25,13 @@ import toast from "react-hot-toast";
 
 import { useNavigate, useParams } from "react-router-dom";
 import StaffRequestDialog from "./requestDialog";
+import { adminTaskManage } from "@/services/tasklist";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function StaffTaskDetail() {
   const { id } = useParams();
   const { data, isError } = useGetTaskDetail(id);
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   useEffect(() => {
     if (isError) {
@@ -65,7 +68,24 @@ export default function StaffTaskDetail() {
             <div className="w-full flex justify-between ">
               <h1 className="text-[17px] font- line-clamp-1">{task?.title}</h1>
               <div className="flex gap-2 items-center">
-                <Select>
+                <Select
+                  onValueChange={async (value) => {
+                    try {
+                      setSelectLoading(true);
+                      await adminTaskManage.update(task?.id, {
+                        status: value,
+                        project_staff: task.project_staff,
+                        deadline: task?.deadline,
+                      });
+                      queryClient.invalidateQueries(["taskDetail", id]);
+                      setSelectLoading(false);
+                      return toast.success("Status updated");
+                    } catch (error) {
+                      setSelectLoading(false);
+                      return toast.error(error.message);
+                    }
+                  }}
+                >
                   <SelectTrigger
                     className={`w-[140px] rounded-xl ${
                       selectLoading ? "pointer-events-none" : ""
@@ -83,12 +103,12 @@ export default function StaffTaskDetail() {
                           <>
                             <div
                               className={cn(
-                                "capitalize h-6 px-2 rounded-md bg-yellow-400 flex items-center text-white",
+                                "capitalize h-6 px-3 rounded-lg bg-yellow-400 flex items-center text-white",
                                 {
                                   "bg-yellow-500": task.status == "pending",
                                   "bg-green-500": task.status == "completed",
-                                  "bg-orange-500": task.status == "on hold",
-                                  "bg-lime-500": task.status == "in progress",
+                                  "bg-orange-500": task.status == "on_hold",
+                                  "bg-lime-500": task.status == "in_progress",
                                 }
                               )}
                             >
@@ -101,9 +121,9 @@ export default function StaffTaskDetail() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="in progress">In progress</SelectItem>
+                    <SelectItem value="in_progress">In progress</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="on hold">On hold</SelectItem>
+                    <SelectItem value="on_hold">On hold</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -134,6 +154,7 @@ export default function StaffTaskDetail() {
               </Accordion>
             </div>
             <div className="flex justify-end mt-1">
+              {/* staff_id,staff_name,project_name,staff_email,prev_deadline,project_reference_id */}
               <StaffRequestDialog
                 data={{
                   staff_id: data?.staff_assignment.id,
