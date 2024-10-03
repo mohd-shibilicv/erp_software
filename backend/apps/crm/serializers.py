@@ -511,3 +511,25 @@ class ProjectTaskSerializer(serializers.ModelSerializer):
         if instance.deadline:
             representation['deadline'] = instance.deadline.strftime("%Y-%m-%d %H:%M")
         return representation
+    
+
+
+
+class StaffProjectAssignmentSerializer(serializers.ModelSerializer):
+    project_details = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = ProjectAssignedStaffs
+        fields = [
+            'id', 'project_name', 'project_reference_id', 
+            'assigned_date', 'is_active', 'project_details'
+        ]
+
+    def get_project_details(self, obj):
+        return {
+            'id': obj.project.id,
+            'description': obj.project.project_description,
+            'priority_level': obj.project.priority_level,
+            'status': obj.project.status,
+        }
+  

@@ -325,3 +325,54 @@ class ProjectIndividualTaskViewSet(viewsets.ModelViewSet):
                 {'error': 'Invalid staff assignment ID'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
+  
+from rest_framework.response import Response
+from rest_framework import generics, permissions, status
+from rest_framework.permissions import IsAuthenticated
+from .serializers import StaffProjectAssignmentSerializer
+
+class StaffProjectAssignmentView(generics.ListAPIView):
+    serializer_class = StaffProjectAssignmentSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        user = self.request.user
+        
+        # Check if user is authenticated and has staff role
+        if not user.is_authenticated:
+            return ProjectAssignedStaffs.objects.none()
+        
+        if user.role != 'staff':
+            return ProjectAssignedStaffs.objects.none()
+            
+        # Get all active project assignments for the logged-in staff
+        return ProjectAssignedStaffs.objects.filter(
+            staff=user,
+            is_active=True
+        ).select_related('project').order_by('-assigned_date')
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        if not queryset.exists():
+            return Response({
+                "message": "No projects are currently assigned to you.",
+                "assignments": []
+            })
+            
+        serializer = self.get_serializer(queryset, many=True)
+        
+        response_data = {
+            "staff_details": {
+                "id": request.user.id,
+                "username": request.user.username,
+                "email": request.user.email,
+                "phone_number": request.user.phone_number
+            },
+            "total_assignments": queryset.count(),
+            "assignments": serializer.data
+        }
+        
+        return Response(response_data)
+
