@@ -170,5 +170,5 @@ urlpatterns += [
 urlpatterns += [
     path("api/dashboard/", DashboardView.as_view(), name="dashboard"),
     path('api/branch-dashboard/', BranchDashboardView.as_view(), name='branch-dashboard'),
-    path('staff/my-projects/', StaffProjectAssignmentView.as_view(), name='staff-projects'),
+    path('api/staff/my-projects/', StaffProjectAssignmentView.as_view(), name='staff-projects'),
 ]
