@@ -20,8 +20,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
-
 import { useQueryClient } from "@tanstack/react-query";
 import {
   flexRender,
@@ -156,13 +154,17 @@ export default function TaskTable({ data }) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigate(`/admin/project/${row.original.id}`)}
+                onClick={() =>
+                  navigate(`/admin/tasks/detail/${row.original.id}`)
+                }
               >
                 View details
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
-                  navigate(`/admin/tasks/detail/${row.original.id}`)
+                  navigate(
+                    `/admin/tasks/new?project_name=${row.original?.project_name}&id=${row.original.id}&staff=${row.original?.staff_name}`
+                  )
                 }
               >
                 Assign Tasks
@@ -206,13 +208,11 @@ export default function TaskTable({ data }) {
         <div className="w-full flex justify-between mb-4 flex-col md:flex-row gap-5">
           <Input
             placeholder="Filter Tasks"
-              value={table.getColumn("staff_name")?.getFilterValue() ?? ""}
+            value={table.getColumn("staff_name")?.getFilterValue() ?? ""}
             className="w-full md:w-[300px] shadow-sm"
-              onChange={(event) =>
-                table
-                  .getColumn("staff_name")
-                  ?.setFilterValue(event.target.value)
-              }
+            onChange={(event) =>
+              table.getColumn("staff_name")?.setFilterValue(event.target.value)
+            }
           />
         </div>
         <div className="rounded-md border">
