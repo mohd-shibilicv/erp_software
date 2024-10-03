@@ -20,7 +20,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
 import {
   flexRender,
   getCoreRowModel,
@@ -29,6 +28,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { format } from "date-fns";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -57,19 +57,7 @@ export default function StaffTaskTable({ data }) {
       enableSorting: false,
       enableHiding: false,
     },
-    {
-      accessorKey: "staff",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Task title
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => <div>{row.getValue("staff")?.username}</div>,
-    },
+
     {
       accessorKey: "project_name",
       header: ({ column }) => (
@@ -87,7 +75,7 @@ export default function StaffTaskTable({ data }) {
       },
     },
     {
-      accessorKey: "status",
+      accessorKey: "project_reference_id",
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -98,31 +86,30 @@ export default function StaffTaskTable({ data }) {
         </Button>
       ),
       cell: ({ row }) => {
-        const status = row?.original?.status;
-        return <div>{status}</div>;
+        const projectReference = row?.original?.project_reference_id;
+        return <div>{projectReference}</div>;
       },
     },
     {
-      accessorKey: "tasks",
+      accessorKey: "assigned_date",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Number of Tasks
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          Assigned Date
+          {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
         </Button>
       ),
       cell: ({ row }) => {
-        return <div>{row.getValue("tasks")?.length}</div>;
+        const projectReference = row?.original?.assigned_date;
+        return <div>{format(String(projectReference), "PPPP")}</div>;
       },
     },
 
     {
       id: "actions",
       cell: ({ row }) => {
-      
-
         const navigate = useNavigate();
         return (
           <DropdownMenu>
@@ -135,16 +122,9 @@ export default function StaffTaskTable({ data }) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigate(`/admin/project/${row.original.id}`)}
+                onClick={() => navigate(`/admin/staff-tasks/detail/${row.original?.id}`)}
               >
                 View details
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigate(`/admin/project/edit/${row.original.id}`)
-                }
-              >
-                Assign Tasks
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
