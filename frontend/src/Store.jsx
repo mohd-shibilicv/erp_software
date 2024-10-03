@@ -48,6 +48,7 @@ import ListStaffAndTask from "./pages/storePages/TasksForSfaff/listStaffandTask"
 import TaskAddEdit from "./pages/storePages/TasksForSfaff/TasksAddUpdate";
 import StaffTaskLists from "./pages/staffPages/staffTaskLlist";
 import AdminTaskDetails from "./pages/storePages/TasksForSfaff/AdminTaskdetail";
+import StaffTaskDetail from "./pages/staffPages/staffTaskdetail";
 
 function Store() {
   return (
@@ -291,6 +292,7 @@ function Store() {
 
         <Route path="/client-request" element={<DemoRequestTable />} />
         <Route path="/staff-tasks" element={<StaffTaskLists />} />
+        <Route path="/staff-tasks/detail/:id" element={<StaffTaskDetail />} />
 
         <Route
           path="/client-relationship"

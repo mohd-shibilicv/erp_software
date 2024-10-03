@@ -19,7 +19,7 @@ export default function StaffTaskLists() {
       </div>
       <div className="flex items-center py-4"></div>
 
-      <StaffTaskTable data={[]} />
+      <StaffTaskTable data={data ? data?.assignments : []} />
     </div>
   );
 }
