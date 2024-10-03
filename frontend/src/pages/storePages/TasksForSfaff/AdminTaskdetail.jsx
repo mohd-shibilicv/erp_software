@@ -4,24 +4,26 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useGetTaskDetail } from "@/hooks/useGetTaskDetail";
 import { cn } from "@/lib/utils";
 import { adminTaskManage } from "@/services/tasklist";
+import { useQueryClient } from "@tanstack/react-query";
+
 import { format } from "date-fns";
 
-import { CalendarClock, PackageCheck, Paperclip } from "lucide-react";
-import { useEffect, useState } from "react";
+import { CalendarClock, PackageCheck, Paperclip, Trash2 } from "lucide-react";
+
 import { useParams } from "react-router-dom";
 
 export default function AdminTaskDetails() {
   const { id } = useParams();
-  const [data, setData] = useState({});
-  useEffect(() => {
-    adminTaskManage.get(id).then(({ data }) => {
-      setData(data);
-    });
-  }, [id]);
-  console.log("🚀 ~ AdminTaskDetails ~ id :", id);
-
+  const { data } = useGetTaskDetail(id);
+  const queryClient = useQueryClient();
+  const handleDeleteTask = async (taskId) => {
+    // ["taskDetail", id]
+    await adminTaskManage.delete(taskId);
+    queryClient.invalidateQueries(["taskDetail", id]);
+  };
   return (
     <main className="w-full h-full bg-white rounded-xl border shadow-sm p-5">
       <div className="grid grid-cols-1 sm:grid-cols-2 mt-5 gap-5">
@@ -43,7 +45,7 @@ export default function AdminTaskDetails() {
           </div>
         </div>
       </div>
-      <div className="custom-scrollbar mt-5 w-full border rounded-md p-5 bg-slate-100/50 shadow-sm max-h-[500px] pt-0 overflow-y-auto">
+      <div className="custom-scrollbar mt-5 w-full border rounded-md p-5 bg-slate-100/50 shadow-sm  pt-0 overflow-y-auto">
         <div className="w-full border-b pb-3  top-0 left-0 pt-5 z-30 ">
           <h1 className="font- text-[19px]">Tasks</h1>
         </div>
@@ -55,16 +57,24 @@ export default function AdminTaskDetails() {
           >
             <div className="w-full flex justify-between ">
               <h1 className="text-[17px] font- line-clamp-1">{task?.title}</h1>
-              <div
-                className={cn(
-                  "px-3 flex items-center h-7 rounded-2xl border text-[13px] capitalize ",
-                  {
-                    "bg-yellow-400 text-white": task?.status == "pending",
-                    "bg-green-500 text-white": false,
-                  }
-                )}
-              >
-                {task?.status}
+              <div className="flex gap-2 items-center">
+                <div
+                  className={cn(
+                    "px-3 flex items-center h-7 rounded-2xl border text-[13px] capitalize ",
+                    {
+                      "bg-yellow-400 text-white": task?.status == "pending",
+                      "bg-green-500 text-white": false,
+                    }
+                  )}
+                >
+                  {task?.status}
+                </div>
+                <button
+                  onClick={() => handleDeleteTask(task?.id)}
+                  className="size-7 rounded-md flex justify-center items-center bg-red-500 text-white"
+                >
+                  <Trash2 className="w-4" />
+                </button>
               </div>
             </div>
             <div className="break-words ">
