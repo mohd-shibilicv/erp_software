@@ -263,9 +263,7 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         if 'deadline' in request.data and isinstance(request.data['deadline'], str):
             try:
-                # Parse the deadline string in the format "YYYY-MM-DD HH:MM"
                 deadline = datetime.datetime.strptime(request.data['deadline'], "%Y-%m-%d %H:%M")
-                # Convert to timezone-aware datetime
                 deadline = timezone.make_aware(deadline)
                 request.data['deadline'] = deadline
             except ValueError as e:

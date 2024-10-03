@@ -387,10 +387,11 @@ from .models import ProjectAssignedStaffs
 
 class ProjectAssignedStaffsSerializer(serializers.ModelSerializer):
     staff_name = serializers.CharField(source='staff.username', read_only=True)
-    
+    staff_email = serializers.EmailField(source='staff.email', read_only=True)
+
     class Meta:
         model = ProjectAssignedStaffs
-        fields = ['id', 'project_name', 'project_reference_id', 'staff_name', 'assigned_date', 'is_active']
+        fields = ['id', 'project_name', 'project_reference_id', 'staff_name','staff_email', 'assigned_date', 'is_active']
     
 from .models import ProjectTask
 
@@ -472,12 +473,14 @@ class ProjectSerializer(serializers.ModelSerializer):
 class ProjectTaskSerializer(serializers.ModelSerializer):
     project_name = serializers.CharField(source='project_staff.project_name', read_only=True)
     staff_name = serializers.CharField(source='project_staff.staff.username', read_only=True)
+    staff_email = serializers.CharField(source='project_staff.staff.email', read_only=True)
+
     attachment_url = serializers.SerializerMethodField()
 
     class Meta:
         model = ProjectTask
         fields = [
-            'id', 'project_staff', 'project_name', 'staff_name',
+            'id', 'project_staff', 'project_name', 'staff_name','staff_email',
             'title', 'description', 'deadline', 'attachment',
             'attachment_url', 'priority', 'status',
             'created_at', 'updated_at'
