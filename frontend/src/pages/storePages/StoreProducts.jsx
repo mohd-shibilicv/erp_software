@@ -1,6 +1,5 @@
-import Layout from "@/components/layout/Layout";
+
 import { ProductsTable } from "@/components/store/ProductsTable";
-import React from "react";
 
 const StoreProducts = () => {
   return (
