@@ -4,7 +4,8 @@ from django.core.validators import MinValueValidator
 from django.contrib.postgres.fields import ArrayField
 from apps.users.models import User
 from apps.products.models import Product
-
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 
 class Client(models.Model):
@@ -355,8 +356,6 @@ class ProjectAssignedStaffs(models.Model):
 def task_file_path(instance, filename):
     return f'uploads/project_{instance.project_staff.project.id}/tasks/{filename}'
 
-from django.core.exceptions import ValidationError
-from django.utils import timezone
 
 class ProjectTask(models.Model):
     PRIORITY_CHOICES = [
