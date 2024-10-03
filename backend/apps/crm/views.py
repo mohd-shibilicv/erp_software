@@ -277,3 +277,51 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+from django.shortcuts import get_object_or_404
+
+class ProjectIndividualTaskViewSet(viewsets.ModelViewSet):
+    queryset = ProjectTask.objects.all()
+    serializer_class = ProjectTaskSerializer
+    parser_classes = (JSONParser, MultiPartParser, FormParser)
+    filterset_class = ProjectTaskFilter
+
+    @action(detail=False, methods=['get'], url_path='staff-tasks/(?P<staff_assignment_id>[^/.]+)')
+    def staff_tasks(self, request, staff_assignment_id=None):
+        """
+        Get all tasks for a specific ProjectAssignedStaff
+        """
+        try:
+            staff_assignment = get_object_or_404(
+                ProjectAssignedStaffs, 
+                id=staff_assignment_id,
+                is_active=True
+            )            
+            tasks = self.queryset.filter(project_staff=staff_assignment)
+            tasks = self.filter_queryset(tasks)            
+            tasks = tasks.order_by('-created_at')
+            
+            serializer = self.serializer_class(
+                tasks, 
+                many=True,
+                context={'request': request}
+            )
+            
+            response_data = {
+                'staff_assignment': {
+                    'id': staff_assignment.id,
+                    'project_name': staff_assignment.project_name,
+                    'staff_name': staff_assignment.staff.username,
+                    'staff_email': staff_assignment.staff.email,
+                    'assigned_date': staff_assignment.assigned_date
+                },
+                'tasks': serializer.data
+            }
+            
+            return Response(response_data)
+            
+        except ValueError:
+            return Response(
+                {'error': 'Invalid staff assignment ID'},
+                status=status.HTTP_400_BAD_REQUEST
+            )

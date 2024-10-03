@@ -48,7 +48,8 @@ from apps.crm.views import (
     AgreementViewSet,
     ProjectViewSet,
     ProjectAssignedStaffsViewSet,
-    ProjectTaskViewSet
+    ProjectTaskViewSet,
+    ProjectIndividualTaskViewSet
 )
 
 
@@ -90,6 +91,7 @@ router.register(r"agreements", AgreementViewSet, basename="agreements")
 router.register(r'projects', ProjectViewSet, basename='project')
 router.register(r'project-assignments', ProjectAssignedStaffsViewSet, basename='project-assignments')
 router.register(r'project-tasks', ProjectTaskViewSet)
+router.register(r'individual-projects-tasks',ProjectIndividualTaskViewSet, basename="individual-projects-tasks")
 
 
 
