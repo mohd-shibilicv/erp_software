@@ -2,7 +2,7 @@ import { staffTaskList } from "@/services/tasklist";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-export const useGetAllTasksForAdmin = () => {
+export const useGetAllStaffTask = () => {
   return useQuery({
     queryKey: ["staffTasks"],
     queryFn: async () => {

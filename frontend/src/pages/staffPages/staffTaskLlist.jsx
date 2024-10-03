@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom";
 
 import StaffTaskTable from "./staffTaskTable";
-import { useGetAllTasksForAdmin } from "@/hooks/useGetAllTaskforAdmin";
+
+import { useGetAllStaffTask } from "@/hooks/useGetAllStaffTasks";
 
 export default function StaffTaskLists() {
   const navigate = useNavigate();
   navigate;
-  const { data, isLoading: loading } = useGetAllTasksForAdmin();
+  const { data, isLoading: loading } = useGetAllStaffTask();
 
   if (loading) {
     return <div>Loading...</div>;
