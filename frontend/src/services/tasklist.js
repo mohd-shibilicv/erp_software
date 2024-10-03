@@ -16,4 +16,5 @@ export const adminTaskManage = {
 
 export const staffTaskList = {
   getAll: () => api.get("/induvidual-listing/"),
+  requestDeadline: (data) => api.post("/send-project-email/",data),
 };

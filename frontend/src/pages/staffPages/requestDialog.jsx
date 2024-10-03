@@ -10,8 +10,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { staffTaskList } from "@/services/tasklist";
+import { format } from "date-fns";
 import { LoaderCircleIcon } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function StaffRequestDialog({ data }) {
   data;
@@ -23,14 +26,36 @@ export default function StaffRequestDialog({ data }) {
   //   prev_deadline: task?.deadline,
   // }
   const [loading, setLoading] = useState(false);
-  setLoading;
-  const handleDeadlineRequest = () => {};
+
+  const [description, setDescription] = useState("");
+  const [deadline, setDeadline] = useState(null);
+  const handleDeadlineRequest = async () => {
+    try {
+      setLoading(true);
+
+      await staffTaskList.requestDeadline({
+        staff_id: data?.staff_id,
+        staff_name: data?.staff_name,
+        project_name: data?.project_name,
+        staff_email: data?.staff_email,
+        prev_deadline: format(new Date(data?.deadline), "dd-MM-yyyy hh:mm a"),
+        deadline: format(new Date(deadline), "dd-MM-yyyy hh:mm a"),
+      });
+
+      setLoading(false);
+      setDialogOpen(false);
+    } catch (error) {
+      setLoading(false);
+      return toast.error(error.message);
+    }
+  };
+  const [openDialog, setDialogOpen] = useState(false);
   return (
-    <Dialog>
+    <Dialog onOpenChange={setDialogOpen} open={openDialog}>
       <DialogTrigger>
         {" "}
         <button className="h-8 px-3 bg-blue-500 rounded-md text-white text-sm">
-          Request Deadline change 
+          Request Deadline change
         </button>
       </DialogTrigger>
       <DialogContent>
@@ -42,6 +67,8 @@ export default function StaffRequestDialog({ data }) {
                 Choose updated deadline
               </label>
               <Input
+                value={deadline && deadline?.toISOString().slice(0, 16)}
+                onChange={(e) => setDeadline(new Date(e.target.value))}
                 type="datetime-local"
                 className="bg-slate-100 text-black"
               />
@@ -51,6 +78,8 @@ export default function StaffRequestDialog({ data }) {
                 Enter description
               </label>
               <Textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 className="w-full resize-none bg-slate-100 text-black"
                 placeholder="Enter remark or description"
               />
