@@ -189,3 +189,13 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(hours=24),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=3),
 }
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'nashirnoor2002@gmail.com'
+EMAIL_HOST_PASSWORD = 'pqcyjuxcmcqpesez'  
+DEFAULT_FROM_EMAIL = 'nashirnoor2002@gmail.com'
