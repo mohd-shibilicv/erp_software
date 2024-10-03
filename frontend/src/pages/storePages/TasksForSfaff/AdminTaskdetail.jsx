@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
-import { adminTasksList } from "@/services/tasklist";
+import { adminTaskManage } from "@/services/tasklist";
 
 import { CalendarClock, PackageCheck, Paperclip } from "lucide-react";
 import { useEffect } from "react";
@@ -14,7 +14,7 @@ import { useParams } from "react-router-dom";
 export default function AdminTaskDetails() {
   const { id } = useParams();
   useEffect(()=>{
-    adminTasksList.get(id).then(({data})=>{
+    adminTaskManage.get(id).then(({data})=>{
         console.log(data);
         
     })
