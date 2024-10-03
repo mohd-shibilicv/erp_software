@@ -261,23 +261,27 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     def create(self, request, *args, **kwargs):
-        if 'deadline' in request.data and isinstance(request.data['deadline'], str):
+        # Create a mutable copy of request.data
+        data = request.data.copy()  # Now 'data' is mutable
+
+        if 'deadline' in data and isinstance(data['deadline'], str):
             try:
-                deadline = datetime.datetime.strptime(request.data['deadline'], "%Y-%m-%d %H:%M")
+                # Parse and make the deadline timezone-aware
+                deadline = datetime.datetime.strptime(data['deadline'], "%Y-%m-%d %H:%M")
                 deadline = timezone.make_aware(deadline)
-                request.data['deadline'] = deadline
-            except ValueError as e:
+                data['deadline'] = deadline
+            except ValueError:
                 return Response(
                     {'deadline': 'Invalid datetime format. Please use format YYYY-MM-DD HH:MM'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-        serializer = self.get_serializer(data=request.data)
+        # Pass the modified data to the serializer
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-    
 from django.shortcuts import get_object_or_404
 
 class ProjectIndividualTaskViewSet(viewsets.ModelViewSet):
