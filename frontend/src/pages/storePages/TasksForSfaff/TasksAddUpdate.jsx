@@ -11,7 +11,7 @@ import { useSearchParams } from "react-router-dom";
 
 export default function TaskAddEdit() {
   const [searchParam, setSearchParam] = useSearchParams();
-
+  setSearchParam;
   const [taskTitle, setTitle] = useState("");
   const [taskDeadline, setTaskDeadline] = useState(null);
   const [taskDescription, setTaskDescription] = useState("");
@@ -32,13 +32,13 @@ export default function TaskAddEdit() {
       }
       setLoading(true);
       await adminTaskManage.create({
-          project_staff: Number(searchParam.get("id")),
-          title: taskTitle,
-          description: taskDescription,
-          deadline: formatDateForTaskSection(taskDeadline),
-        });
-        toast.success("Task added")
-        setLoading(false);
+        project_staff: Number(searchParam.get("id")),
+        title: taskTitle,
+        description: taskDescription,
+        deadline: formatDateForTaskSection(taskDeadline),
+      });
+      toast.success("Task added");
+      setLoading(false);
     } catch (error) {
       setLoading(false);
       return toast.error(error.message);
@@ -97,7 +97,7 @@ export default function TaskAddEdit() {
                   Task Description
                 </label>
                 <Textarea
-                placeholder="enter description"
+                  placeholder="enter description"
                   value={taskDescription}
                   onChange={(e) => setTaskDescription(e.target.value)}
                   className="w-full h-full"

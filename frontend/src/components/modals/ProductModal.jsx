@@ -76,67 +76,72 @@ export function ProductModal({ isOpen, onClose, productId, onProductChange }) {
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="name" className="text-start">
                 Name
               </Label>
               <Input
                 id="name"
                 name="name"
                 value={product.name}
+                placeholder="Enter Product Name"
                 onChange={handleInputChange}
-                className="col-span-3"
+                className="col-span-3 shadow-sm bg-gray-100/50 focus-visible:bg-white"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="description" className="text-start">
                 Description
               </Label>
               <Textarea
                 id="description"
+                 placeholder="Enter Product Description"
                 name="description"
                 value={product.description}
                 onChange={handleInputChange}
-                className="col-span-3"
+                className="col-span-3 shadow-sm bg-gray-100/50 focus-visible:bg-white"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="price" className="text-right">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="price" className="text-start">
                 Price
               </Label>
               <Input
                 id="price"
                 name="price"
+                 placeholder="Enter Product Amount"
                 type="number"
                 value={product.price}
                 onChange={handleInputChange}
-                className="col-span-3"
+                className="col-span-3 shadow-sm bg-gray-100/50 focus-visible:bg-white"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="quantity" className="text-right">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="quantity" className="text-start">
                 Quantity
               </Label>
               <Input
                 id="quantity"
                 name="quantity"
+                 placeholder="Enter Product Quantity"
                 type="number"
                 value={product.quantity}
                 onChange={handleInputChange}
-                className="col-span-3"
+                className="col-span-3 shadow-sm bg-gray-100/50 focus-visible:bg-white"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="opening_stock" className="text-right">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="opening_stock" className="text-start">
                 Opening Stock
               </Label>
               <Input
                 id="opening_stock"
                 name="opening_stock"
+                 placeholder="Enter Product Opening Stock"
                 type="number"
                 value={product.opening_stock}
                 onChange={handleInputChange}
-                className="col-span-3"
+                className="col-span-3 shadow-sm bg-gray-100/50 focus-visible:bg-white"
               />
             </div>
           </div>
