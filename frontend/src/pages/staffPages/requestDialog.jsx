@@ -33,6 +33,12 @@ export default function StaffRequestDialog({ data }) {
   const [deadline, setDeadline] = useState(null);
   const handleDeadlineRequest = async () => {
     try {
+      if (!deadline) {
+        return toast.error("Please Select updated deadline");
+      }
+      if (!description) {
+        return toast.error("Please enter description");
+      }
       setLoading(true);
 
       await staffTaskList.requestDeadline({
@@ -46,7 +52,7 @@ export default function StaffRequestDialog({ data }) {
         description: description,
       });
 
-      toast.success("Requested successfull");
+      toast.success("Deadline Request sended");
       setLoading(false);
       setDeadline(undefined);
       setDescription("");

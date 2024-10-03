@@ -4,11 +4,23 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useGetTaskDetail } from "@/hooks/useGetTaskDetail";
 import { formatDateForTaskSection } from "@/lib/formatTaskDate";
 import { cn } from "@/lib/utils";
 import { adminTaskManage } from "@/services/tasklist";
+
 import { useQueryClient } from "@tanstack/react-query";
 
 import { format } from "date-fns";
@@ -34,6 +46,7 @@ export default function AdminTaskDetails() {
   const handleDeleteTask = async (taskId) => {
     // ["taskDetail", id]
     await adminTaskManage.delete(taskId);
+    toast.success("Task deleted");
     queryClient.invalidateQueries(["taskDetail", id]);
   };
   return (
@@ -91,12 +104,34 @@ export default function AdminTaskDetails() {
                 >
                   {task?.status}
                 </div>
-                <button
-                  onClick={() => handleDeleteTask(task?.id)}
-                  className="size-7 rounded-md flex justify-center items-center bg-red-500 text-white"
-                >
-                  <Trash2 className="w-4" />
-                </button>
+                <AlertDialog>
+                  <AlertDialogTrigger>
+                    {" "}
+                    <button className="size-7 rounded-md flex justify-center items-center bg-red-500 text-white">
+                      <Trash2 className="w-4" />
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete your account and remove your data from our
+                        servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDeleteTask(task?.id)}
+                      >
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
             <div className="break-words ">
@@ -129,7 +164,7 @@ export default function AdminTaskDetails() {
                       });
                       queryClient.invalidateQueries(["taskDetail", id]);
                       toast.success("Date and time updated");
-                      dateTimeInputRefs.current[I]?.blur()
+                      dateTimeInputRefs.current[I]?.blur();
                     } catch (error) {
                       return toast.error(error.message);
                     }
@@ -153,7 +188,6 @@ export default function AdminTaskDetails() {
                     <embed
                       className="max-h-[500px]"
                       src={task?.attachment_url}
-                      
                     />
                   </AccordionContent>
                 </AccordionItem>
