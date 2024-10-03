@@ -335,18 +335,18 @@ from rest_framework.response import Response
 from rest_framework import generics, permissions, status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import StaffProjectAssignmentSerializer
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-class StaffProjectAssignmentView(generics.ListAPIView):
+class StaffProjectAssignmentViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = StaffProjectAssignmentSerializer
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         user = self.request.user
         
-        # Check if user is authenticated and has staff role
-        if not user.is_authenticated:
-            return ProjectAssignedStaffs.objects.none()
-        
+        # Check if user has the staff role
         if user.role != 'staff':
             return ProjectAssignedStaffs.objects.none()
             
@@ -379,4 +379,3 @@ class StaffProjectAssignmentView(generics.ListAPIView):
         }
         
         return Response(response_data)
-

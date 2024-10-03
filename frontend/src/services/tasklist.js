@@ -15,5 +15,5 @@ export const adminTaskManage = {
 };
 
 export const staffTaskList = {
-  getAll: () => api.get("/staff/my-projects/"),
+  getAll: () => api.get("/induvidual-listing/"),
 };

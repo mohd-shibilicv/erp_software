@@ -50,7 +50,7 @@ from apps.crm.views import (
     ProjectAssignedStaffsViewSet,
     ProjectTaskViewSet,
     ProjectIndividualTaskViewSet,
-    StaffProjectAssignmentView
+    StaffProjectAssignmentViewSet
 )
 
 
@@ -93,12 +93,18 @@ router.register(r'projects', ProjectViewSet, basename='project')
 router.register(r'project-assignments', ProjectAssignedStaffsViewSet, basename='project-assignments')
 router.register(r'project-tasks', ProjectTaskViewSet)
 router.register(r'individual-projects-tasks',ProjectIndividualTaskViewSet, basename="individual-projects-tasks")
+router.register(r'staff-assignments', StaffProjectAssignmentViewSet, basename='staff-assignments'),
+router.register(r'induvidual-listing', StaffProjectAssignmentViewSet, basename='staff-assignments-induvidual')
+
+
 
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
+    # path('api/staff/my-projects/', StaffProjectAssignmentView.as_view(), name='staff-projects'),
+
     path("api/logout/", LogoutView.as_view({"post": "logout"}), name="logout"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -170,5 +176,4 @@ urlpatterns += [
 urlpatterns += [
     path("api/dashboard/", DashboardView.as_view(), name="dashboard"),
     path('api/branch-dashboard/', BranchDashboardView.as_view(), name='branch-dashboard'),
-    path('api/staff/my-projects/', StaffProjectAssignmentView.as_view(), name='staff-projects'),
 ]
