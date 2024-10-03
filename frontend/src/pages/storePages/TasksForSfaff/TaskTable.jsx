@@ -12,6 +12,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -35,6 +42,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function TaskTable({ data }) {
+  const [filterOption, setFilterOption] = useState("staff_name");
   const columns = [
     {
       id: "select",
@@ -206,14 +214,31 @@ export default function TaskTable({ data }) {
     <main>
       <>
         <div className="w-full flex justify-between mb-4 flex-col md:flex-row gap-5">
-          <Input
-            placeholder="Filter Tasks"
-            value={table.getColumn("staff_name")?.getFilterValue() ?? ""}
-            className="w-full md:w-[300px] shadow-sm"
-            onChange={(event) =>
-              table.getColumn("staff_name")?.setFilterValue(event.target.value)
-            }
-          />
+          <div className="flex gap-2 items-center">
+            <Input
+              placeholder={`Filter Tasks by ${filterOption}`}
+              value={table.getColumn(filterOption)?.getFilterValue() ?? ""}
+              className="w-full md:w-[300px] shadow-sm"
+              onChange={(event) =>
+                table
+                  .getColumn(filterOption)
+                  ?.setFilterValue(event.target.value)
+              }
+            />
+            <Select onValueChange={(value) => setFilterOption(value)}>
+              <SelectTrigger className="max-w-[120px]">
+                <SelectValue placeholder={"Staff-name"} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="id">Id</SelectItem>
+                <SelectItem value="staff_name">Staff name</SelectItem>
+                <SelectItem value="project_name">Project Name</SelectItem>
+                <SelectItem value="project_reference_id">
+                  Project Reference
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <div className="rounded-md border">
           <Table>
