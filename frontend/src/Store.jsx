@@ -47,6 +47,7 @@ import ProjectDetailPage from "./pages/storePages/Projects/projectDetail";
 import ListStaffAndTask from "./pages/storePages/TasksForSfaff/listStaffandTask";
 import TaskAddEdit from "./pages/storePages/TasksForSfaff/TasksAddUpdate";
 import StaffTaskLists from "./pages/staffPages/staffTaskLlist";
+import AdminTaskDetails from "./pages/storePages/TasksForSfaff/AdminTaskdetail";
 
 function Store() {
   return (
@@ -276,6 +277,14 @@ function Store() {
           element={
             <StoreProtectedRoute allowedRoles={["admin"]}>
               <TaskAddEdit />
+            </StoreProtectedRoute>
+          }
+        />
+        <Route
+          path="/tasks/detail/:id"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <AdminTaskDetails />
             </StoreProtectedRoute>
           }
         />

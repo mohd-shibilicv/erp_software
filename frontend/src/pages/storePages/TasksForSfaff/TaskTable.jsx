@@ -125,7 +125,7 @@ export default function TaskTable({ data }) {
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Number of Tasks
+          Assigned Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -162,7 +162,7 @@ export default function TaskTable({ data }) {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
-                  navigate(`/admin/project/edit/${row.original.id}`)
+                  navigate(`/admin/tasks/detail/${row.original.id}`)
                 }
               >
                 Assign Tasks
