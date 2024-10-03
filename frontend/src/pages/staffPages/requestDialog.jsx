@@ -17,6 +17,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function StaffRequestDialog({ data }) {
+  // console.log("🚀 ~ StaffRequestDialog ~ data:", data);
   data;
   // {
   //   staff_id: data?.id,
@@ -38,10 +39,11 @@ export default function StaffRequestDialog({ data }) {
         staff_name: data?.staff_name,
         project_name: data?.project_name,
         staff_email: data?.staff_email,
-        prev_deadline: format(new Date(data?.deadline), "dd-MM-yyyy hh:mm a"),
-        deadline: format(new Date(deadline), "dd-MM-yyyy hh:mm a"),
+        prev_deadline: String(data?.deadline),
+        deadline: String(deadline),
       });
 
+      toast.success("Requested successfull");
       setLoading(false);
       setDialogOpen(false);
     } catch (error) {
