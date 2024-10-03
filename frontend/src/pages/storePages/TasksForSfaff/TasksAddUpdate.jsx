@@ -31,12 +31,12 @@ export default function TaskAddEdit() {
         return toast.error("Please enter task description");
       }
       setLoading(true);
-      await adminTaskManage.create({
-        project_staff: Number(searchParam.get("id")),
-        title: taskTitle,
-        description: taskDescription,
-        deadline: formatDateForTaskSection(taskDeadline),
-      });
+      const formData = new FormData();
+      formData.append("project_staff", Number(searchParam.get("id")));
+      formData.append("title", taskTitle);
+      formData.append("description", taskDescription);
+      formData.append("deadline", String(formatDateForTaskSection(taskDeadline)));
+      await adminTaskManage.create(formData);
       toast.success("Task added");
       setLoading(false);
     } catch (error) {
