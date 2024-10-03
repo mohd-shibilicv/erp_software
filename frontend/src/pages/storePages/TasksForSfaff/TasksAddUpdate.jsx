@@ -7,7 +7,7 @@ import { adminTaskManage } from "@/services/tasklist";
 import { LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function TaskAddEdit() {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -22,6 +22,7 @@ export default function TaskAddEdit() {
     console.log(searchParam.get("id"), " KD");
   }, [searchParam]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const handleSubmitTask = async () => {
     try {
       if (!taskTitle) {
@@ -35,9 +36,17 @@ export default function TaskAddEdit() {
       formData.append("project_staff", Number(searchParam.get("id")));
       formData.append("title", taskTitle);
       formData.append("description", taskDescription);
-      formData.append("deadline", String(formatDateForTaskSection(taskDeadline)));
+      formData.append(
+        "deadline",
+        String(formatDateForTaskSection(taskDeadline))
+      );
+      formData.append("attachment", taskDoc);
       await adminTaskManage.create(formData);
       toast.success("Task added");
+      setTaskDeadline(null);
+      setTaskDescription("");
+      setTaskDoc(null);
+      setTitle(null);
       setLoading(false);
     } catch (error) {
       setLoading(false);
