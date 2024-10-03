@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { useGetTaskDetail } from "@/hooks/useGetTaskDetail";
+import { formatDateForTaskSection } from "@/lib/formatTaskDate";
 import { cn } from "@/lib/utils";
 import { adminTaskManage } from "@/services/tasklist";
 import { useQueryClient } from "@tanstack/react-query";
@@ -20,6 +21,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useRef } from "react";
+import toast from "react-hot-toast";
 
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -28,7 +30,7 @@ export default function AdminTaskDetails() {
   const { data } = useGetTaskDetail(id);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const dateTimeInputRef = useRef(null);
+  const dateTimeInputRefs = useRef([]);
   const handleDeleteTask = async (taskId) => {
     // ["taskDetail", id]
     await adminTaskManage.delete(taskId);
@@ -70,9 +72,9 @@ export default function AdminTaskDetails() {
           </Button>
         </div>
 
-        {data?.tasks?.map((task) => (
+        {data?.tasks?.map((task, I) => (
           <div
-            key={task?.id}
+            key={task?.id + I}
             className="mt-4 w-full flex flex-col border p-3 rounded-md bg-gray-100 shadow-sm gap-2"
           >
             <div className="w-full flex justify-between ">
@@ -107,16 +109,34 @@ export default function AdminTaskDetails() {
                   {format(new Date(task?.deadline), "dd-MM-yyyy hh:mm a")}
                 </div>
                 <input
+                  //   key={task?.id}
                   type="datetime-local"
                   className="hidden absolute top-3"
-                  id="time-task"
-
-                  name="time-task"
-                  ref={dateTimeInputRef}
-                  onChange={(e) => console.log(e.target.value)} // Optional: Log the value
+                  id={`${task?.id}${task?.title}${I}`}
+                  name={`${task?.id}${task?.title}${I}`}
+                  value={
+                    task?.deadline &&
+                    new Date(task?.deadline)?.toISOString().slice(0, 16)
+                  }
+                  ref={(el) => (dateTimeInputRefs.current[I] = el)}
+                  onChange={async (e) => {
+                    try {
+                      await adminTaskManage.update(task?.id, {
+                        project_staff: data?.staff_assignment?.id,
+                        deadline: formatDateForTaskSection(
+                          new Date(e.target.value)
+                        ),
+                      });
+                      queryClient.invalidateQueries(["taskDetail", id]);
+                      toast.success("Date and time updated");
+                      dateTimeInputRefs.current[I]?.blur()
+                    } catch (error) {
+                      return toast.error(error.message);
+                    }
+                  }} // Optional: Log the value
                 />
                 <label
-                  onClick={()=>dateTimeInputRef.current?.showPicker()}
+                  onClick={() => dateTimeInputRefs.current[I]?.showPicker()}
                   className="h-7 px-2 text-sm bg-blue-500 text-white rounded-md items-center flex gap-1 cursor-pointer"
                 >
                   <CalendarClock className="w-4" />
