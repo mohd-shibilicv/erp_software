@@ -75,13 +75,29 @@ export default function StaffTaskTable({ data }) {
       },
     },
     {
-      accessorKey: "project_reference_id",
+      accessorKey: "project_details",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Project Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const projectReference = row?.original?.project_details?.status;
+        return <div>{projectReference}</div>;
+      },
+    },
+    {
+      accessorKey: "project_reference_id",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Project Reference Id
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -122,7 +138,11 @@ export default function StaffTaskTable({ data }) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigate(`/admin/staff-tasks/detail/${row.original?.id}`)}
+                onClick={() =>
+                  navigate(
+                    `/admin/staff-tasks/detail/${row.original?.id}?project_reference_id=${row.original?.project_reference_id}`
+                  )
+                }
               >
                 View details
               </DropdownMenuItem>

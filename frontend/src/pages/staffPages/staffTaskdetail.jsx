@@ -4,6 +4,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { useGetTaskDetail } from "@/hooks/useGetTaskDetail";
 
@@ -11,22 +18,25 @@ import { cn } from "@/lib/utils";
 
 import { format } from "date-fns";
 
-import { CalendarClock, PackageCheck, Paperclip } from "lucide-react";
-import { useEffect } from "react";
+import { CalendarClock, Loader2, PackageCheck, Paperclip } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import toast from "react-hot-toast";
 
 import { useNavigate, useParams } from "react-router-dom";
+import StaffRequestDialog from "./requestDialog";
 
 export default function StaffTaskDetail() {
   const { id } = useParams();
-  const { data,isError } = useGetTaskDetail(id);
+  const { data, isError } = useGetTaskDetail(id);
   const navigate = useNavigate();
-  useEffect(()=>{
-    if(isError){
-      return toast.error("Something went wrong")
+  useEffect(() => {
+    if (isError) {
+      return toast.error("Something went wrong");
     }
-  },[isError])
+  }, [isError]);
+  const [selectLoading, setSelectLoading] = useState(false);
+  setSelectLoading;
   navigate;
   return (
     <main className="w-full h-full bg-white rounded-xl border shadow-sm p-5">
@@ -55,17 +65,47 @@ export default function StaffTaskDetail() {
             <div className="w-full flex justify-between ">
               <h1 className="text-[17px] font- line-clamp-1">{task?.title}</h1>
               <div className="flex gap-2 items-center">
-                <div
-                  className={cn(
-                    "px-3 flex items-center h-7 rounded-2xl border text-[13px] capitalize ",
-                    {
-                      "bg-yellow-400 text-white": task?.status == "pending",
-                      "bg-green-500 text-white": false,
-                    }
-                  )}
-                >
-                  {task?.status}
-                </div>
+                <Select>
+                  <SelectTrigger
+                    className={`w-[140px] rounded-xl ${
+                      selectLoading ? "pointer-events-none" : ""
+                    }`}
+                  >
+                    {/* pending, in progress, completed, on hold */}
+                    <SelectValue
+                      placeholder={
+                        selectLoading ? (
+                          <div className="flex gap-2 items-center">
+                            <span>Loading...</span>{" "}
+                            <Loader2 className="w-5 animate-spin" />
+                          </div>
+                        ) : (
+                          <>
+                            <div
+                              className={cn(
+                                "capitalize h-6 px-2 rounded-md bg-yellow-400 flex items-center text-white",
+                                {
+                                  "bg-yellow-500": task.status == "pending",
+                                  "bg-green-500": task.status == "completed",
+                                  "bg-orange-500": task.status == "on hold",
+                                  "bg-lime-500": task.status == "in progress",
+                                }
+                              )}
+                            >
+                              {task?.status}
+                            </div>
+                          </>
+                        )
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="in progress">In progress</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="on hold">On hold</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="break-words ">
@@ -92,6 +132,20 @@ export default function StaffTaskDetail() {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
+            </div>
+            <div className="flex justify-end mt-1">
+              <StaffRequestDialog
+                data={{
+                  staff_id: data?.staff_assignment.id,
+                  staff_name: data?.staff_assignment.staff_name,
+                  project_name: data?.staff_assignment.project_name,
+                  staff_email: data?.staff_assignment.staff_email,
+                  prev_deadline: task?.deadline,
+                  project_reference_id: new URLSearchParams(
+                    window.location.search
+                  ).get("project_reference_id"),
+                }}
+              />
             </div>
           </div>
         ))}
