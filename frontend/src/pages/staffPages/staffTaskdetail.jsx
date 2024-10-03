@@ -107,8 +107,8 @@ export default function StaffTaskDetail() {
                                 {
                                   "bg-yellow-500": task.status == "pending",
                                   "bg-green-500": task.status == "completed",
-                                  "bg-orange-500": task.status == "on_hold",
-                                  "bg-lime-500": task.status == "in_progress",
+                                  // "bg-orange-500": task.status == "on_hold",
+                                  "bg-lime-500": task.status == "in progress",
                                 }
                               )}
                             >
@@ -121,9 +121,9 @@ export default function StaffTaskDetail() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="in_progress">In progress</SelectItem>
+                    <SelectItem value="in progress">In progress</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="on_hold">On hold</SelectItem>
+                    {/* <SelectItem value="on_hold">On hold</SelectItem> */}
                   </SelectContent>
                 </Select>
               </div>

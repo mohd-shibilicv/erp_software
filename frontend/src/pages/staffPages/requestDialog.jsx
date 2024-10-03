@@ -11,14 +11,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { staffTaskList } from "@/services/tasklist";
-import { format } from "date-fns";
+
 import { LoaderCircleIcon } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function StaffRequestDialog({ data }) {
   // console.log("🚀 ~ StaffRequestDialog ~ data:", data);
-  data;
+
   // {
   //   staff_id: data?.id,
   //   staff_name: data?.staff_name,
@@ -26,6 +26,7 @@ export default function StaffRequestDialog({ data }) {
   //   staff_email: data?.staff_email,
   //   prev_deadline: task?.deadline,
   // }
+
   const [loading, setLoading] = useState(false);
 
   const [description, setDescription] = useState("");
@@ -39,12 +40,16 @@ export default function StaffRequestDialog({ data }) {
         staff_name: data?.staff_name,
         project_name: data?.project_name,
         staff_email: data?.staff_email,
-        prev_deadline: String(data?.deadline),
+        prev_deadline: String(data?.prev_deadline),
         deadline: String(deadline),
+        project_reference_id: data?.project_reference_id,
+        description: description,
       });
 
       toast.success("Requested successfull");
       setLoading(false);
+      setDeadline(undefined);
+      setDescription("");
       setDialogOpen(false);
     } catch (error) {
       setLoading(false);
