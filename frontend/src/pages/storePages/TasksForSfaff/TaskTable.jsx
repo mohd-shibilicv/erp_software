@@ -168,8 +168,13 @@ export default function TaskTable({ data }) {
           try {
             await adminTaskManage.delete(row?.original?.id);
             queryClient.invalidateQueries(["adminTasks"]);
-            toast.success("Task deleted")
+            toast.success("Task deleted");
           } catch (error) {
+            if (error.response?.data) {
+              return toast.error(
+                error.response?.data[Object.keys(error.response?.data)[0]]
+              );
+            }
             return toast.error(error.message);
           }
         };
@@ -273,8 +278,14 @@ export default function TaskTable({ data }) {
               }
             />
             <Select onValueChange={(value) => setFilterOption(value)}>
-              <SelectTrigger className="max-w-[120px]">
-                <SelectValue placeholder={"Staff-name"} />
+              <SelectTrigger className="max-w-[120px]" >
+                <SelectValue
+                  placeholder={
+                    <span className="capitalize">
+                      {filterOption.split("_").join(" ")}
+                    </span>
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="id">Id</SelectItem>
