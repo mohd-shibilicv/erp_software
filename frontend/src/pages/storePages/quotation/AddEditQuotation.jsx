@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { api } from '@/services/api';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
-import { clientQuotation } from '@/services/crmServiceApi';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from "react";
+import { api } from "@/services/api";
+import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { clientQuotation } from "@/services/crmServiceApi";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import QuotationProduct from './QuotationProduct';
-
+import QuotationProduct from "./QuotationProduct";
+import { v4 as uuid } from "uuid";
 const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
   const [clients, setClients] = useState([]);
   const [products, setProducts] = useState([]);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { id } = useParams();
   const [staffMembers, setStaffMembers] = useState([]);
   const [totals, setTotals] = useState({
@@ -19,20 +19,28 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
     totalDiscount: 0,
   });
   const [formData, setFormData] = useState({
-    quotation_number: quotation.quotation_number || '',
+    quotation_number: quotation.quotation_number || "",
     version: quotation.version || 1,
-    status: quotation.status || 'DRAFT',
-    valid_until: quotation.valid_until || '',
-    client: quotation.client || '',
-    client_reference: quotation.client_reference || '',
-    assigned_to: quotation.assigned_to || '',
+    status: quotation.status || "DRAFT",
+    valid_until: quotation.valid_until || "",
+    client: quotation.client || "",
+    client_reference: quotation.client_reference || "",
+    assigned_to: quotation.assigned_to || "",
     subtotal: quotation.subtotal || 0,
     discount_amount: quotation.discount_amount || 0,
     total_amount: quotation.total_amount || 0,
-    notes: quotation.notes || '',
-    terms_and_conditions: quotation.terms_and_conditions || '',
+    notes: quotation.notes || "",
+    terms_and_conditions: quotation.terms_and_conditions || "",
     requires_approval: quotation.requires_approval || false,
   });
+  useEffect(() => {
+    if (!formData.quotation_number || formData.quotation_number == "") {
+      setFormData({
+        ...formData,
+        quotation_number: Number(uuid().replace(/\D/g, "").slice(0, 5)),
+      });
+    }
+  }, []);
   const [quotationItems, setQuotationItems] = useState([
     {
       id: 1,
@@ -43,7 +51,7 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
       unitPrice: 0,
       taxRate: 5,
       total: 0,
-    }
+    },
   ]);
 
   const handleTotalsUpdate = (totalUnitPrice, totalAmount, totalDiscount) => {
@@ -51,12 +59,12 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
   };
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    const updatedValue = type === 'checkbox' ? checked : value;
+    const updatedValue = type === "checkbox" ? checked : value;
     let updatedFormData = {
       ...formData,
-      [name]: updatedValue
+      [name]: updatedValue,
     };
-    if (name === 'subtotal' || name === 'discount_amount') {
+    if (name === "subtotal" || name === "discount_amount") {
       const total = updatedFormData.subtotal - updatedFormData.discount_amount;
       updatedFormData.total_amount = total > 0 ? total : 0;
     }
@@ -71,7 +79,7 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
     try {
       const dataToSubmit = {
         ...formData,
-        items: quotationItems.map(item => ({
+        items: quotationItems.map((item) => ({
           product: item.product.id,
           description: item.description || "",
           quantity: item.quantity,
@@ -84,13 +92,16 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
       let response;
       if (isEditMode) {
         response = await clientQuotation.update(id, dataToSubmit);
-        console.log("edittt:", response)
+        console.log("edittt:", response);
       } else {
         response = await clientQuotation.create(dataToSubmit);
       }
-      navigate('/admin/quotation');
+      navigate("/admin/quotation");
     } catch (error) {
-      console.error("Error submitting form:", error.response?.data || error.message);
+      console.error(
+        "Error submitting form:",
+        error.response?.data || error.message
+      );
     }
   };
   useEffect(() => {
@@ -98,41 +109,42 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
       const fetchQuotation = async () => {
         try {
           const response = await clientQuotation.get(id);
-          console.log(response, "quoation")
-          setFormData(prevState => ({
+          console.log(response, "quoation");
+          setFormData((prevState) => ({
             ...prevState,
             ...response.data,
           }));
-          setQuotationItems(response.data.items.map((item, index) => ({
-            id: index + 1,
-            product: products.find(p => p.id === item.product),
-            sku: item.product_sku, 
-            quantity: parseFloat(item.quantity),
-            discount: parseFloat(item.discount_percentage),
-            unitPrice: parseFloat(item.unit_price),
-            taxRate: parseFloat(item.tax_percentage),
-            total: parseFloat(item.subtotal),
-          })));
+          setQuotationItems(
+            response.data.items.map((item, index) => ({
+              id: index + 1,
+              product: products.find((p) => p.id === item.product),
+              sku: item.product_sku,
+              quantity: parseFloat(item.quantity),
+              discount: parseFloat(item.discount_percentage),
+              unitPrice: parseFloat(item.unit_price),
+              taxRate: parseFloat(item.tax_percentage),
+              total: parseFloat(item.subtotal),
+            }))
+          );
         } catch (error) {
-          console.error('Error fetching quotation:', error);
+          console.error("Error fetching quotation:", error);
         }
       };
       fetchQuotation();
     }
   }, [isEditMode, id, products]);
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const clientResponse = await api.get('/clients/');
+        const clientResponse = await api.get("/clients/");
         setClients(clientResponse.data.results);
-        const staffResponse = await api.get('/staff');
+        const staffResponse = await api.get("/staff");
         setStaffMembers(staffResponse.data);
-        const productResponse = await api.get('/products/');
+        const productResponse = await api.get("/products/");
         setProducts(productResponse.data.results);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
     fetchData();
@@ -143,12 +155,14 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
       <div className="max-w-7xl mx-auto mb-4">
         <form onSubmit={handleSubmit} className="space-y-6">
           <h2 className="text-2xl font-bold mb-6 text-left">
-            {isEditMode ? 'Edit Quotation' : 'Add New Quotation'}
+            {isEditMode ? "Edit Quotation" : "Add New Quotation"}
           </h2>
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Date</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Date
+                </label>
                 <Input
                   type="date"
                   className="mt-1 block w-full"
@@ -156,17 +170,21 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Quotation Number</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Quotation Number
+                </label>
                 <input
                   type="text"
                   name="quotation_number"
                   value={formData.quotation_number}
                   onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
+                  className="mt-1 block pointer-events-none w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Client</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Client
+                </label>
                 <select
                   name="client"
                   value={formData.client}
@@ -174,7 +192,7 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                 >
                   <option value="">Select a Client</option>
-                  {clients.map(client => (
+                  {clients.map((client) => (
                     <option key={client.id} value={client.id}>
                       {client.name} - {client.city}, {client.country}
                     </option>
@@ -182,7 +200,9 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Status</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Status
+                </label>
                 <select
                   name="status"
                   value={formData.status}
@@ -199,7 +219,9 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Version</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Version
+                </label>
                 <input
                   type="number"
                   name="version"
@@ -209,7 +231,9 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Valid Until</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Valid Until
+                </label>
                 <input
                   type="date"
                   name="valid_until"
@@ -219,7 +243,9 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Client Reference</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Client Reference
+                </label>
                 <input
                   type="text"
                   name="client_reference"
@@ -229,7 +255,9 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Assigned To</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Assigned To
+                </label>
                 <select
                   name="assigned_to"
                   value={formData.assigned_to}
@@ -237,7 +265,7 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                 >
                   <option value="">Select staff</option>
-                  {staffMembers.map(staffMember => (
+                  {staffMembers.map((staffMember) => (
                     <option key={staffMember.id} value={staffMember.id}>
                       {staffMember.username}
                     </option>
@@ -266,7 +294,9 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                   ></textarea>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Terms and Conditions</h3>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Terms and Conditions
+                  </h3>
                   <textarea
                     name="terms_and_conditions"
                     value={formData.terms_and_conditions}
@@ -279,7 +309,9 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
             </div>
             <div className="bg-white rounded-lg shadow-md p-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Subtotal</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Subtotal
+                </label>
                 <input
                   type="number"
                   name="subtotal"
@@ -289,7 +321,9 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                 />
               </div>
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700">Discount Amount</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Discount Amount
+                </label>
                 <input
                   type="number"
                   name="discount_amount"
@@ -299,7 +333,9 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                 />
               </div>
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700">Total</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Total
+                </label>
                 <input
                   type="number"
                   name="total_amount"
