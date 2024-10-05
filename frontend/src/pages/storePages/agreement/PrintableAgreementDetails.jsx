@@ -505,7 +505,8 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
         </div>
       </div>
 
-      <div className="mt-2 w-full flex flex-col gap-1">
+<div className="pt-2"></div>
+      <div className="mt-2  w-full flex flex-col gap-1">
         <h2 className="font-semibold text-[10px]">Client Information: </h2>
         <div className=" border-black border">
           <div className="grid grid-cols-12 min-h-7 border-b border-black">
@@ -711,7 +712,7 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
               <span className="font-semibold text-[9.4px] ">Sr.#</span>
             </div>
             <div className="h-full col-span-6 p-1 border-r border-black">
-              <span className="font-semibold text-[9.4px] border-r">
+              <span className="font-semibold text-[9.4px] ">
                 Description
               </span>
             </div>
@@ -813,7 +814,7 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
           </div>
         </div>
       </div>
-      <div className="mt-3">
+      <div className="mt-8">
         <div className="w-full mb-2">
           <img src="/nasscript_full_banner_logo.png" className="h-5" alt="" />
         </div>
@@ -828,7 +829,7 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
           </p>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-1 mt-5">
+      <div className="flex flex-col items-center gap-1 mt-2">
         <h2 className="text-center font-bold text-[10px]">
           Nasscript Software Innovations
         </h2>
