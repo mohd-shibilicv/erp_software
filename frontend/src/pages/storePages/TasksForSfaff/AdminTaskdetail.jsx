@@ -27,12 +27,13 @@ import { format } from "date-fns";
 
 import {
   CalendarClock,
+  Loader2Icon,
   PackageCheck,
   Paperclip,
   PlusCircle,
   Trash2,
 } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 import { useNavigate, useParams } from "react-router-dom";
@@ -45,10 +46,13 @@ export default function AdminTaskDetails() {
   const dateTimeInputRefs = useRef([]);
   const handleDeleteTask = async (taskId) => {
     // ["taskDetail", id]
+    setTaskDeleteLoading((prev) => ({ ...prev, [taskId]: true }));
     await adminTaskManage.delete(taskId);
-    toast.success("Task deleted");
     queryClient.invalidateQueries(["taskDetail", id]);
+    setTaskDeleteLoading((prev) => ({ ...prev, [taskId]: false }));
+    toast.success("Task deleted");
   };
+  const [taskDeleteLoading, setTaskDeleteLoading] = useState({});
   return (
     <main className="w-full h-full bg-white rounded-xl border shadow-sm p-5">
       <div className="grid grid-cols-1 sm:grid-cols-2 mt-5 gap-5">
@@ -107,8 +111,26 @@ export default function AdminTaskDetails() {
                 <AlertDialog>
                   <AlertDialogTrigger>
                     {" "}
-                    <button className="size-7 rounded-md flex justify-center items-center bg-red-500 text-white">
-                      <Trash2 className="w-4" />
+                    <button
+                      className={cn(
+                        "size-7 rounded-md flex justify-center items-center bg-red-500 text-white",
+                        {
+                          "bg-blue-500": taskDeleteLoading[task?.id],
+                          "pointer-events-none": Object.values(
+                            taskDeleteLoading
+                          ).find((v) => v == true),
+                        }
+                      )}
+                    >
+                      {taskDeleteLoading[task?.id] ? (
+                        <>
+                          <Loader2Icon className="w-4 animate-spin" />
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="w-4" />
+                        </>
+                      )}
                     </button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
