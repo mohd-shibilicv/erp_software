@@ -215,6 +215,26 @@ export default function AdminTaskDetails() {
                 </AccordionItem>
               </Accordion>
             </div>
+            {task?.subtasks && task?.subtasks?.length > 0 && (
+              <>
+                <div className="w-full border rounded-md p-2 shadow-sm bg-slate-50">
+                  <h1 className="font-semibold">Sub Tasks</h1>
+                  <div className="mt-3 w-full">
+                    {task?.subtasks?.map((subTsk, Id) => (
+                      <div
+                        key={Id}
+                        className="w-full border rounded-lg p-2 flex flex-col gap-2 break-words"
+                      >
+                        <h2>{subTsk?.title}</h2>
+                        <p className="text-sm break-words">
+                          {subTsk?.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>
