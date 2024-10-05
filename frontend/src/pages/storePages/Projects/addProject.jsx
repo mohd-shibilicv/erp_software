@@ -350,7 +350,7 @@ export default function ProjectAddandUpdate() {
             <SelectContent>
               {agreements?.map((ag, i) => (
                 <SelectItem value={ag?.id} key={ag?.baladiya + "" + i}>
-                  {ag?.baladiya}
+                  {ag?.cr_number} <span>{" -  "}</span> {ag?.clientName}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -378,7 +378,7 @@ export default function ProjectAddandUpdate() {
             <SelectContent>
               {requirements?.map((req, i) => (
                 <SelectItem value={req?.id} key={req?.layout + "" + i}>
-                  {req?.file_number}
+                  {req?.file_number} <span>{" -  "}</span> {req?.client?.name}
                 </SelectItem>
               ))}
             </SelectContent>

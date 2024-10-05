@@ -74,7 +74,7 @@ const AgreementAddEdit = () => {
   const [tcFileChanged, setTcFileChanged] = useState(false);
   const [signedAgreementChanged, setSignedAgreementChanged] = useState(false);
   const formatDateForBackend = (date) => {
-    return date instanceof Date ? format(date, 'yyyy-MM-dd') : null;
+    return date instanceof Date ? format(date, "yyyy-MM-dd") : null;
   };
   const isEditMode = !!id;
 
@@ -98,28 +98,36 @@ const AgreementAddEdit = () => {
       const fetchAgreement = async () => {
         try {
           const response = await clientAgreement.get(id);
-          console.log(response.data)
+          console.log(response.data);
           const agreementData = response.data;
           setFormData({
             ...formData,
             ...agreementData,
             clientName: agreementData.client,
-            payment_terms: agreementData.payment_terms ? agreementData.payment_terms.map(term => ({
-              ...term,
-              date: term.date ? new Date(term.date) : null
-            })) : [],
-            payment_date: agreementData.payment_date ? new Date(agreementData.payment_date) : null,
-            project_start_date: agreementData.project_start_date ? new Date(agreementData.project_start_date) : null,
-            project_end_date: agreementData.project_end_date ? new Date(agreementData.project_end_date) : null,
+            payment_terms: agreementData.payment_terms
+              ? agreementData.payment_terms.map((term) => ({
+                  ...term,
+                  date: term.date ? new Date(term.date) : null,
+                }))
+              : [],
+            payment_date: agreementData.payment_date
+              ? new Date(agreementData.payment_date)
+              : null,
+            project_start_date: agreementData.project_start_date
+              ? new Date(agreementData.project_start_date)
+              : null,
+            project_end_date: agreementData.project_end_date
+              ? new Date(agreementData.project_end_date)
+              : null,
           });
           setSelectedQuotation(agreementData.quotation_number);
           setSelectedClient(agreementData.clientName);
           if (agreementData.tc_file) {
-            setTcFile({ name: 'Existing T&C File' });
+            setTcFile({ name: "Existing T&C File" });
             setTcFileUrl(agreementData.tc_file);
           }
           if (agreementData.signed_agreement) {
-            setSignedAgreement({ name: 'Existing Signed Agreement' });
+            setSignedAgreement({ name: "Existing Signed Agreement" });
             setSignedAgreementUrl(agreementData.signed_agreement);
           }
         } catch (error) {
@@ -155,7 +163,7 @@ const AgreementAddEdit = () => {
       try {
         const response = await clientService.getAll();
         setClients(response.data.results);
-        console.log(response.data.results)
+        console.log(response.data.results);
       } catch (error) {
         console.error("Error fetching clients:", error);
         toast({
@@ -174,7 +182,7 @@ const AgreementAddEdit = () => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: name === 'clientName' ? parseInt(value, 10) : value,
+      [name]: name === "clientName" ? parseInt(value, 10) : value,
     }));
   };
 
@@ -188,7 +196,12 @@ const AgreementAddEdit = () => {
     const updatedTerms = [...formData.payment_terms];
     updatedTerms[index] = {
       ...updatedTerms[index],
-      [field]: field === 'date' ? new Date(value) : (field === 'amount' ? parseFloat(value) || 0 : value)
+      [field]:
+        field === "date"
+          ? new Date(value)
+          : field === "amount"
+          ? parseFloat(value) || 0
+          : value,
     };
     setFormData((prevData) => ({
       ...prevData,
@@ -198,14 +211,22 @@ const AgreementAddEdit = () => {
   const addPaymentTerm = () => {
     setFormData((prevData) => ({
       ...prevData,
-      payment_terms: [...prevData.payment_terms, { date: new Date(), amount: 0 }],
+      payment_terms: [
+        ...prevData.payment_terms,
+        { date: new Date(), amount: "" },
+      ],
     }));
   };
   const isValidPaymentTerm = (term) => {
-    if(term.amount<=0){
-      return true
+    if (term.amount <= 0) {
+      return true;
     }
-    return term.date && term.amount && !isNaN(parseFloat(term.amount)) && parseFloat(term.amount) >= 0;
+    return (
+      term.date &&
+      term.amount &&
+      !isNaN(parseFloat(term.amount)) &&
+      parseFloat(term.amount) >= 0
+    );
   };
   const removePaymentTerm = (index) => {
     setFormData((prevData) => ({
@@ -247,13 +268,13 @@ const AgreementAddEdit = () => {
     if (validateForm()) {
       try {
         const formDataToSend = new FormData();
-        
-        Object.keys(formData).forEach(key => {
-          if (key !== 'tc_file' && key !== 'signed_agreement') {
-            if (key === 'payment_terms') {
-              const formattedPaymentTerms = formData[key].map(term => ({
+
+        Object.keys(formData).forEach((key) => {
+          if (key !== "tc_file" && key !== "signed_agreement") {
+            if (key === "payment_terms") {
+              const formattedPaymentTerms = formData[key].map((term) => ({
                 ...term,
-                date: formatDateForBackend(new Date(term.date))
+                date: formatDateForBackend(new Date(term.date)),
               }));
               formDataToSend.append(key, JSON.stringify(formattedPaymentTerms));
             } else {
@@ -263,16 +284,25 @@ const AgreementAddEdit = () => {
         });
 
         if (tcFile && tcFileChanged) {
-          formDataToSend.append('tc_file', tcFile);
+          formDataToSend.append("tc_file", tcFile);
         }
         if (signedAgreement && signedAgreementChanged) {
-          formDataToSend.append('signed_agreement', signedAgreement);
+          formDataToSend.append("signed_agreement", signedAgreement);
         }
 
-        formDataToSend.set('payment_date', formatDateForBackend(formData.payment_date));
-        formDataToSend.set('project_start_date', formatDateForBackend(formData.project_start_date));
-        formDataToSend.set('project_end_date', formatDateForBackend(formData.project_end_date));
-        formDataToSend.set('total_amount', formData.total_amount.toString());
+        formDataToSend.set(
+          "payment_date",
+          formatDateForBackend(formData.payment_date)
+        );
+        formDataToSend.set(
+          "project_start_date",
+          formatDateForBackend(formData.project_start_date)
+        );
+        formDataToSend.set(
+          "project_end_date",
+          formatDateForBackend(formData.project_end_date)
+        );
+        formDataToSend.set("total_amount", formData.total_amount.toString());
 
         let response;
         if (id) {
@@ -281,11 +311,13 @@ const AgreementAddEdit = () => {
           response = await clientAgreement.create(formDataToSend);
         }
 
-        console.log('Server response:', response);
+        console.log("Server response:", response);
 
         toast({
           title: "Success",
-          description: id ? "Agreement updated successfully" : "Agreement created successfully",
+          description: id
+            ? "Agreement updated successfully"
+            : "Agreement created successfully",
           variant: "success",
         });
 
@@ -310,20 +342,20 @@ const AgreementAddEdit = () => {
       if (fileType === "tc_file") {
         setTcFile(file);
         setTcFileChanged(true);
-        setFormData(prevData => ({ ...prevData, tc_file: file }));
+        setFormData((prevData) => ({ ...prevData, tc_file: file }));
       } else if (fileType === "signed_agreement") {
         setSignedAgreement(file);
         setSignedAgreementChanged(true);
-        setFormData(prevData => ({ ...prevData, signed_agreement: file }));
+        setFormData((prevData) => ({ ...prevData, signed_agreement: file }));
       }
     }
   };
   const openDialog = (file, fileUrl) => {
     if (file instanceof File) {
       const url = URL.createObjectURL(file);
-      window.open(url, '_blank');
+      window.open(url, "_blank");
     } else if (fileUrl) {
-      window.open(fileUrl, '_blank');
+      window.open(fileUrl, "_blank");
     } else {
       console.log("No file available for preview");
     }
@@ -340,7 +372,11 @@ const AgreementAddEdit = () => {
         <CardTitle className="text-2xl font-bold">Agreement Form</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6"
+          encType="multipart/form-data"
+        >
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="quotation">Select Quotation</Label>
@@ -411,7 +447,9 @@ const AgreementAddEdit = () => {
                   className="text-sm text-blue-500 cursor-pointer"
                   onClick={() => openDialog(tcFile, tcFileUrl)}
                 >
-                  {tcFile instanceof File ? tcFile.name : 'View Existing T&C File'}
+                  {tcFile instanceof File
+                    ? tcFile.name
+                    : "View Existing T&C File"}
                 </p>
               )}
             </div>
@@ -429,7 +467,9 @@ const AgreementAddEdit = () => {
                 className="text-sm text-blue-500 cursor-pointer"
                 onClick={() => openDialog(signedAgreement, signedAgreementUrl)}
               >
-                {signedAgreement instanceof File ? signedAgreement.name : 'View Existing Signed Agreement'}
+                {signedAgreement instanceof File
+                  ? signedAgreement.name
+                  : "View Existing Signed Agreement"}
               </p>
             )}
           </div>
@@ -730,19 +770,22 @@ const AgreementAddEdit = () => {
                     </TableCell>
                     <TableCell>
                       <Input
-                        type="number"
+                        type="text"
+                        accept="number"
                         value={term.amount}
                         onChange={(e) =>
                           handlePaymentTermChange(
                             index,
                             "amount",
-                            e.target.value
+                            Number(e.target.value)
                           )
                         }
                         placeholder="Amount"
                       />
                       {!isValidPaymentTerm(term) && (
-                        <p className="text-red-500 text-sm mt-1">Invalid payment term</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          Invalid payment term
+                        </p>
                       )}
                     </TableCell>
                     <TableCell>
@@ -797,14 +840,14 @@ const AgreementAddEdit = () => {
             >
               {remainingAmount === 0
                 ? "Total paid amount matches the estimated amount."
-                : `Warning: There is still ${isNaN(remainingAmount) ? 0 : remainingAmount
-                } remaining to be allocated.`}
+                : `Warning: There is still ${
+                    isNaN(remainingAmount) ? 0 : remainingAmount
+                  } remaining to be allocated.`}
             </div>
           )}
           {errors.payment_terms && (
             <p className="text-red-500">{errors.payment_terms}</p>
           )}
-
         </form>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
