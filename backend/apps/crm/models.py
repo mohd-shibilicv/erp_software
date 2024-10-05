@@ -363,14 +363,12 @@ class ProjectTask(models.Model):
         ('medium', 'Medium'),
         ('high', 'High'),
     ]
-    
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('in progress', 'In Progress'),
         ('completed', 'Completed'),
         ('on hold', 'On Hold'),
     ]
-
     project_staff = models.ForeignKey(ProjectAssignedStaffs,on_delete=models.CASCADE,related_name='tasks')
     title = models.CharField(max_length=255,null=True,blank=True)
     description = models.TextField(null=True,blank=True)
@@ -405,3 +403,19 @@ class ProjectTask(models.Model):
         
         if not self.project_staff.is_active:
             raise ValidationError('Cannot create task for inactive project assignment')
+        
+
+class SubTask(models.Model):
+    project_task = models.ForeignKey(ProjectTask, on_delete=models.CASCADE, related_name='subtasks')
+    title = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    status = models.CharField(
+        max_length=11,
+        choices=ProjectTask.STATUS_CHOICES,
+        default='pending',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.project_task.title}"

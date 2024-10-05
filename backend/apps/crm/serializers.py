@@ -10,12 +10,16 @@ from .models import (
     QuotationItem,
     PaymentTerm,
     Agreement,
-    Project
+    Project,
+    ProjectTask,
+    ProjectAssignedStaffs
 )
 from apps.users.models import User
 from django.db import transaction
 import logging
 import json
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -291,9 +295,6 @@ class QuotationSerializer(serializers.ModelSerializer):
         instance.update_totals()
         return instance
 
-
-from django.core.exceptions import ValidationError
-
 class PaymentTermSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentTerm
@@ -316,22 +317,17 @@ class AgreementSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        logger.info(f"Validated data: {validated_data}")
         payment_terms_data = validated_data.pop("payment_terms", [])
         quotation_id = validated_data.pop("quotation_id", None)
-        logger.info(f"Quotation ID: {quotation_id}")
        
         if quotation_id:
             try:
                 quotation = Quotation.objects.get(id=quotation_id)
                 validated_data["quotation"] = quotation
-                logger.info(f"Found quotation: {quotation}")
             except Quotation.DoesNotExist:
-                logger.error(f"Quotation with id {quotation_id} does not exist")
                 raise serializers.ValidationError("Invalid quotation_id")
 
         agreement = Agreement.objects.create(**validated_data)
-        logger.info(f"Created agreement: {agreement}")
 
         if isinstance(payment_terms_data, str):
             try:
@@ -346,7 +342,6 @@ class AgreementSerializer(serializers.ModelSerializer):
             try:
                 PaymentTerm.objects.create(agreement=agreement, **payment_term_data)
             except ValidationError as e:
-                logger.error(f"Error creating payment term: {e}")
                 raise serializers.ValidationError(f"Invalid payment term data: {e}")
 
         return agreement
@@ -371,19 +366,14 @@ class AgreementSerializer(serializers.ModelSerializer):
                 validated_data.pop(field, None)
             elif self.initial_data[field] in [None, '', 'null']:
                 validated_data.pop(field, None)
-        logger.info(f"Updating agreement: {instance}")
         if quotation_id:
           validated_data["quotation"] = Quotation.objects.get(id=quotation_id)
         instance.payment_terms.all().delete()
         for payment_term_data in payment_terms_data:
             payment_term = PaymentTerm.objects.create(agreement=instance, **payment_term_data)
-            logger.info(f"Created payment term: {payment_term}")
 
         return instance
 
-
-from django.utils import timezone
-from .models import ProjectAssignedStaffs
 
 class ProjectAssignedStaffsSerializer(serializers.ModelSerializer):
     staff_name = serializers.CharField(source='staff.username', read_only=True)
@@ -393,7 +383,6 @@ class ProjectAssignedStaffsSerializer(serializers.ModelSerializer):
         model = ProjectAssignedStaffs
         fields = ['id', 'project_name', 'project_reference_id', 'staff_name','staff_email', 'assigned_date', 'is_active']
     
-from .models import ProjectTask
 
 class ProjectSerializer(serializers.ModelSerializer):
     client = ClientSerializer(read_only=True)
@@ -417,7 +406,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(),
         required=False
     )
-
     class Meta:
         model = Project
         fields = [
@@ -431,17 +419,13 @@ class ProjectSerializer(serializers.ModelSerializer):
     def validate(self, data):
         agreement = data.get('agreement')
         requirements = data.get('requirements')
-
         if not agreement:
             raise serializers.ValidationError({"agreement_id": "This field is required."})
         if not requirements:
             raise serializers.ValidationError({"requirements_id": "This field is required."})
-
         data['project_name'] = agreement.project_name
-
         if requirements.client != agreement.client:
             raise serializers.ValidationError("The selected requirement must belong to the same client as the agreement.")
-
         data['client'] = agreement.client
 
         return data
@@ -459,23 +443,28 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         assigned_staffs = validated_data.pop('assigned_staffs', None)
-        
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         
         if assigned_staffs is not None:
             instance.assigned_staffs.set(assigned_staffs)
             instance._assigned_staffs = assigned_staffs 
-            
         instance.save() 
         return instance
- 
+from .models import SubTask
+
+class SubTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubTask
+        fields = ['id', 'title', 'description', 'status', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
+
 class ProjectTaskSerializer(serializers.ModelSerializer):
     project_name = serializers.CharField(source='project_staff.project_name', read_only=True)
     staff_name = serializers.CharField(source='project_staff.staff.username', read_only=True)
     staff_email = serializers.CharField(source='project_staff.staff.email', read_only=True)
-
     attachment_url = serializers.SerializerMethodField()
+    subtasks = SubTaskSerializer(many=True, required=False)
 
     class Meta:
         model = ProjectTask
@@ -483,7 +472,7 @@ class ProjectTaskSerializer(serializers.ModelSerializer):
             'id', 'project_staff', 'project_name', 'staff_name','staff_email',
             'title', 'description', 'deadline', 'attachment',
             'attachment_url', 'priority', 'status',
-            'created_at', 'updated_at'
+            'created_at', 'updated_at','subtasks'
         ]
         read_only_fields = ['created_at', 'updated_at']
 
@@ -512,12 +501,35 @@ class ProjectTaskSerializer(serializers.ModelSerializer):
             representation['deadline'] = instance.deadline.strftime("%Y-%m-%d %H:%M")
         return representation
     
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.deadline:
+            representation['deadline'] = instance.deadline.strftime("%Y-%m-%d %H:%M")
+        return representation
 
+    def create(self, validated_data):
+        subtasks_data = validated_data.pop('subtasks', [])
+        project_task = ProjectTask.objects.create(**validated_data)
+        for subtask_data in subtasks_data:
+            SubTask.objects.create(project_task=project_task, **subtask_data)
+        return project_task
 
+    def update(self, instance, validated_data):
+        subtasks_data = validated_data.pop('subtasks', [])
+        instance = super().update(instance, validated_data)
+        
+        for subtask_data in subtasks_data:
+            SubTask.objects.update_or_create(
+                project_task=instance,
+                id=subtask_data.get('id'),
+                defaults=subtask_data
+            )
+        
+        return instance
+    
 
 class StaffProjectAssignmentSerializer(serializers.ModelSerializer):
     project_details = serializers.SerializerMethodField()
-    
     class Meta:
         model = ProjectAssignedStaffs
         fields = [

@@ -11,7 +11,9 @@ from .models import (
     Quotation,
     QuotationItem,
     Agreement,
-    Project
+    Project,
+    ProjectAssignedStaffs,
+    ProjectTask
 )
 from .serializers import (
     ClientSerializer,
@@ -22,12 +24,24 @@ from .serializers import (
     QuotationItemSerializer,
     QuotationSerializer,
     AgreementSerializer,
-    ProjectSerializer
+    ProjectSerializer,
+    ProjectAssignedStaffsSerializer,
+    ProjectTaskSerializer,
+    StaffProjectAssignmentSerializer
 )
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from .utils import create_google_calendar_event, send_calendar_invite_email
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 import logging
+from rest_framework.views import APIView
+from django.core.mail import send_mail
+from rest_framework.permissions import IsAuthenticated
+import datetime
+from django.utils import timezone
+from django.core.files.base import ContentFile
+import json
+from django.http import QueryDict
 
 logger = logging.getLogger(__name__)
 
@@ -124,10 +138,6 @@ class QuotationItemViewSet(viewsets.ModelViewSet):
     queryset = QuotationItem.objects.all()
     serializer_class = QuotationItemSerializer
 
-from django.core.files.base import ContentFile
-import json
-from django.http import QueryDict
-
 class AgreementViewSet(viewsets.ModelViewSet):
     queryset = Agreement.objects.all()
     serializer_class = AgreementSerializer
@@ -141,7 +151,6 @@ class AgreementViewSet(viewsets.ModelViewSet):
         else:
             data = request.data.copy()
 
-        # Handle payment_terms if it's a string
         if 'payment_terms' in data and isinstance(data['payment_terms'], str):
             try:
                 data['payment_terms'] = json.loads(data['payment_terms'])
@@ -163,7 +172,6 @@ class AgreementViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         mutable_data = request.data.copy()
 
-        # Handle file fields
         for field in ['tc_file', 'signed_agreement']:
             if field in mutable_data:
                 file_data = mutable_data.get(field)
@@ -213,8 +221,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         return serializer.save()
 
-from .serializers import ProjectAssignedStaffsSerializer
-from .models import ProjectAssignedStaffs
 
 class ProjectAssignedStaffsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProjectAssignedStaffsSerializer
@@ -228,12 +234,6 @@ class ProjectAssignedStaffsFilter(filters.FilterSet):
         model = ProjectAssignedStaffs
         fields = ['project', 'staff', 'is_active']
 
-from .models import ProjectTask
-import datetime
-from django.utils import timezone
-from .serializers import ProjectTaskSerializer
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from dateutil.parser import parse
 
 class ProjectTaskFilter(filters.FilterSet):
     project = filters.NumberFilter(field_name='project_staff__project')
@@ -261,12 +261,10 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     def create(self, request, *args, **kwargs):
-        # Create a mutable copy of request.data
-        data = request.data.copy()  # Now 'data' is mutable
+        data = request.data.copy() 
 
         if 'deadline' in data and isinstance(data['deadline'], str):
             try:
-                # Parse and make the deadline timezone-aware
                 deadline = datetime.datetime.strptime(data['deadline'], "%Y-%m-%d %H:%M")
                 deadline = timezone.make_aware(deadline)
                 data['deadline'] = deadline
@@ -276,13 +274,11 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-        # Pass the modified data to the serializer
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-from django.shortcuts import get_object_or_404
 
 class ProjectIndividualTaskViewSet(viewsets.ModelViewSet):
     queryset = ProjectTask.objects.all()
@@ -331,26 +327,15 @@ class ProjectIndividualTaskViewSet(viewsets.ModelViewSet):
             )
         
   
-from rest_framework.response import Response
-from rest_framework import generics, permissions, status
-from rest_framework.permissions import IsAuthenticated
-from .serializers import StaffProjectAssignmentSerializer
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-
 class StaffProjectAssignmentViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = StaffProjectAssignmentSerializer
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        user = self.request.user
-        
-        # Check if user has the staff role
+        user = self.request.user        
         if user.role != 'staff':
             return ProjectAssignedStaffs.objects.none()
             
-        # Get all active project assignments for the logged-in staff
         return ProjectAssignedStaffs.objects.filter(
             staff=user,
             is_active=True
@@ -366,7 +351,6 @@ class StaffProjectAssignmentViewSet(viewsets.ReadOnlyModelViewSet):
             })
             
         serializer = self.get_serializer(queryset, many=True)
-        
         response_data = {
             "staff_details": {
                 "id": request.user.id,
@@ -380,11 +364,6 @@ class StaffProjectAssignmentViewSet(viewsets.ReadOnlyModelViewSet):
         
         return Response(response_data)
     
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.core.mail import send_mail
-from django.conf import settings
 class SendProjectEmailView(APIView):
     def post(self, request):
         deadline = request.data.get('deadline')
