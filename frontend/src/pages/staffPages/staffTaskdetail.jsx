@@ -172,7 +172,7 @@ export default function StaffTaskDetail() {
               <>
                 <div className="w-full border rounded-md p-2 shadow-sm bg-slate-50">
                   <h1 className="font-semibold">Sub Tasks</h1>
-                  <div className="mt-3 w-full">
+                  <div className="mt-3 w-full space-y-2">
                     {task?.subtasks?.map((subTsk, Id) => (
                       <div
                         key={Id}
