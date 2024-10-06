@@ -406,12 +406,17 @@ class ProjectTask(models.Model):
         
 
 class SubTask(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('in progress', 'In Progress'),
+        ('completed', 'Completed'),
+    ]
     project_task = models.ForeignKey(ProjectTask, on_delete=models.CASCADE, related_name='subtasks')
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     status = models.CharField(
         max_length=11,
-        choices=ProjectTask.STATUS_CHOICES,
+        choices=STATUS_CHOICES,
         default='pending',
     )
     created_at = models.DateTimeField(auto_now_add=True)
