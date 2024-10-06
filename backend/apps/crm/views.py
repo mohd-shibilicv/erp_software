@@ -291,6 +291,10 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
                     {'subtasks': 'Invalid JSON format for subtasks.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+        if 'attachment' in request.FILES:
+            data['attachment'] = request.FILES['attachment']
+        elif 'attachment' in data:
+            del data['attachment']
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
