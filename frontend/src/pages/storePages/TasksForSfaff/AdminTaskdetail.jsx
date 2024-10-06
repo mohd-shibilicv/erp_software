@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useGetTaskDetail } from "@/hooks/useGetTaskDetail";
+import { fetchPdf } from "@/lib/fetchPdf";
 import { formatDateForTaskSection } from "@/lib/formatTaskDate";
 import { cn } from "@/lib/utils";
 import { adminTaskManage } from "@/services/tasklist";
@@ -33,7 +34,7 @@ import {
   PlusCircle,
   Trash2,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 import { useNavigate, useParams } from "react-router-dom";
@@ -44,6 +45,25 @@ export default function AdminTaskDetails() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const dateTimeInputRefs = useRef([]);
+  const [attchementUrls, setAttachementUrls] = useState({});
+  useEffect(() => {
+    const loadPdf = async (task) => {
+      if (task?.attachment_url && /\.pdf$/i.test(task?.attachment_url)) {
+        const blobUrl = await fetchPdf(task?.attachment_url);
+        setAttachementUrls((prev) => ({ ...prev, [task?.id]: blobUrl }));
+      }
+    };
+
+    const loadAllPdfs = async () => {
+      if (data?.tasks?.length) {
+        // Create an array of promises and wait for all of them to resolve
+        await Promise.all(data.tasks.map((task) => loadPdf(task)));
+      }
+    };
+
+    loadAllPdfs();
+  }, [data]);
+
   const handleDeleteTask = async (taskId) => {
     // ["taskDetail", id]
     setTaskDeleteLoading((prev) => ({ ...prev, [taskId]: true }));
@@ -209,7 +229,7 @@ export default function AdminTaskDetails() {
                   <AccordionContent>
                     <embed
                       className="max-h-[500px]"
-                      src={task?.attachment_url}
+                      src={attchementUrls[task?.id]}
                     />
                   </AccordionContent>
                 </AccordionItem>
@@ -225,7 +245,12 @@ export default function AdminTaskDetails() {
                         key={Id}
                         className="w-full border rounded-lg p-2 flex flex-col gap-2 break-words"
                       >
-                        <h2>{subTsk?.title}</h2>
+                        <div className="w-full flex justify-between">
+                          <h2>{subTsk?.title}</h2>
+                          <div className="flex capitalize text-sm border py-1 bg-slate-200 shadow-sm gap-2 items-center px-2 rounded-md ">
+                            {subTsk?.status}
+                          </div>
+                        </div>
                         <p className="text-sm break-words">
                           {subTsk?.description}
                         </p>
