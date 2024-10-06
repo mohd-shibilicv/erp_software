@@ -25,6 +25,7 @@ export default function TaskAddEdit() {
   }, [searchParam]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  navigate;
   const handleSubmitTask = async () => {
     try {
       if (!taskTitle) {
