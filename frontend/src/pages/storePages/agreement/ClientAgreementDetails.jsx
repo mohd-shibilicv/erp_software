@@ -118,83 +118,101 @@ const ClientAgreementDetails = () => {
           </div>
           <div className="flex justify-between">
             <p className="text-blue-500 font-semibold">Terms & Conditions:</p>
-            <div className="flex gap-2">
-              <a
-                href={"#"}
-                className="text-blue-500 underline ml-2 cursor-pointer"
-                // target="_blank"
-                // rel="noopener noreferrer"
-                // download={`terms-and-conditions${getFileExtension(
-                //   agreement.tc_file
-                // )}`}
-                onClick={async (e) => {
-                  e.preventDefault();
-                  try {
-                    const response = await fetch(agreement.tc_file);
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const link = document.createElement("a");
-                    link.href = url;
-                    link.download = `terms-and-conditions${getFileExtension(
-                      agreement.tc_file
-                    )}`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    window.URL.revokeObjectURL(url);
-                  } catch (error) {
-                    console.error("Download failed:", error);
-                  }
-                }}
-              >
-                Download
-              </a>
-              <a
-                href={agreement.tc_file}
-                target="_blank"
-                className="text-blue-500 underline ml-2 cursor-pointer"
-              >
-                View
-              </a>
-            </div>
+            {agreement?.tc_file ? (
+              <>
+                <div className="flex gap-2">
+                  <a
+                    href={"#"}
+                    className="text-blue-500 underline ml-2 cursor-pointer"
+                    // target="_blank"
+                    // rel="noopener noreferrer"
+                    // download={`terms-and-conditions${getFileExtension(
+                    //   agreement.tc_file
+                    // )}`}
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      try {
+                        const response = await fetch(agreement.tc_file);
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.download = `terms-and-conditions${getFileExtension(
+                          agreement.tc_file
+                        )}`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(url);
+                      } catch (error) {
+                        console.error("Download failed:", error);
+                      }
+                    }}
+                  >
+                    Download
+                  </a>
+                  <a
+                    href={agreement.tc_file}
+                    target="_blank"
+                    className="text-blue-500 underline ml-2 cursor-pointer"
+                  >
+                    View
+                  </a>
+                </div>
+              </>
+            ) : (
+              <>
+               <div>N/A</div>
+              </>
+            )}
           </div>
           <div className="flex justify-between">
             <p className="text-blue-500 font-semibold">Signed Agreement:</p>
-            <div className="flex-gap-2">
-              <a
-                // download={"signed_agreement"}
-                href={"#"}
-                className="text-blue-500 underline ml-2 cursor-pointer"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  try {
-                    const response = await fetch(agreement.signed_agreement);
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const link = document.createElement("a");
-                    link.href = url;
-                    link.download = `signed_agreement${getFileExtension(
-                      agreement.signed_agreement
-                    )}`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    window.URL.revokeObjectURL(url);
-                  } catch (error) {
-                    console.error("Download failed:", error);
-                  }
-                }}
-              >
-                Download
-              </a>
-              <a
-                target="_blank"
-                href={agreement.signed_agreement}
-                className="text-blue-500 underline ml-2 cursor-pointer"
-              >
-                View
-              </a>
-            </div>
+            {agreement?.signed_agreement ? (
+              <>
+                <div className="flex-gap-2">
+                  <a
+                    // download={"signed_agreement"}
+                    href={"#"}
+                    className="text-blue-500 underline ml-2 cursor-pointer"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      try {
+                        const response = await fetch(
+                          agreement.signed_agreement
+                        );
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.download = `signed_agreement${getFileExtension(
+                          agreement.signed_agreement
+                        )}`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(url);
+                      } catch (error) {
+                        console.error("Download failed:", error);
+                      }
+                    }}
+                  >
+                    Download
+                  </a>
+                  <a
+                    target="_blank"
+                    href={agreement.signed_agreement}
+                    className="text-blue-500 underline ml-2 cursor-pointer"
+                  >
+                    View
+                  </a>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>N/A</div>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -87,7 +87,7 @@ export default function StaffTaskDetail() {
                   }}
                 >
                   <SelectTrigger
-                    className={`w-[140px] rounded-xl ${
+                    className={`w-[140px] rounded-xl hidden ${
                       selectLoading ? "pointer-events-none" : ""
                     }`}
                   >
@@ -178,7 +178,42 @@ export default function StaffTaskDetail() {
                         key={Id}
                         className="w-full border rounded-lg p-2 flex flex-col gap-2 break-words"
                       >
-                        <h2>{subTsk?.title}</h2>
+                        <div className="flex justify-between line-clamp-1 py-1 pr-1">
+                          <h2 className="line-clamp-1">{subTsk?.title}</h2>
+                          <Select
+                            onValueChange={async (value) => {
+                              try {
+                                await adminTaskManage.update(subTsk.id, {
+                                  status: value,
+                                  title: subTsk?.title,
+                                  description: subTsk?.description,
+                                });
+                                toast.success(
+                                  "Subtask status updated successfully"
+                                );
+                              } catch (error) {
+                                return toast.error(error.message);
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="w-[130px] shadow-md bg-gray-100 text-sm outline-none ring-0 h-8 capitalize">
+                              <SelectValue
+                                placeholder={
+                                  subTsk?.status ? subTsk?.status : "Status"
+                                }
+                              />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">Pending</SelectItem>
+                              <SelectItem value="in progress">
+                                In Progress
+                              </SelectItem>
+                              <SelectItem value="completed">
+                                Completed
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                         <p className="text-sm break-words">
                           {subTsk?.description}
                         </p>
