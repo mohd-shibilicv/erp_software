@@ -27,6 +27,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import StaffRequestDialog from "./requestDialog";
 import { adminTaskManage } from "@/services/tasklist";
 import { useQueryClient } from "@tanstack/react-query";
+import { fetchPdf } from "@/lib/fetchPdf";
 
 export default function StaffTaskDetail() {
   const { id } = useParams();
@@ -39,6 +40,24 @@ export default function StaffTaskDetail() {
     }
   }, [isError]);
   const [selectLoading, setSelectLoading] = useState(false);
+  const [attchementUrls, setAttachementUrls] = useState({});
+  useEffect(() => {
+    const loadPdf = async (task) => {
+      if (task?.attachment_url && /\.pdf$/i.test(task?.attachment_url)) {
+        const blobUrl = await fetchPdf(task?.attachment_url);
+        setAttachementUrls((prev) => ({ ...prev, [task?.id]: blobUrl }));
+      }
+    };
+
+    const loadAllPdfs = async () => {
+      if (data?.tasks?.length) {
+        // Create an array of promises and wait for all of them to resolve
+        await Promise.all(data.tasks.map((task) => loadPdf(task)));
+      }
+    };
+
+    loadAllPdfs();
+  }, [data]);
   setSelectLoading;
   navigate;
   return (
@@ -147,7 +166,7 @@ export default function StaffTaskDetail() {
                   <AccordionContent>
                     <embed
                       className="max-h-[500px]"
-                      src={task?.attachment_url}
+                      src={attchementUrls[task?.id]}
                     />
                   </AccordionContent>
                 </AccordionItem>
