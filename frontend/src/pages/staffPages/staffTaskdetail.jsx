@@ -86,7 +86,7 @@ export default function StaffTaskDetail() {
           >
             <div className="w-full flex justify-between ">
               <h1 className="text-[17px] font- line-clamp-1">{task?.title}</h1>
-              <div className="flex gap-2 items-center">
+              <div className="gap-2 items-center hidden">
                 <Select
                   onValueChange={async (value) => {
                     try {
