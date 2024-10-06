@@ -245,9 +245,10 @@ class ProjectTaskFilter(filters.FilterSet):
 
     class Meta:
         model = ProjectTask
-        fields = ['project', 'staff', 'status', 'priority']
+        fields = ['project', 'staff', 'priority']
 
 from .models import SubTask
+from .serializers import SubTaskSerializer
 
 class ProjectTaskViewSet(viewsets.ModelViewSet):
     queryset = ProjectTask.objects.all()
@@ -309,6 +310,20 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
             subtasks = json.loads(subtasks_data)
             for subtask in subtasks:
                 SubTask.objects.create(project_task=instance, **subtask)
+
+    @action(detail=True, methods=['put'], url_path=r'subtask/(?P<subtask_id>\d+)')
+    def update_subtask(self, request, pk=None, subtask_id=None):
+        task = self.get_object()
+        try:
+            subtask = task.subtasks.get(id=subtask_id)
+        except SubTask.DoesNotExist:
+            return Response({"error": "Subtask not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = SubTaskSerializer(subtask, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProjectIndividualTaskViewSet(viewsets.ModelViewSet):
     queryset = ProjectTask.objects.all()

@@ -87,7 +87,7 @@ export default function StaffTaskDetail() {
                   }}
                 >
                   <SelectTrigger
-                    className={`w-[140px] rounded-xl hidden ${
+                    className={`w-[140px] rounded-xl ${
                       selectLoading ? "pointer-events-none" : ""
                     }`}
                   >
@@ -183,16 +183,15 @@ export default function StaffTaskDetail() {
                           <Select
                             onValueChange={async (value) => {
                               try {
-                                await adminTaskManage.update(subTsk.id, {
+                                await adminTaskManage.update(task.id, {
                                   status: value,
                                   title: subTsk?.title,
                                   description: subTsk?.description,
-                                });
-                                toast.success(
-                                  "Subtask status updated successfully"
-                                );
+                                }, subTsk.id);
+                                queryClient.invalidateQueries(["taskDetail", id]);
+                                toast.success("Subtask status updated successfully");
                               } catch (error) {
-                                return toast.error(error.message);
+                                toast.error(error.message);
                               }
                             }}
                           >
