@@ -50,7 +50,7 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
       quantity: 1,
       discount: 0,
       unitPrice: 0,
-      taxRate: 5,
+      taxRate: 0,
       total: 0,
     },
   ]);

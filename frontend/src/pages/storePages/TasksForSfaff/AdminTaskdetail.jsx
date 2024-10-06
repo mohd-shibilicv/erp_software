@@ -116,7 +116,7 @@ export default function AdminTaskDetails() {
           >
             <div className="w-full flex justify-between ">
               <h1 className="text-[17px] font- line-clamp-1">{task?.title}</h1>
-              <div className="flex gap-2 items-center">
+              <div className="gap-2 items-center hidden">
                 <div
                   className={cn(
                     "px-3 flex items-center h-7 rounded-2xl border text-[13px] capitalize ",
