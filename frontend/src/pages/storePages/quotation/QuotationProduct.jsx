@@ -48,7 +48,7 @@ const QuotationProduct = ({ onTotalsUpdate, items, setItems, isEditMode }) => {
             quantity: 1,
             discount: 0,
             unitPrice: 0,
-            taxRate: 5,
+            taxRate: 0,
             total: 0,
         };
         setItems([...items, newItem]);

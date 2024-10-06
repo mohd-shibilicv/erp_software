@@ -240,6 +240,7 @@ const AddEditQuotation = ({ quotation = {}, isEditMode = false }) => {
                   name="valid_until"
                   value={formData.valid_until}
                   onChange={handleChange}
+                  required
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                 />
               </div>
