@@ -27,17 +27,16 @@ class Client(models.Model):
 
 class ClientRequest(models.Model):
     COMPANY_SIZE_CHOICES = [
-        ("small", "0 - 10"),
-        ("medium", "10 - 50"),
-        ("large", "50 - 100"),
-        ("corporate", "Above 100"),
+        ("0-10", "0 - 10"),
+        ("10-50", "10 - 50"),
+        ("50-100", "50 - 100"),
+        ("Above 100", "Above 100"),
     ]
 
     PLATFORM_CHOICES = [
-        ("zoom", "Zoom"),
-        ("google_meet", "Google Meet"),
-        ("microsoft_teams", "Microsoft Teams"),
-        ("phone", "Phone Call"),
+        ("Phone Call", "Phone Call"),
+        ("Zoom", "Zoom"),
+        ("Google Meet", "Google Meet"),
     ]
 
     STATUS_CHOICES = [
@@ -61,6 +60,8 @@ class ClientRequest(models.Model):
     company_size = models.CharField(max_length=20, choices=COMPANY_SIZE_CHOICES)
     platform = models.CharField(max_length=20, choices=PLATFORM_CHOICES)
     service_requested = models.CharField(max_length=255)
+    time_zone = models.CharField(max_length=50)
+    duration = models.CharField(max_length=20)
     project_details = models.TextField()
 
     class Meta:
@@ -140,7 +141,6 @@ class ClientRequirement(models.Model):
     )
     custom_features = models.TextField(blank=True, default="[]")
 
-
     def __str__(self):
         return f"{self.client} - {self.file_number}"
 
@@ -148,17 +148,17 @@ class ClientRequirement(models.Model):
         if isinstance(features, list):
             self.custom_features = json.dumps(features)
         elif isinstance(features, str):
-            self.custom_features = json.dumps(features.split(','))
+            self.custom_features = json.dumps(features.split(","))
         else:
             raise ValueError("Features must be a list or a comma-separated string")
-    
+
     def get_custom_features(self):
         if not self.custom_features:
             return []
         try:
             return json.loads(self.custom_features)
         except json.JSONDecodeError:
-            return [feature.strip() for feature in self.custom_features.split(',')]
+            return [feature.strip() for feature in self.custom_features.split(",")]
 
 
 class RequirementImage(models.Model):
@@ -170,45 +170,70 @@ class RequirementImage(models.Model):
 
 class Quotation(models.Model):
     STATUS_CHOICES = [
-        ('DRAFT', 'Draft'),
-        ('PENDING_APPROVAL', 'Pending Approval'),
-        ('APPROVED', 'Approved'),
-        ('SENT', 'Sent to Client'),
-        ('ACCEPTED', 'Accepted'),
-        ('REJECTED', 'Rejected'),
-        ('EXPIRED', 'Expired'),
+        ("DRAFT", "Draft"),
+        ("PENDING_APPROVAL", "Pending Approval"),
+        ("APPROVED", "Approved"),
+        ("SENT", "Sent to Client"),
+        ("ACCEPTED", "Accepted"),
+        ("REJECTED", "Rejected"),
+        ("EXPIRED", "Expired"),
     ]
     quotation_number = models.CharField(max_length=50, unique=True)
     version = models.PositiveIntegerField(default=1)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='DRAFT')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="DRAFT")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     valid_until = models.DateField()
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
     client_reference = models.CharField(max_length=100, blank=True, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_created')
-    last_updated_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='quotations_updated')
-    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_quotations')
-    subtotal = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
-    discount_amount = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
-    total_amount = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
+    created_by = models.ForeignKey(
+        User, on_delete=models.PROTECT, related_name="quotations_created"
+    )
+    last_updated_by = models.ForeignKey(
+        User, on_delete=models.PROTECT, related_name="quotations_updated"
+    )
+    assigned_to = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="assigned_quotations",
+    )
+    subtotal = models.DecimalField(
+        max_digits=14, decimal_places=2, validators=[MinValueValidator(0)]
+    )
+    discount_amount = models.DecimalField(
+        max_digits=14, decimal_places=2, validators=[MinValueValidator(0)]
+    )
+    total_amount = models.DecimalField(
+        max_digits=14, decimal_places=2, validators=[MinValueValidator(0)]
+    )
     notes = models.TextField(blank=True)
     terms_and_conditions = models.TextField(blank=True)
     requires_approval = models.BooleanField(default=False)
-    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_quotations')
+    approved_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="approved_quotations",
+    )
     approved_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     def __str__(self):
         return f"Quotation {self.quotation_number} - {self.client}"
-    
+
     def calculate_subtotal(self):
         return sum(item.subtotal for item in self.items.all())
 
     def calculate_discount_amount(self):
-        return sum(item.subtotal * (item.discount_percentage / 100) for item in self.items.all())
+        return sum(
+            item.subtotal * (item.discount_percentage / 100)
+            for item in self.items.all()
+        )
 
     def calculate_total(self):
         subtotal = self.calculate_subtotal()
@@ -219,7 +244,9 @@ class Quotation(models.Model):
         self.subtotal = self.calculate_subtotal()
         self.discount_amount = self.calculate_discount_amount()
         self.total_amount = self.calculate_total()
-        super(Quotation, self).save(update_fields=['subtotal', 'discount_amount', 'total_amount'])
+        super(Quotation, self).save(
+            update_fields=["subtotal", "discount_amount", "total_amount"]
+        )
 
     def save(self, *args, **kwargs):
         if self.pk is None:
@@ -230,18 +257,30 @@ class Quotation(models.Model):
 
 
 class QuotationItem(models.Model):
-    quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE, related_name='items')
+    quotation = models.ForeignKey(
+        Quotation, on_delete=models.CASCADE, related_name="items"
+    )
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     description = models.TextField(blank=True)
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    unit_price = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
-    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0, validators=[MinValueValidator(0)])
-    tax_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0, validators=[MinValueValidator(0)])
-    subtotal = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
+    quantity = models.DecimalField(
+        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+    )
+    unit_price = models.DecimalField(
+        max_digits=14, decimal_places=2, validators=[MinValueValidator(0)]
+    )
+    discount_percentage = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0, validators=[MinValueValidator(0)]
+    )
+    tax_percentage = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0, validators=[MinValueValidator(0)]
+    )
+    subtotal = models.DecimalField(
+        max_digits=14, decimal_places=2, validators=[MinValueValidator(0)]
+    )
 
     def __str__(self):
         return f"{self.product}"
-    
+
     def save(self, *args, **kwargs):
         self.subtotal = self.quantity * self.unit_price
         super(QuotationItem, self).save(*args, **kwargs)
@@ -250,8 +289,10 @@ class QuotationItem(models.Model):
 
 class Agreement(models.Model):
     quotation = models.ForeignKey(Quotation, on_delete=models.SET_NULL, null=True)
-    tc_file = models.FileField(upload_to='terms_conditions/', null=True, blank=True)
-    signed_agreement = models.FileField(upload_to='signed_agreements/', null=True, blank=True)
+    tc_file = models.FileField(upload_to="terms_conditions/", null=True, blank=True)
+    signed_agreement = models.FileField(
+        upload_to="signed_agreements/", null=True, blank=True
+    )
     client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)
     company_name = models.CharField(max_length=255)
     company_address = models.CharField(max_length=255, blank=True)
@@ -271,51 +312,68 @@ class Agreement(models.Model):
 
 
 class PaymentTerm(models.Model):
-    agreement = models.ForeignKey(Agreement, related_name='payment_terms', on_delete=models.CASCADE)
+    agreement = models.ForeignKey(
+        Agreement, related_name="payment_terms", on_delete=models.CASCADE
+    )
     date = models.DateField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
 
 class Project(models.Model):
     PRIORITY_CHOICES = [
-        ('low', 'Low'),
-        ('medium', 'Medium'),
-        ('high', 'High'),
+        ("low", "Low"),
+        ("medium", "Medium"),
+        ("high", "High"),
     ]
 
     STATUS_CHOICES = [
-        ('not_started', 'Not Started'),
-        ('in_progress', 'In Progress'),
-        ('on_hold', 'On Hold'),
-        ('completed', 'Completed'),
+        ("not_started", "Not Started"),
+        ("in_progress", "In Progress"),
+        ("on_hold", "On Hold"),
+        ("completed", "Completed"),
     ]
 
     project_name = models.CharField(max_length=255)
-    project_id = models.CharField(max_length=100, unique=True,null=True,blank=True)
+    project_id = models.CharField(max_length=100, unique=True, null=True, blank=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    requirements = models.ForeignKey(ClientRequirement, on_delete=models.CASCADE, related_name='projects',null=True,blank=True)
-    agreement = models.ForeignKey(Agreement, on_delete=models.CASCADE, related_name='project_agreement',null=True,blank=True)
+    requirements = models.ForeignKey(
+        ClientRequirement,
+        on_delete=models.CASCADE,
+        related_name="projects",
+        null=True,
+        blank=True,
+    )
+    agreement = models.ForeignKey(
+        Agreement,
+        on_delete=models.CASCADE,
+        related_name="project_agreement",
+        null=True,
+        blank=True,
+    )
     project_description = models.TextField(blank=True, null=True)
     priority_level = models.CharField(max_length=6, choices=PRIORITY_CHOICES)
-    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default='not_started')  
-    assigned_staffs = models.ManyToManyField(User, related_name='assigned_projects', blank=True)
-    active = models.BooleanField(default=False)  
+    status = models.CharField(
+        max_length=12, choices=STATUS_CHOICES, default="not_started"
+    )
+    assigned_staffs = models.ManyToManyField(
+        User, related_name="assigned_projects", blank=True
+    )
+    active = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        if self.status == 'completed':
+        if self.status == "completed":
             self.active = True
         else:
             self.active = False
         super(Project, self).save(*args, **kwargs)
 
-        if hasattr(self, '_assigned_staffs'):
+        if hasattr(self, "_assigned_staffs"):
             self.update_staff_assignments()
 
-    
     def update_staff_assignments(self):
         current_assignments = ProjectAssignedStaffs.objects.filter(project=self)
-        current_staff_ids = set(current_assignments.values_list('staff_id', flat=True))
-        new_staff_ids = set(self.assigned_staffs.values_list('id', flat=True))
+        current_staff_ids = set(current_assignments.values_list("staff_id", flat=True))
+        new_staff_ids = set(self.assigned_staffs.values_list("id", flat=True))
         staff_to_remove = current_staff_ids - new_staff_ids
         current_assignments.filter(staff_id__in=staff_to_remove).update(is_active=False)
 
@@ -326,93 +384,97 @@ class Project(models.Model):
                 staff_id=staff_id,
                 project_name=self.project_name,
                 project_reference_id=self.project_id,
-                is_active=True
+                is_active=True,
             )
 
         staff_to_reactivate = new_staff_ids & current_staff_ids
-        current_assignments.filter(staff_id__in=staff_to_reactivate).update(is_active=True)
+        current_assignments.filter(staff_id__in=staff_to_reactivate).update(
+            is_active=True
+        )
 
     def __str__(self):
         return self.project_name
 
-    
 
 class ProjectAssignedStaffs(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='staff_assignments')
-    staff = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project_assignments')
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name="staff_assignments"
+    )
+    staff = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="project_assignments"
+    )
     project_name = models.CharField(max_length=255)
-    project_reference_id = models.CharField(max_length=100, null=True, blank=True)  
+    project_reference_id = models.CharField(max_length=100, null=True, blank=True)
     assigned_date = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = 'Project Assigned Staff'
-        verbose_name_plural = 'Project Assigned Staffs'
-        unique_together = ('project', 'staff')
+        verbose_name = "Project Assigned Staff"
+        verbose_name_plural = "Project Assigned Staffs"
+        unique_together = ("project", "staff")
 
     def __str__(self):
         return f"{self.project_name} - {self.staff.username}"
 
+
 def task_file_path(instance, filename):
-    return f'uploads/project_{instance.project_staff.project.id}/tasks/{filename}'
+    return f"uploads/project_{instance.project_staff.project.id}/tasks/{filename}"
 
 
 class ProjectTask(models.Model):
     PRIORITY_CHOICES = [
-        ('low', 'Low'),
-        ('medium', 'Medium'),
-        ('high', 'High'),
+        ("low", "Low"),
+        ("medium", "Medium"),
+        ("high", "High"),
     ]
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('in progress', 'In Progress'),
-        ('completed', 'Completed'),
-        ('on hold', 'On Hold'),
+        ("pending", "Pending"),
+        ("in progress", "In Progress"),
+        ("completed", "Completed"),
+        ("on hold", "On Hold"),
     ]
-    project_staff = models.ForeignKey(ProjectAssignedStaffs,on_delete=models.CASCADE,related_name='tasks')
-    title = models.CharField(max_length=255,null=True,blank=True)
-    description = models.TextField(null=True,blank=True)
-    deadline = models.DateTimeField()
-    attachment = models.FileField(
-        upload_to=task_file_path,
-        null=True,
-        blank=True
+    project_staff = models.ForeignKey(
+        ProjectAssignedStaffs, on_delete=models.CASCADE, related_name="tasks"
     )
+    title = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    deadline = models.DateTimeField()
+    attachment = models.FileField(upload_to=task_file_path, null=True, blank=True)
     priority = models.CharField(
-        max_length=6,
-        choices=PRIORITY_CHOICES,
-        default='medium'
+        max_length=6, choices=PRIORITY_CHOICES, default="medium"
     )
     status = models.CharField(
         max_length=11,
         choices=STATUS_CHOICES,
-        default='pending',
+        default="pending",
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     def __str__(self):
         return f"{self.title} - {self.project_staff.staff.username}"
 
     def clean(self):
         if self.deadline and self.deadline < timezone.now():
-            raise ValidationError({'deadline': 'Deadline cannot be in the past'})
-        
+            raise ValidationError({"deadline": "Deadline cannot be in the past"})
+
         if not self.project_staff.is_active:
-            raise ValidationError('Cannot create task for inactive project assignment')
-        
+            raise ValidationError("Cannot create task for inactive project assignment")
+
 
 class SubTask(models.Model):
-    project_task = models.ForeignKey(ProjectTask, on_delete=models.CASCADE, related_name='subtasks')
+    project_task = models.ForeignKey(
+        ProjectTask, on_delete=models.CASCADE, related_name="subtasks"
+    )
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     status = models.CharField(
         max_length=11,
         choices=ProjectTask.STATUS_CHOICES,
-        default='pending',
+        default="pending",
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

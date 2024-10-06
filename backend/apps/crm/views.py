@@ -47,6 +47,7 @@ from django.http import QueryDict
 
 logger = logging.getLogger(__name__)
 
+
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
@@ -56,10 +57,14 @@ class ClientViewSet(viewsets.ModelViewSet):
 class ClientRequestViewSet(viewsets.ModelViewSet):
     queryset = ClientRequest.objects.all()
     serializer_class = ClientRequestSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
-    def perform_create(self, serializer):
-        serializer.save()
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_queryset(self):
         queryset = ClientRequest.objects.all()

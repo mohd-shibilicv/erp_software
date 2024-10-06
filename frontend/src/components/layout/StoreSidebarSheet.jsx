@@ -18,10 +18,9 @@ export default function StoreSideBarSheet({ menuItems }) {
   return (
     <Sheet >
       <SheetTrigger>
-        {" "}
-        <button className="lg:hidden absolute left-2 top-1 cursor-pointer p-2 rounded-full bg-white/55 border shadow-md">
+        <span className="lg:hidden absolute left-2 top-1 cursor-pointer p-2 rounded-full bg-white/55 border shadow-md">
           <MenuIcon className="size-6 " />
-        </button>
+        </span>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>

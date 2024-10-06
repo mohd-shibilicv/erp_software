@@ -253,7 +253,7 @@ const StoreSidebar = () => {
     <>
       {section && (
         <>
-          <div key={section.section} className="mb-4 mr-2">
+          <div key={section} className="mb-4 mr-2">
             <button
               onClick={() => toggleSection(section.section)}
               className="flex items-center justify-between w-full p-2 text-left text-gray-600 hover:bg-gray-100 rounded"

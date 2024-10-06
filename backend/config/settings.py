@@ -75,8 +75,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
-
 ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
@@ -102,23 +100,23 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # if DEBUG:
-# DATABASES = {
-#         "default": {
-#             "ENGINE": "django.db.backends.sqlite3",
-#             "NAME": BASE_DIR / "db.sqlite3",
-#         }
-# }
-# else:
 DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": "erp",
-            "USER": "postgres",
-            "PASSWORD": env.str("DB_PASSWORD"),
-            "HOST": "localhost",
-            "PORT": env.str("DB_PORT", ""),
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
-    }
+}
+# else:
+# DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql",
+#             "NAME": "erp",
+#             "USER": "postgres",
+#             "PASSWORD": env.str("DB_PASSWORD"),
+#             "HOST": "localhost",
+#             "PORT": env.str("DB_PORT", ""),
+#         }
+#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -189,13 +187,3 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(hours=24),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=3),
 }
-
-
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'nashirnoor2002@gmail.com'
-EMAIL_HOST_PASSWORD = 'pqcyjuxcmcqpesez'  
-DEFAULT_FROM_EMAIL = 'nashirnoor2002@gmail.com'

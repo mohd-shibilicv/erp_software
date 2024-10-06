@@ -26,13 +26,11 @@ logger = logging.getLogger(__name__)
 
 
 class ClientRequestSerializer(serializers.ModelSerializer):
-    platform = serializers.CharField(source="get_platform_display")
-
     class Meta:
         model = ClientRequest
         fields = "__all__"
         read_only_fields = ("created_at", "updated_at")
-
+ 
     def validate_scheduled_date(self, value):
         from django.utils import timezone
 
