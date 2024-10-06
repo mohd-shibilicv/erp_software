@@ -13,7 +13,8 @@ from .models import (
     Agreement,
     Project,
     ProjectAssignedStaffs,
-    ProjectTask
+    ProjectTask,
+    SubTask
 )
 from .serializers import (
     ClientSerializer,
@@ -27,7 +28,8 @@ from .serializers import (
     ProjectSerializer,
     ProjectAssignedStaffsSerializer,
     ProjectTaskSerializer,
-    StaffProjectAssignmentSerializer
+    StaffProjectAssignmentSerializer,
+    SubTaskSerializer
 )
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
@@ -247,8 +249,6 @@ class ProjectTaskFilter(filters.FilterSet):
         model = ProjectTask
         fields = ['project', 'staff', 'priority']
 
-from .models import SubTask
-from .serializers import SubTaskSerializer
 
 class ProjectTaskViewSet(viewsets.ModelViewSet):
     queryset = ProjectTask.objects.all()
