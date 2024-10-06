@@ -79,16 +79,22 @@ export function SuppliersTable() {
     setIsDeleteModalOpen(true);
   };
 
+  const [loading, setIsLoading] = useState(false);
   const handleSaveSupplier = async (formData) => {
     try {
+      setIsLoading(true);
       if (selectedSupplier) {
         await api.put(`/suppliers/${selectedSupplier.id}/`, formData);
+        setIsLoading(false);
       } else {
         await api.post("/suppliers/", formData);
+        setIsLoading(false);
       }
       handleSuppliersChange();
+      setIsLoading(false);
       setIsSupplierModalOpen(false);
     } catch (error) {
+      setIsLoading(false);
       console.error("Error saving supplier:", error);
     }
   };
@@ -327,6 +333,7 @@ export function SuppliersTable() {
         isOpen={isSupplierModalOpen}
         onClose={() => setIsSupplierModalOpen(false)}
         onSave={handleSaveSupplier}
+        supplierLoading={loading}
         supplier={selectedSupplier}
       />
       <ConfirmationModal

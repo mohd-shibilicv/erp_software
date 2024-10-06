@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -10,8 +11,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoaderCircle } from "lucide-react";
 
-const SupplierModal = ({ isOpen, onClose, onSave, supplier }) => {
+const SupplierModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  supplier,
+  supplierLoading,
+}) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -55,8 +63,8 @@ const SupplierModal = ({ isOpen, onClose, onSave, supplier }) => {
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
+            <div className="flex flex-col gap-1 text-start">
+              <Label htmlFor="name" className="text-start">
                 Name
               </Label>
               <Input
@@ -64,11 +72,11 @@ const SupplierModal = ({ isOpen, onClose, onSave, supplier }) => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="col-span-3"
+                className="col-span-3 bg-slate-50 bg-slate-50"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">
+            <div className="flex flex-col gap-1 ">
+              <Label htmlFor="email" className="text-start">
                 Email
               </Label>
               <Input
@@ -77,11 +85,11 @@ const SupplierModal = ({ isOpen, onClose, onSave, supplier }) => {
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="col-span-3"
+                className="col-span-3 bg-slate-50"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="location" className="text-right">
+            <div className="flex flex-col gap-1 ">
+              <Label htmlFor="location" className="text-start">
                 Location
               </Label>
               <Input
@@ -89,11 +97,11 @@ const SupplierModal = ({ isOpen, onClose, onSave, supplier }) => {
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
-                className="col-span-3"
+                className="col-span-3 bg-slate-50"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="contact_person" className="text-right">
+            <div className="flex flex-col gap-1 ">
+              <Label htmlFor="contact_person" className="text-start">
                 Contact Person
               </Label>
               <Input
@@ -101,11 +109,11 @@ const SupplierModal = ({ isOpen, onClose, onSave, supplier }) => {
                 name="contact_person"
                 value={formData.contact_person}
                 onChange={handleChange}
-                className="col-span-3"
+                className="col-span-3 bg-slate-50"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phone_number" className="text-right">
+            <div className="flex flex-col gap-1 ">
+              <Label htmlFor="phone_number" className="text-start">
                 Phone Number
               </Label>
               <Input
@@ -113,14 +121,27 @@ const SupplierModal = ({ isOpen, onClose, onSave, supplier }) => {
                 name="phone_number"
                 value={formData.phone_number}
                 onChange={handleChange}
-                className="col-span-3"
+                className="col-span-3 bg-slate-50"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">
-              {supplier ? "Update" : "Add"} Supplier
-            </Button>
+            {supplierLoading ? (
+              <>
+                <Button
+                  className="bg-purple-700 flex items-center gap-2"
+                  type="button"
+                >
+                  Loading <LoaderCircle className="w-5 animate-spin" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button type="submit">
+                  {supplier ? "Update" : "Add"} Supplier
+                </Button>
+              </>
+            )}
           </DialogFooter>
         </form>
       </DialogContent>
