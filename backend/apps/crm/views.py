@@ -247,6 +247,8 @@ class ProjectTaskFilter(filters.FilterSet):
         model = ProjectTask
         fields = ['project', 'staff', 'status', 'priority']
 
+from .models import SubTask
+
 class ProjectTaskViewSet(viewsets.ModelViewSet):
     queryset = ProjectTask.objects.all()
     serializer_class = ProjectTaskSerializer
@@ -273,12 +275,36 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
                     {'deadline': 'Invalid datetime format. Please use format YYYY-MM-DD HH:MM'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+        
+        if 'subtasks' in data:
+            try:
+                subtasks = json.loads(data['subtasks'])
+                if isinstance(subtasks, list):
+                    data['subtasks'] = subtasks
+                else:
+                    return Response(
+                        {'subtasks': 'Invalid format. Expected a JSON array.'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            except json.JSONDecodeError:
+                return Response(
+                    {'subtasks': 'Invalid JSON format for subtasks.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        subtasks_data = self.request.data.get('subtasks')
+        if subtasks_data:
+            subtasks = json.loads(subtasks_data)
+            for subtask in subtasks:
+                SubTask.objects.create(project_task=instance, **subtask)
 
 class ProjectIndividualTaskViewSet(viewsets.ModelViewSet):
     queryset = ProjectTask.objects.all()

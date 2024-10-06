@@ -45,7 +45,11 @@ export default function TaskAddEdit() {
       formData.append("attachment", taskDoc);
       formData.append("priority", "high");
       formData.append("status", "pending");
-      formData.append("subtasks", subTasks);
+      const subtasksJSON = JSON.stringify(subTasks.map(subtask => ({
+        ...subtask,
+        status: 'pending'
+      })));
+      formData.append("subtasks", subtasksJSON);
       await adminTaskManage.create(formData);
       toast.success("Task added");
       setTaskDeadline(null);

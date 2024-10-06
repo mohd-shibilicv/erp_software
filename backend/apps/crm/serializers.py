@@ -12,7 +12,8 @@ from .models import (
     Agreement,
     Project,
     ProjectTask,
-    ProjectAssignedStaffs
+    ProjectAssignedStaffs,
+    SubTask
 )
 from apps.users.models import User
 from django.db import transaction
@@ -451,7 +452,6 @@ class ProjectSerializer(serializers.ModelSerializer):
             instance._assigned_staffs = assigned_staffs 
         instance.save() 
         return instance
-from .models import SubTask
 
 class SubTaskSerializer(serializers.ModelSerializer):
     class Meta:
@@ -499,12 +499,7 @@ class ProjectTaskSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         if instance.deadline:
             representation['deadline'] = instance.deadline.strftime("%Y-%m-%d %H:%M")
-        return representation
-    
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        if instance.deadline:
-            representation['deadline'] = instance.deadline.strftime("%Y-%m-%d %H:%M")
+        representation['subtasks'] = SubTaskSerializer(instance.subtasks.all(), many=True).data
         return representation
 
     def create(self, validated_data):
@@ -517,14 +512,12 @@ class ProjectTaskSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         subtasks_data = validated_data.pop('subtasks', [])
         instance = super().update(instance, validated_data)
-        
         for subtask_data in subtasks_data:
             SubTask.objects.update_or_create(
                 project_task=instance,
                 id=subtask_data.get('id'),
                 defaults=subtask_data
             )
-        
         return instance
     
 
