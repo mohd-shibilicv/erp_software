@@ -350,6 +350,9 @@ const AgreementAddEdit = () => {
       }
     }
   };
+  const handleback = () =>{
+    navigate("/admin/agreement")
+  }
   const openDialog = (file, fileUrl) => {
     if (file instanceof File) {
       const url = URL.createObjectURL(file);
@@ -850,13 +853,14 @@ const AgreementAddEdit = () => {
           )}
         </form>
       </CardContent>
-      <CardFooter className="flex justify-end gap-2">
+      <CardFooter className="flex justify-end gap-4">
+      <Button variant="outline" onClick="">
+          <div className="mr-2 h-4 w-4" onClick={handleback} > Back</div>
+        </Button>
         <Button type="submit" onClick={handleSubmit}>
           Save Agreement
         </Button>
-        <Button variant="outline" onClick="">
-          <Printer className="mr-2 h-4 w-4" /> Print Agreement
-        </Button>
+       
       </CardFooter>
 
       {/* Dialog for viewing PDF */}
