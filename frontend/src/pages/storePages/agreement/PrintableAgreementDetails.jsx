@@ -253,7 +253,7 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
           <span className="text-[10px]">4.1</span>
           <div>
             <p className="text-[10px]">
-              No Warranty: The Software is provided "as is," without any express
+              No Warranty: The Software is provided {`"as is,"`} without any express
               or implied warranties, including but not limited to, warranties of
               performance, merchantability, or fitness for a particular purpose.
             </p>
@@ -736,12 +736,12 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
               <p className="text-[10px]">Project based on mentioned scope</p>
               <ul className="ml-4 list-disc">
                 <li className="text-[10px]">
-                  The Complete Trading and Accounting Management Solution
+                  The Complete Project
                 </li>
               </ul>
             </div>
             <div className="h-full col-span-2 p-1 flex flex-col gap-1 border-r border-black">
-              <span className="font-semibold text-[9.4px]">19000</span>
+              <span className="font-semibold text-[9.4px]"> {agreement.total_amount}</span>
             </div>
             <div className="h-full col-span-1 p-1 border-r border-black">
               <span className="font-semibold text-[9.4px] ">
@@ -749,7 +749,7 @@ const PrintableAgreementDetails = forwardRef(({ agreement }, ref) => {
               </span>
             </div>
             <div className="h-full col-span-2 p-1 flex flex-col gap-1">
-              <span className="font-semibold text-[9.4px]">19000</span>
+              <span className="font-semibold text-[9.4px]"> {agreement.total_amount}</span>
             </div>
           </div>
           <div className="w-full border-b grid grid-cols-12 min-h-6 border-t border-black">
