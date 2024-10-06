@@ -106,7 +106,7 @@ export default function StaffTaskDetail() {
                   }}
                 >
                   <SelectTrigger
-                    className={`w-[140px] rounded-xl ${
+                    className={`w-[140px] rounded-xl  hidden${
                       selectLoading ? "pointer-events-none" : ""
                     }`}
                   >
