@@ -291,7 +291,14 @@ function Store() {
         />
 
         <Route path="/client-request" element={<DemoRequestTable />} />
-        <Route path="/staff-tasks" element={<StaffTaskLists />} />
+        <Route
+          path="/staff-tasks"
+          element={
+            <StoreProtectedRoute allowedRoles={["staff"]}>
+              <StaffTaskLists />
+            </StoreProtectedRoute>
+          }
+        />
         <Route path="/staff-tasks/detail/:id" element={<StaffTaskDetail />} />
 
         <Route
