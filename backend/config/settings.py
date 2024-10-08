@@ -1,5 +1,5 @@
 from datetime import timedelta
-from environs import Env
+from environs import Env # type: ignore
 from pathlib import Path
 
 
