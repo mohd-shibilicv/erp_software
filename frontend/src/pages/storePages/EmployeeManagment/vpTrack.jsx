@@ -17,10 +17,10 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectValue,
+  SelectValue,SelectTrigger
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { SelectTrigger } from "@radix-ui/react-select";
+// import { SelectTrigger } from "@radix-ui/react-select";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 import { EmployeeCompanyCommonTable } from "./Components/EmployeListTable";
@@ -44,7 +44,7 @@ export default function VpTrack() {
   return (
     <main className="w-full h-full bg-white rounded-md p-2">
       <div className="w-full">
-        <div className="w-full border rounded-xl p-4 shadow-md">
+        <div className="w-full border rounded-xl p-4 shadow-md ">
           <div className="w-full">
             <h1 className="font-semibold text-[20px]">Add Vp tracking</h1>
           </div>

@@ -17,7 +17,7 @@ export default function EmployeeLayouts() {
   return (
     <main className="w-full h-full bg-white rounded-md p-2">
       <div className="relative">
-        <div className="w-full">
+        <div className="w-full hidden lg:block">
           <Tabs
             defaultValue={employeRoueKeys[pathname]}
             className="w-full flex flex-wrap "
