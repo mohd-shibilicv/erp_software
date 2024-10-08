@@ -164,7 +164,7 @@ export function EmployeeCompanyCommonTable({
             {" "}
             <Button
               className="bg-gray-900 hover:bg-gray-700"
-              onClick={() => navigate("/company/add-vehicle")}
+              onClick={() => navigate("/admin/companyManagement/add-vehicle")}
             >
               Add new Vehicle
             </Button>
@@ -181,7 +181,7 @@ export function EmployeeCompanyCommonTable({
             {" "}
             <Button
               className="bg-gray-900 hover:bg-gray-700"
-              onClick={() => navigate("/company/add-company")}
+              onClick={() => navigate("/admin/companyManagement/add-company")}
             >
               Add new company
             </Button>

@@ -24,7 +24,6 @@ import {
   Handshake,
   FileText,
   ChevronDown,
-  // ChevronRight,
   CreditCard,
   ReceiptText,
   Contact,
@@ -37,11 +36,8 @@ import {
   UserCog,
   CalendarArrowDown,
   LayoutList,
-  // Sun,
-  // Moon,
   ClipboardCheck,
   ListTodo,
-  Users,
   MenuIcon,
   X,
   FilePlus,
@@ -49,6 +45,20 @@ import {
   RefreshCcw,
   TrendingDown,
   Wrench,
+  UserPlus,
+  UsersRound,
+  PlaneTakeoff,
+  PencilRuler,
+  Shirt,
+  ChartNoAxesCombined,
+  Building2,
+  HousePlus,
+  Bus,
+  Ambulance,
+  FileChartLine,
+  ShieldAlert,
+  ChartScatter,
+  ChartNoAxesCombinedIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -220,24 +230,126 @@ const StoreSidebar = () => {
       items: [
         {
           path: "/admin/employeeMangement",
-          icon: Users,
-          label: "Employees",
+          icon: LayoutDashboard,
+          label: "Employee Dashboard",
         },
-        // { path: "/admin/projects", icon: LayoutList, label: "Projects" },
-        // { path: "/admin/tasks", icon: ClipboardCheck, label: "Tasks" },
+        {
+          path: "/admin/employeeMangement/add-employee",
+          icon: UserPlus,
+          label: "Add Employee",
+        },
+        {
+          path: "/admin/employeeMangement/employee-list",
+          icon: UsersRound,
+          label: "Employee list",
+        },
+        {
+          path: "/admin/employeeMangement/leave-vacation",
+          icon: PlaneTakeoff,
+          label: "Leave Vacation",
+        },
+        {
+          path: "/admin/employeeMangement/vp-track",
+          icon: PencilRuler,
+          label: "Vp Track",
+        },
+        {
+          path: "/admin/employeeMangement/uniform-report",
+          icon: Shirt,
+          label: "Uniform Report",
+        },
+        {
+          path: "/admin/employeeMangement/reports",
+          icon: ChartNoAxesCombined,
+          label: "Reports",
+        },
       ],
     },
     {
       section: "Asset Management",
       items: [
-        { path: "/admin/assets-dashboard", icon: LayoutDashboard, label: "Assets Dashboard" },
-        { path: "/admin/asset-creation", icon: FilePlus, label: "Asset Creation" },
-        { path: "/admin/branch-creation", icon: Building, label: "Branch Creation" },
-        { path: "/admin/asset-transfer", icon: RefreshCcw, label: "Asset Transfer" },
-        { path: "/admin/asset-depreciation", icon: TrendingDown, label: "Asset Depreciation" },
+        {
+          path: "/admin/assets-dashboard",
+          icon: LayoutDashboard,
+          label: "Assets Dashboard",
+        },
+        {
+          path: "/admin/asset-creation",
+          icon: FilePlus,
+          label: "Asset Creation",
+        },
+        {
+          path: "/admin/branch-creation",
+          icon: Building,
+          label: "Branch Creation",
+        },
+        {
+          path: "/admin/asset-transfer",
+          icon: RefreshCcw,
+          label: "Asset Transfer",
+        },
+        {
+          path: "/admin/asset-depreciation",
+          icon: TrendingDown,
+          label: "Asset Depreciation",
+        },
         { path: "/admin/asset-service", icon: Wrench, label: "Asset Service" },
-        { path: "/admin/asset-reports", icon: FileText, label: "Asset Reports" },
-      ],      
+        {
+          path: "/admin/asset-reports",
+          icon: FileText,
+          label: "Asset Reports",
+        },
+      ],
+    },
+    {
+      section: "Company Management",
+      items: [
+        {
+          path: "/admin/companyManagement",
+          icon: LayoutDashboard,
+          label: "Company Dashboard",
+        },
+        {
+          path: "/admin/companyManagement/company-list",
+          icon: Building2,
+          label: "Company List",
+        },
+        {
+          path: "/admin/companyManagement/add-company",
+          icon: HousePlus,
+          label: "Add Company",
+        },
+        {
+          path: "/admin/companyManagement/vehicle-list",
+          icon: Bus,
+          label: "Vehicle List",
+        },
+        {
+          path: "/admin/companyManagement/add-vehicle",
+          icon: Ambulance,
+          label: "Add Vehicle",
+        },
+        {
+          path: "/admin/companyManagement/vehicle-expense",
+          icon: FileChartLine,
+          label: "Vehicle Expense",
+        },
+        {
+          path: "/admin/companyManagement/fire-certification",
+          icon: ShieldAlert,
+          label: "Fire and Certificate",
+        },
+        {
+          path: "/admin/companyManagement/rent-expense",
+          icon: ChartScatter,
+          label: "Rent and Expense",
+        },
+        {
+          path: "/admin/companyManagement/reports",
+          icon: ChartNoAxesCombinedIcon ,
+          label: "Reports",
+        },
+      ],
     },
   ].filter(Boolean);
 

@@ -6,7 +6,7 @@ export const StatCard = ({ title, value, bgColor }) => (
           ? "/employees/emp-list"
           : `/employees/dashboard-details?detailType=${title}`
       }
-      className={`${bgColor} rounded-xl shadow-lg p-5 text-white`}
+      className={`${bgColor} rounded-none shadow-lg p-5 text-white`}
     >
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
       <p className="text-2xl font-bold">{value}</p>
