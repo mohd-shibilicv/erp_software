@@ -57,6 +57,15 @@ import AssetDepreciationForm from "./components/asset-management/AssetDepreciati
 import AssetServiceForm from "./components/asset-management/AssetServiceForm";
 import AssetReports from "./components/asset-management/AssetReports";
 
+import EmployeeLayouts from "./pages/storePages/EmployeeManagment/EmployeLayouts/EmployeLayout";
+import EmployeDashboard from "./pages/storePages/EmployeeManagment/EmployeDashboard";
+import AddEmployee from "./pages/storePages/EmployeeManagment/AddEmployee";
+import EmployeeList from "./pages/storePages/EmployeeManagment/EmployeeLIst";
+import LeaveAndVacation from "./pages/storePages/EmployeeManagment/LeaveAndVacation";
+import VpTrack from "./pages/storePages/EmployeeManagment/vpTrack";
+import UniformReport from "./pages/storePages/EmployeeManagment/UniformReport";
+import Reports from "./pages/storePages/EmployeeManagment/reports";
+
 function Store() {
   return (
     <>
@@ -296,6 +305,22 @@ function Store() {
             </StoreProtectedRoute>
           }
         />
+        <Route
+          path="/employeeMangement"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <EmployeeLayouts />
+            </StoreProtectedRoute>
+          }
+        >
+          <Route index element={<EmployeDashboard />} />
+          <Route path="add-employee" element={<AddEmployee />} />
+          <Route path="employee-list" element={<EmployeeList />} />
+          <Route path="leave-vacation" element={<LeaveAndVacation />} />
+          <Route path="vp-track" element={<VpTrack />} />
+          <Route path="uniform-report" element={<UniformReport />} />
+          <Route path="reports" element={<Reports />} />
+        </Route>
 
         <Route path="/client-request" element={<DemoRequestTable />} />
         <Route

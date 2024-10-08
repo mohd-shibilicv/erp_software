@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -23,7 +24,7 @@ import {
   Handshake,
   FileText,
   ChevronDown,
-  ChevronRight,
+  // ChevronRight,
   CreditCard,
   ReceiptText,
   Contact,
@@ -36,10 +37,11 @@ import {
   UserCog,
   CalendarArrowDown,
   LayoutList,
-  Sun,
-  Moon,
+  // Sun,
+  // Moon,
   ClipboardCheck,
   ListTodo,
+  Users,
   MenuIcon,
   X,
   FilePlus,
@@ -50,8 +52,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Tabs } from "@/components/ui/tabs";
 import LogoutBtn from "./LogoutBtn";
 import { useTheme } from "../ui/them-provider";
 
@@ -201,8 +203,28 @@ const StoreSidebar = () => {
     {
       section: "Job Order",
       items: [
-        { path: "/admin/projects", icon: LayoutList, label: "Projects" },
-        { path: "/admin/tasks", icon: ClipboardCheck, label: "Tasks" },
+        {
+          path: "/admin/projects",
+          icon: LayoutList,
+          label: "Projects",
+        },
+        {
+          path: "/admin/tasks",
+          icon: ClipboardCheck,
+          label: "Tasks",
+        },
+      ],
+    },
+    {
+      section: "Employee Management",
+      items: [
+        {
+          path: "/admin/employeeMangement",
+          icon: Users,
+          label: "Employees",
+        },
+        // { path: "/admin/projects", icon: LayoutList, label: "Projects" },
+        // { path: "/admin/tasks", icon: ClipboardCheck, label: "Tasks" },
       ],
     },
     {
