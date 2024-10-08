@@ -46,23 +46,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import { Calendar } from "@/components/ui/calendar";
-import { api } from "@/services/api";
+import { api, refreshProductOutflows } from "@/services/api";
 import ConfirmationModal from "../modals/ConfirmationModal";
-import { cn } from "@/lib/utils";
 import Loader from "../layout/Loader";
 import OutflowModalForm from "../modals/OutflowModalForm";
 
@@ -121,8 +106,9 @@ const ProductOutflowsTable = () => {
 
   const handleCreateOutflow = async (formData) => {
     try {
-      const response = await api.post("/product-outflow/", formData);
-      setData((prevData) => [...prevData, response.data]);
+      await api.post("/product-outflow/", formData);
+      const updatedRequests = await refreshProductOutflows();
+      setData(updatedRequests.results);
       setIsCreateModalOpen(false);
     } catch (error) {
       console.error("Failed to create product outflow:", error);
@@ -201,7 +187,10 @@ const ProductOutflowsTable = () => {
     {
       accessorKey: "date_sent",
       header: "Date Sent",
-      cell: ({ row }) => format(new Date(row.getValue("date_sent")), "PPP"),
+      cell: ({ row }) =>
+        row.getValue("date_sent")
+          ? format(new Date(row.getValue("date_sent")), "PPP")
+          : "N/A",
     },
     {
       id: "actions",
@@ -353,7 +342,7 @@ const ProductOutflowsTable = () => {
         </div>
       </div>
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle>Create Product Outflow</DialogTitle>
             <DialogDescription></DialogDescription>

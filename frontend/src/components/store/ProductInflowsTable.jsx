@@ -64,6 +64,7 @@ import ConfirmationModal from "../modals/ConfirmationModal";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "../ui/calendar";
+import MultiProductInflowModal from "../modals/MultiProductInflowModal";
 
 export const ProductInflowsTable = () => {
   const [sorting, setSorting] = useState([]);
@@ -114,24 +115,6 @@ export const ProductInflowsTable = () => {
       setSuppliers(response.data.results);
     } catch (error) {
       console.error("Error fetching suppliers:", error);
-    }
-  };
-
-  const handleCreateInflow = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await api.post("/product-inflow/", formData);
-      setData((prevData) => [...prevData, response.data]);
-      setIsCreateModalOpen(false);
-      setFormData({
-        product: "",
-        supplier: "",
-        quantity_received: "",
-        manufacturing_date: "",
-        expiry_date: "",
-      });
-    } catch (error) {
-      console.error("Failed to create product inflow:", error);
     }
   };
 
@@ -369,231 +352,14 @@ export const ProductInflowsTable = () => {
           </Button>
         </div>
       </div>
-      <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create Product Inflow</DialogTitle>
-            <DialogDescription>
-              Add a new product inflow record
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleCreateInflow}>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="product" className="text-center">
-                  Product
-                </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className="col-span-3 justify-between"
-                    >
-                      {formData.product
-                        ? products.find(
-                            (p) => p.id.toString() === formData.product
-                          )?.name
-                        : "Select product..."}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search product..." />
-                      <CommandList>
-                        <CommandEmpty>No products found.</CommandEmpty>
-                        <CommandGroup>
-                          {products.map((product) => (
-                            <CommandItem
-                              key={product.id}
-                              value={product.name}
-                              onSelect={() => {
-                                setFormData({
-                                  ...formData,
-                                  product: product.id.toString(),
-                                });
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  formData.product === product.id.toString()
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {product.name}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="supplier" className="text-center">
-                  Supplier
-                </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className="col-span-3 justify-between"
-                    >
-                      {formData.supplier
-                        ? suppliers.find(
-                            (s) => s.id.toString() === formData.supplier
-                          )?.name
-                        : "Select supplier..."}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search supplier..." />
-                      <CommandList>
-                        <CommandEmpty>No supplier found.</CommandEmpty>
-                        <CommandGroup>
-                          {suppliers.map((supplier) => (
-                            <CommandItem
-                              key={supplier.id}
-                              value={supplier.name}
-                              onSelect={() => {
-                                setFormData({
-                                  ...formData,
-                                  supplier: supplier.id.toString(),
-                                });
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  formData.supplier === supplier.id.toString()
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {supplier.name}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="quantity_received" className="text-center">
-                  Quantity Received
-                </Label>
-                <Input
-                  id="quantity_received"
-                  name="quantity_received"
-                  type="number"
-                  value={formData.quantity_received}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      quantity_received: e.target.value,
-                    })
-                  }
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="manufacturing_date" className="text-center">
-                  Manufacturing Date
-                </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      id="manufacturing_date"
-                      variant={"outline"}
-                      className={cn(
-                        "col-span-3 justify-start text-left font-normal",
-                        !formData.manufacturing_date && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData.manufacturing_date ? (
-                        format(new Date(formData.manufacturing_date), "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={
-                        formData.manufacturing_date
-                          ? new Date(formData.manufacturing_date)
-                          : undefined
-                      }
-                      onSelect={(date) =>
-                        setFormData({
-                          ...formData,
-                          manufacturing_date: date
-                            ? format(date, "yyyy-MM-dd")
-                            : "",
-                        })
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="expiry_date" className="text-center">
-                  Expiry Date
-                </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      id="expiry_date"
-                      variant={"outline"}
-                      className={cn(
-                        "col-span-3 justify-start text-left font-normal",
-                        !formData.expiry_date && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData.expiry_date ? (
-                        format(new Date(formData.expiry_date), "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={
-                        formData.expiry_date
-                          ? new Date(formData.expiry_date)
-                          : undefined
-                      }
-                      onSelect={(date) =>
-                        setFormData({
-                          ...formData,
-                          expiry_date: date ? format(date, "yyyy-MM-dd") : "",
-                        })
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit">Create Inflow</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <MultiProductInflowModal
+        isCreateModalOpen={isCreateModalOpen}
+        setIsCreateModalOpen={setIsCreateModalOpen}
+        fetchProductInflows={fetchProductInflows}
+        products={products}
+        suppliers={suppliers}
+        api={api}
+      />
       <ConfirmationModal
         open={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

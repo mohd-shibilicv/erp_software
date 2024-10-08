@@ -88,3 +88,8 @@ export const fetchProductRequests = async () => {
   const response = await api.get("/product-requests/");
   return response.data;
 };
+
+export const refreshProductOutflows = async () => {
+  const response = await api.get("/product-outflow/");
+  return response.data;
+};

@@ -66,8 +66,8 @@ const StoreSidebar = () => {
 
   const isActive = (path) => {
     return location.pathname === path
-      ? "bg-purple-600 rounded-[6px] text-white"
-      : "hover:bg-purple-600/10 hover:text-purple-600 rounded-[6px]";
+      ? "bg-[#6f42c1] text-white"
+      : "hover:bg-[#6f42c1]/10 hover:text-[#6f42c1]";
   };
 
   const toggleSection = (section) => {
@@ -256,7 +256,7 @@ const StoreSidebar = () => {
     >
       <Link
         to={item.path}
-        className={`flex items-center space-x-2 p-2 rounded-md transition-colors duration-200 ${isActive(
+        className={`flex items-center space-x-2 p-2 rounded-[5px] transition-colors duration-200 ${isActive(
           item.path
         )}`}
         onClick={() => setIsOpen(false)}
@@ -418,7 +418,7 @@ const DesktopSidebar = ({
       <ThemeToggle theme={theme} setTheme={setTheme} />
       <Link
         to="/admin/notifications"
-        className="flex items-center space-x-2 p-2 rounded-md hover:bg-accent mt-2"
+        className="flex items-center space-x-2 p-2 hover:bg-transparent hover:text-purple-600 rounded-[5px] mt-2"
       >
         <Bell className="w-5 h-5" />
         <span>Notifications</span>

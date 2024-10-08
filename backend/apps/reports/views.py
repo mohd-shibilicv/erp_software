@@ -1,6 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from datetime import timedelta
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.utils import timezone
@@ -8,7 +8,9 @@ from django.db.models import Sum, F, Count, IntegerField
 from django.db.models.functions import Coalesce, Cast
 from .serializers import (
     ProductInflowSerializer,
+    MultipleProductInflowSerializer,
     ProductOutflowSerializer,
+    MultipleProductOutflowSerializer,
     InwardQtyReportSerializer,
     OutwardQtyReportSerializer,
     BranchWiseQtyReportSerializer,
@@ -37,11 +39,41 @@ class ProductInflowViewSet(viewsets.ModelViewSet):
     serializer_class = ProductInflowSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_serializer_class(self):
+        if self.action == 'create' and isinstance(self.request.data, list):
+            return MultipleProductInflowSerializer
+        return self.serializer_class
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
 
 class ProductOutflowViewSet(viewsets.ModelViewSet):
     queryset = ProductOutflow.objects.all()
     serializer_class = ProductOutflowSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.action == "create" and isinstance(self.request.data, list):
+            return MultipleProductOutflowSerializer
+        return self.serializer_class
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        serializer.save()
 
 
 class InwardQtyReportView(APIView):

@@ -22,6 +22,10 @@ class ProductInflowSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "date_received"]
 
 
+class MultipleProductInflowSerializer(serializers.ListSerializer):
+    child = ProductInflowSerializer()
+
+
 class ProductOutflowSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source="product.name", read_only=True)
     branch_name = serializers.CharField(source="branch.name", read_only=True)
@@ -39,6 +43,10 @@ class ProductOutflowSerializer(serializers.ModelSerializer):
             "date_sent",
         ]
         read_only_fields = ["id", "date_sent"]
+
+
+class MultipleProductOutflowSerializer(serializers.ListSerializer):
+    child = ProductOutflowSerializer()
 
 
 class InwardQtyReportSerializer(serializers.Serializer):
