@@ -42,6 +42,11 @@ import {
   ListTodo,
   MenuIcon,
   X,
+  FilePlus,
+  Building,
+  RefreshCcw,
+  TrendingDown,
+  Wrench,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -59,8 +64,8 @@ const StoreSidebar = () => {
 
   const isActive = (path) => {
     return location.pathname === path
-      ? "bg-purple-600 text-white"
-      : "hover:bg-purple-600/10 hover:text-purple-600";
+      ? "bg-purple-600 rounded-[6px] text-white"
+      : "hover:bg-purple-600/10 hover:text-purple-600 rounded-[6px]";
   };
 
   const toggleSection = (section) => {
@@ -199,6 +204,18 @@ const StoreSidebar = () => {
         { path: "/admin/projects", icon: LayoutList, label: "Projects" },
         { path: "/admin/tasks", icon: ClipboardCheck, label: "Tasks" },
       ],
+    },
+    {
+      section: "Asset Management",
+      items: [
+        { path: "/admin/assets-dashboard", icon: LayoutDashboard, label: "Assets Dashboard" },
+        { path: "/admin/asset-creation", icon: FilePlus, label: "Asset Creation" },
+        { path: "/admin/branch-creation", icon: Building, label: "Branch Creation" },
+        { path: "/admin/asset-transfer", icon: RefreshCcw, label: "Asset Transfer" },
+        { path: "/admin/asset-depreciation", icon: TrendingDown, label: "Asset Depreciation" },
+        { path: "/admin/asset-service", icon: Wrench, label: "Asset Service" },
+        { path: "/admin/asset-reports", icon: FileText, label: "Asset Reports" },
+      ],      
     },
   ].filter(Boolean);
 

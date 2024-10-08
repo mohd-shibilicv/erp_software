@@ -49,6 +49,13 @@ import TaskAddEdit from "./pages/storePages/TasksForSfaff/TasksAddUpdate";
 import StaffTaskLists from "./pages/staffPages/staffTaskLlist";
 import AdminTaskDetails from "./pages/storePages/TasksForSfaff/AdminTaskdetail";
 import StaffTaskDetail from "./pages/staffPages/staffTaskdetail";
+import AssetsDashboard from "./components/asset-management/AssetsDashboardForm";
+import AssetCreationForm from "./components/asset-management/AssetCreation";
+import BranchCreationForm from "./components/asset-management/BranchCreationForm";
+import AssetTransferForm from "./components/asset-management/AssetTransferForm";
+import AssetDepreciationForm from "./components/asset-management/AssetDepreciationForm";
+import AssetServiceForm from "./components/asset-management/AssetServiceForm";
+import AssetReports from "./components/asset-management/AssetReports";
 
 function Store() {
   return (
@@ -343,6 +350,16 @@ function Store() {
         <Route path="/agreement/new" element={<AgreementAddEdit />} />
         <Route path="/agreement/new/:id" element={<AgreementAddEdit />} />
         <Route path="/agreement/:id" element={<ClientAgreementDetails />} />
+
+
+        {/* Asset Management */}
+        <Route path="/assets-dashboard" element={<AssetsDashboard />} />
+        <Route path="/asset-creation" element={<AssetCreationForm />} />
+        <Route path="/branch-creation" element={<BranchCreationForm />} />
+        <Route path="/asset-transfer" element={<AssetTransferForm />} />
+        <Route path="/asset-depreciation" element={<AssetDepreciationForm />} />
+        <Route path="/asset-service" element={<AssetServiceForm />} />
+        <Route path="/asset-reports" element={<AssetReports />} />
 
         <Route path="*" element={<NotFound404 />} />
       </Routes>
