@@ -51,6 +51,14 @@ import {
   PencilRuler,
   Shirt,
   ChartNoAxesCombined,
+  Building2,
+  HousePlus,
+  Bus,
+  Ambulance,
+  FileChartLine,
+  ShieldAlert,
+  ChartScatter,
+  ChartNoAxesCombinedIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -290,6 +298,56 @@ const StoreSidebar = () => {
           path: "/admin/asset-reports",
           icon: FileText,
           label: "Asset Reports",
+        },
+      ],
+    },
+    {
+      section: "Company Management",
+      items: [
+        {
+          path: "/admin/companyManagement",
+          icon: LayoutDashboard,
+          label: "Company Dashboard",
+        },
+        {
+          path: "/admin/companyManagement/company-list",
+          icon: Building2,
+          label: "Company List",
+        },
+        {
+          path: "/admin/companyManagement/add-company",
+          icon: HousePlus,
+          label: "Add Company",
+        },
+        {
+          path: "/admin/companyManagement/vehicle-list",
+          icon: Bus,
+          label: "Vehicle List",
+        },
+        {
+          path: "/admin/companyManagement/add-vehicle",
+          icon: Ambulance,
+          label: "Add Vehicle",
+        },
+        {
+          path: "/admin/companyManagement/vehicle-expense",
+          icon: FileChartLine,
+          label: "Vehicle Expense",
+        },
+        {
+          path: "/admin/companyManagement/fire-certification",
+          icon: ShieldAlert,
+          label: "Fire and Certificate",
+        },
+        {
+          path: "/admin/companyManagement/rent-expense",
+          icon: ChartScatter,
+          label: "Rent and Expense",
+        },
+        {
+          path: "/admin/companyManagement/reports",
+          icon: ChartNoAxesCombinedIcon ,
+          label: "Reports",
         },
       ],
     },

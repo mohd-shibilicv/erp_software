@@ -25,7 +25,7 @@ import {
   Pie,
   PieChart,
   XAxis,
-  YAxis,
+  
 } from "recharts";
 import { TrendingUp } from "lucide-react";
 export const description = "A multiple line chart";
@@ -49,32 +49,20 @@ const chartConfig = {
 };
 
 /* eslint-disable react/prop-types */
-export default function EmployeDashboard() {
+export default function CompanyDashboard() {
   return (
     <main className="w-full h-full bg-white rounded-md p-2">
       {/* <div className="w-full">
-        <h1 className="text-lg">Dashboard</h1>
-      </div> */}
+          <h1 className="text-lg">Dashboard</h1>
+        </div> */}
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3">
-        <StatCard title="Total Employees" value={100} bgColor="bg-blue-500" />
-        <StatCard title="Pending Employees" value={75} bgColor="bg-green-500" />
+        <StatCard title="Total Companies" value={100} bgColor="bg-blue-500" />
+        <StatCard title="Total Vehicles" value={75} bgColor="bg-green-500" />
+        <StatCard title="Expired Vehicles" value={25} bgColor="bg-yellow-500" />
         <StatCard
-          title="Pending Visa print"
-          value={25}
-          bgColor="bg-yellow-500"
-        />
-        <StatCard title="Pending ID print" value={50} bgColor="bg-purple-500" />
-        <StatCard title="Pending Gate pass" value={30} bgColor="bg-cyan-500" />
-        <StatCard title="Pending Passport" value={20} bgColor="bg-indigo-500" />
-        <StatCard
-          title="Completed Employees"
-          value={150}
-          bgColor="bg-lime-500"
-        />
-        <StatCard
-          title="Pending Contract"
-          value={100}
-          bgColor={"bg-orange-500"}
+          title="Pending Companies"
+          value={50}
+          bgColor="bg-purple-500"
         />
       </div>
       <div className="w-full mt-3 ">
@@ -257,9 +245,10 @@ export default function EmployeDashboard() {
           </Card>
         </div>
         <div className="mt-3 grid gap-3 grid-cols-1 md:grid-cols-6">
+          {/* md:col-span-4 rounded-none */}
           <Card className="md:col-span-4 rounded-none">
             <CardHeader>
-              <CardTitle>Bar Chart - Horizontal</CardTitle>
+              <CardTitle>Bar Chart</CardTitle>
               <CardDescription>January - June 2024</CardDescription>
             </CardHeader>
             <CardContent>
@@ -274,15 +263,10 @@ export default function EmployeDashboard() {
                     { month: "May", desktop: 209 },
                     { month: "June", desktop: 214 },
                   ]}
-                  layout="vertical"
-                  margin={{
-                    left: -20,
-                  }}
                 >
-                  <XAxis type="number" dataKey="desktop" hide />
-                  <YAxis
+                  <CartesianGrid vertical={false} />
+                  <XAxis
                     dataKey="month"
-                    type="category"
                     tickLine={false}
                     tickMargin={10}
                     axisLine={false}
@@ -295,12 +279,12 @@ export default function EmployeDashboard() {
                   <Bar
                     dataKey="desktop"
                     fill="var(--color-desktop)"
-                    radius={5}
+                    radius={8}
                   />
                 </BarChart>
               </ChartContainer>
             </CardContent>
-            <CardFooter className="flex-col items-start gap-3 text-sm">
+            <CardFooter className="flex-col items-start gap-2 text-sm">
               <div className="flex gap-2 font-medium leading-none">
                 Trending up by 5.2% this month{" "}
                 <TrendingUp className="h-4 w-4" />
@@ -327,11 +311,31 @@ export default function EmployeDashboard() {
                   />
                   <Pie
                     data={[
-                      { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-                      { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-                      { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-                      { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-                      { browser: "other", visitors: 190, fill: "var(--color-other)" },
+                      {
+                        browser: "chrome",
+                        visitors: 275,
+                        fill: "var(--color-chrome)",
+                      },
+                      {
+                        browser: "safari",
+                        visitors: 200,
+                        fill: "var(--color-safari)",
+                      },
+                      {
+                        browser: "firefox",
+                        visitors: 287,
+                        fill: "var(--color-firefox)",
+                      },
+                      {
+                        browser: "edge",
+                        visitors: 173,
+                        fill: "var(--color-edge)",
+                      },
+                      {
+                        browser: "other",
+                        visitors: 190,
+                        fill: "var(--color-other)",
+                      },
                     ]}
                     dataKey="visitors"
                     nameKey="browser"

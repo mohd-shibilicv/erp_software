@@ -65,6 +65,16 @@ import LeaveAndVacation from "./pages/storePages/EmployeeManagment/LeaveAndVacat
 import VpTrack from "./pages/storePages/EmployeeManagment/vpTrack";
 import UniformReport from "./pages/storePages/EmployeeManagment/UniformReport";
 import Reports from "./pages/storePages/EmployeeManagment/reports";
+import CompanyLayouts from "./pages/storePages/CompanyManagement/CompanyLayouts/CompanyLayout";
+import CompanyDashboard from "./pages/storePages/CompanyManagement/CompanyDashboard";
+import { CompanyList } from "./pages/storePages/CompanyManagement/CompanyList";
+import { AddCompany } from "./pages/storePages/CompanyManagement/AddCompany";
+import { AddVehicle } from "./pages/storePages/CompanyManagement/AddVehicle";
+import { VehicleList } from "./pages/storePages/CompanyManagement/VehiclesList";
+import { VehicleExpense } from "./pages/storePages/CompanyManagement/VehicleExpense";
+import { FireAndCertfication } from "./pages/storePages/CompanyManagement/fireandCertification";
+import { RentandExpense } from "./pages/storePages/CompanyManagement/rentAndExpense";
+import { CompanyReports } from "./pages/storePages/CompanyManagement/reports";
 
 function Store() {
   return (
@@ -321,6 +331,29 @@ function Store() {
           <Route path="uniform-report" element={<UniformReport />} />
           <Route path="reports" element={<Reports />} />
         </Route>
+        <Route
+          path="/companyManagement"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <CompanyLayouts />
+            </StoreProtectedRoute>
+          }
+        >
+          <Route index element={<CompanyDashboard />} />
+          <Route path="company-list" element={<CompanyList />} />
+          <Route path="add-company" element={<AddCompany />} />
+          <Route path="add-vehicle" element={<AddVehicle />} />
+          <Route path="vehicle-list" element={<VehicleList />} />
+          <Route path="vehicle-expense" element={<VehicleExpense />} />
+          <Route path="fire-certification" element={<FireAndCertfication />} />
+          <Route path="rent-expense" element={<RentandExpense />} />
+          <Route path="reports" element={<CompanyReports />} />
+          {/* <Route path="employee-list" element={<EmployeeList />} />
+          <Route path="leave-vacation" element={<LeaveAndVacation />} />
+          <Route path="vp-track" element={<VpTrack />} />
+          <Route path="uniform-report" element={<UniformReport />} />
+          <Route path="reports" element={<Reports />} /> */}
+        </Route>
 
         <Route path="/client-request" element={<DemoRequestTable />} />
         <Route
@@ -375,7 +408,6 @@ function Store() {
         <Route path="/agreement/new" element={<AgreementAddEdit />} />
         <Route path="/agreement/new/:id" element={<AgreementAddEdit />} />
         <Route path="/agreement/:id" element={<ClientAgreementDetails />} />
-
 
         {/* Asset Management */}
         <Route path="/assets-dashboard" element={<AssetsDashboard />} />
