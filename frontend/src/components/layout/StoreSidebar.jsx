@@ -37,6 +37,7 @@ import {
   Moon,
   ClipboardCheck,
   ListTodo,
+  Users,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 import StoreSideBarSheet from "./StoreSidebarSheet";
@@ -206,18 +207,16 @@ const StoreSidebar = () => {
           icon: ClipboardCheck,
           label: "Tasks",
         },
-        // {
-        //   path: "/admin/client-relationship",
-        //   icon: Contact,
-        //   label: "Client Relationship",
-        // },
-        // {
-        //   path: "/admin/client-requirements",
-        //   icon: Headset,
-        //   label: "Client Requirements",
-        // },
-        // { path: "/admin/quotation", icon: Handshake, label: "Quotation" },
-        // { path: "/admin/agreement", icon: Signature, label: "Agreement" },
+      ],
+    },
+    {
+      section: "Employee Management",
+      items: [
+        {
+          path: "/admin/employeeMangement",
+          icon: Users,
+          label: "Employees",
+        },
       ],
     },
   ];
