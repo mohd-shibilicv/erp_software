@@ -97,10 +97,6 @@ router.register(r'individual-projects-tasks',ProjectIndividualTaskViewSet, basen
 router.register(r'staff-assignments', StaffProjectAssignmentViewSet, basename='staff-assignments'),
 router.register(r'induvidual-listing', StaffProjectAssignmentViewSet, basename='staff-assignments-induvidual')
 
-
-
-
-
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
@@ -108,6 +104,9 @@ urlpatterns = [
 
     path("api/logout/", LogoutView.as_view({"post": "logout"}), name="logout"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # Store Reports
 urlpatterns += [

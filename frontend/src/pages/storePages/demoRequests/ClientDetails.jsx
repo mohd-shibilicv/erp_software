@@ -42,6 +42,8 @@ export default function ClientDetails({ client, onBack }) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(null);
   const [staffList, setStaffList] = useState([]);
+  console.log(staffList);
+  
   const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function ClientDetails({ client, onBack }) {
   const fetchStaffList = async () => {
     try {
       const response = await api.get("/staff/");
-      setStaffList(response.data.results);
+      setStaffList(response.data);
     } catch (error) {
       console.error("Error fetching staff list:", error);
     }
@@ -140,10 +142,10 @@ export default function ClientDetails({ client, onBack }) {
                         {staffList.map((staff) => (
                           <CommandItem
                             key={staff.id}
-                            value={staff.username}
+                            value={staff.id}
                             onSelect={(currentValue) => {
                               setAssignTo(
-                                currentValue === value ? "" : currentValue
+                                currentValue === staff.id ? "" : staff.id
                               );
                               setOpen(false);
                             }}
