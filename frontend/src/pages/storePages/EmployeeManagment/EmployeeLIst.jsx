@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { EmployeeCompanyCommonTable } from "./EmployeeComponents/EmployeListTable";
+import { EmployeeCompanyCommonTable } from "./Components/EmployeListTable";
 import { Edit2 } from "lucide-react";
 import { format } from "date-fns";
 
