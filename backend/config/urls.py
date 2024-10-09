@@ -47,6 +47,11 @@ from apps.crm.views import (
     QuotationViewSet,
     AgreementViewSet,
 )
+from apps.accounts.views import (
+   NatureGroupViewSet,
+   MainGroupViewSet,
+   LedgerViewSet,
+)
 
 
 router = DefaultRouter()
@@ -84,6 +89,10 @@ router.register(r"quotations", QuotationViewSet, basename="quotations")
 router.register(r"quotation-items", QuotationItemViewSet, basename="quotation_items")
 router.register(r"agreements", AgreementViewSet, basename="agreements")
 
+# Accounts
+router.register(r'nature-groups', NatureGroupViewSet)
+router.register(r'main-groups', MainGroupViewSet)
+router.register(r'ledgers', LedgerViewSet)
 
 
 urlpatterns = [

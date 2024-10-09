@@ -39,6 +39,7 @@ import ClientRequirementsAddEdit from "./pages/storePages/clientRequirements/Cli
 import AddEditQuotation from "./pages/storePages/quotation/AddEditQuotation";
 import QuotationList from "./pages/storePages/quotation/QuotationList";
 import QuotationDetails from "./pages/storePages/quotation/QuotationDetails";
+import Ledger from "./pages/storePages/accounts/Ledger/Ledger";
 
 function Store() {
   return (
@@ -173,9 +174,10 @@ function Store() {
         <Route path="/quotation/:id" element={<QuotationDetails />} />
         <Route path="/quotation/new" element={<AddEditQuotation />} />
         <Route path="/quotation/new/:id" element={<AddEditQuotation isEditMode={true} />} />
-
-
         <Route path="/agreement" element={<Agreement />} />
+
+        {/* Accounts */}
+        <Route path="/ledger" element={<Ledger />} />
 
         <Route path="*" element={<NotFound404 />} />
       </Routes>

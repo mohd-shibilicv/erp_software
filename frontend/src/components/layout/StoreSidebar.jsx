@@ -34,6 +34,7 @@ import {
   User,
   UserCog,
   CalendarArrowDown,
+  Book,
 } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 
@@ -107,13 +108,17 @@ const StoreSidebar = () => {
       items: [
         { path: "/admin/reports", icon: Layers3, label: "Reports" },
         { path: "/admin/sales", icon: Sheet, label: "Sales" },
-        { path: "/admin/van-sales", icon: NotebookText, label: "Van Sales" },
+        // { path: "/admin/van-sales", icon: NotebookText, label: "Van Sales" },
+        { path: "/admin/van-sales", icon: NotebookText, label: "Join Venture Sales" },
+
       ],
     },
     {
       section: "Operations",
       items: [
-        { path: "/admin/packing", icon: Package, label: "Packing" },
+        // { path: "/admin/packing", icon: Package, label: "Packing" }, renamed `Product Grouping`
+        { path: "/admin/packing", icon: Package, label: "Product Grouping" },
+
         {
           path: "/admin/physical-stock",
           icon: Blocks,
@@ -165,6 +170,16 @@ const StoreSidebar = () => {
         },
         { path: "/admin/quotation", icon: Handshake, label: "Quotation" },
         { path: "/admin/agreement", icon: Signature, label: "Agreement" },
+      ],
+    },
+    {
+      section: "Accounts",
+      items: [
+        {
+          path: "/admin/ledger",
+          icon: Book,
+          label: "Ledger",
+        },
       ],
     },
   ];
