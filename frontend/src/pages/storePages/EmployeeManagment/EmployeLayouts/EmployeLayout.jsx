@@ -6,13 +6,13 @@ export default function EmployeeLayouts() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const employeRoueKeys = {
-    "/employee-mangement": "dashboard",
-    "/employee-mangement/add-employee": "add-employee",
-    "/employee-mangement/employee-list": "employee-list",
-    "/employee-mangement/leave-vacation": "leave-vacation",
-    "/employee-mangement/vp-track": "vp-track",
-    "/employee-mangement/uniform-report": "uniform-report",
-    "/employee-mangement/reports": "reports",
+    "/admin/employee-mangement": "dashboard",
+    "/admin/employee-mangement/add-employee": "add-employee",
+    "/admin/employee-mangement/employee-list": "employee-list",
+    "/admin/employee-mangement/leave-vacation": "leave-vacation",
+    "/admin/employee-mangement/vp-track": "vp-track",
+    "/admin/employee-mangement/uniform-report": "uniform-report",
+    "/admin/employee-mangement/reports": "reports",
   };
   return (
     <main className="w-full h-full bg-white rounded-md p-2">
