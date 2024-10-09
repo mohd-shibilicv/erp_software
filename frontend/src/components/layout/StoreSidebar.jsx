@@ -155,6 +155,11 @@ const StoreSidebar = () => {
           icon: FileText,
           label: "Invoice Generator",
         },
+        {
+          path: "/admin/group-mailing",
+          icon: FileText,
+          label: "Group Mailing",
+        },
       ],
     },
     {

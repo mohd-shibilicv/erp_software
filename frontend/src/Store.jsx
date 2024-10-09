@@ -75,6 +75,7 @@ import { VehicleExpense } from "./pages/storePages/CompanyManagement/VehicleExpe
 import { FireAndCertfication } from "./pages/storePages/CompanyManagement/fireandCertification";
 import { RentandExpense } from "./pages/storePages/CompanyManagement/rentAndExpense";
 import { CompanyReports } from "./pages/storePages/CompanyManagement/reports";
+import GroupMailing from "./components/store/GroupMailing";
 
 function Store() {
   return (
@@ -163,6 +164,8 @@ function Store() {
             </StoreProtectedRoute>
           }
         />
+
+        {/* Operations */}
         <Route
           path="/packing"
           element={
@@ -195,6 +198,15 @@ function Store() {
             </StoreProtectedRoute>
           }
         />
+        <Route
+          path="/group-mailing"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <GroupMailing />
+            </StoreProtectedRoute>
+          }
+        />
+
         <Route
           path="/add-payment-transaction"
           element={
