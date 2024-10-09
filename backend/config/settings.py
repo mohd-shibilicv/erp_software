@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "apps.suppliers.apps.SuppliersConfig",
     "apps.reports.apps.ReportsConfig",
     "apps.crm.apps.CrmConfig",
+    "apps.accounts.apps.AccountsConfig"
 ]
 
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS")
@@ -114,6 +115,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# if DEBUG:
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -121,16 +124,17 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": env.str("DB_NAME"),
-#         "USER": env.str("DB_USER"),
-#         "PASSWORD": env.str("DB_PASSWORD"),
-#         "HOST": env.str("DB_HOST"),
-#         "PORT": env.int("DB_PORT"),
-#     }
-# }
+# else:
+#     DATABASES = {
+#             "default": {
+#                 "ENGINE": "django.db.backends.postgresql",
+#                 "NAME": "erp",
+#                 "USER": "postgres",
+#                 "PASSWORD": "1111",
+#                 "HOST": "localhost",
+#                 "PORT": "",
+#             }
+#         }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

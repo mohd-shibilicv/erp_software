@@ -35,6 +35,7 @@ import {
   User,
   UserCog,
   CalendarArrowDown,
+  Book,
   LayoutList,
   ClipboardCheck,
   ListTodo,
@@ -205,7 +206,9 @@ const StoreSidebar = () => {
     {
       section: "Operations",
       items: [
-        { path: "/admin/packing", icon: Package, label: "Packing" },
+        // { path: "/admin/packing", icon: Package, label: "Packing" }, renamed `Product Grouping`
+        { path: "/admin/packing", icon: Package, label: "Product Grouping" },
+
         {
           path: "/admin/physical-stock",
           icon: Blocks,
@@ -360,6 +363,16 @@ const StoreSidebar = () => {
           path: "/admin/company-management/reports",
           icon: ChartNoAxesCombinedIcon ,
           label: "Reports",
+        },
+      ],
+    },
+    {
+      section: "Accounts",
+      items: [
+        {
+          path: "/admin/ledger",
+          icon: Book,
+          label: "Ledger",
         },
       ],
     },

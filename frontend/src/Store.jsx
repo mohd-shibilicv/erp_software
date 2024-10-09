@@ -39,6 +39,7 @@ import ClientRequirementsAddEdit from "./pages/storePages/clientRequirements/Cli
 import AddEditQuotation from "./pages/storePages/quotation/AddEditQuotation";
 import QuotationList from "./pages/storePages/quotation/QuotationList";
 import QuotationDetails from "./pages/storePages/quotation/QuotationDetails";
+import Ledger from "./pages/storePages/accounts/Ledger/Ledger";
 import ClientAgreementList from "./pages/storePages/agreement/ClientAgreementList";
 import ClientAgreementDetails from "./pages/storePages/agreement/ClientAgreementDetails";
 import ProjectsPage from "./pages/storePages/Projects/listProject";
@@ -414,6 +415,7 @@ function Store() {
         <Route path="/quotation" element={<QuotationList />} />
         <Route path="/quotation/:id" element={<QuotationDetails />} />
         <Route path="/quotation/new" element={<AddEditQuotation />} />
+
         <Route
           path="/quotation/new/:id"
           element={<AddEditQuotation isEditMode={true} />}
@@ -433,6 +435,9 @@ function Store() {
         <Route path="/asset-depreciation" element={<AssetDepreciationForm />} />
         <Route path="/asset-service" element={<AssetServiceForm />} />
         <Route path="/asset-reports" element={<AssetReports />} />
+
+        {/* Accounts */}
+        <Route path="/ledger" element={<Ledger />} />
 
         <Route path="*" element={<NotFound404 />} />
       </Routes>
