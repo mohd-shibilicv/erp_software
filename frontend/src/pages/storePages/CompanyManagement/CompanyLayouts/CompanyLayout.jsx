@@ -6,15 +6,15 @@ export default function CompanyLayouts() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const companyRouteKeys = {
-    "/admin/companyManagement": "dashboard",
-    "/admin/companyManagement/company-list": "company-list",
-    "/admin/companyManagement/add-company": "add-company",
-    "/admin/companyManagement/add-vehicle": "add-vehicle",
-    "/admin/companyManagement/vehicle-list": "vehicle-list",
-    "/admin/companyManagement/vehicle-expense": "vehicle-expense",
-    "/admin/companyManagement/fire-certification": "fire-certification",
-    "/admin/companyManagement/rent-expense": "rent-expense",
-    "/admin/companyManagement/reports": "reports",
+    "/admin/company-management": "dashboard",
+    "/admin/company-management/company-list": "company-list",
+    "/admin/company-management/add-company": "add-company",
+    "/admin/company-management/add-vehicle": "add-vehicle",
+    "/admin/company-management/vehicle-list": "vehicle-list",
+    "/admin/company-management/vehicle-expense": "vehicle-expense",
+    "/admin/company-management/fire-certification": "fire-certification",
+    "/admin/company-management/rent-expense": "rent-expense",
+    "/admin/company-management/reports": "reports",
   };
   return (
     <main className="w-full h-full bg-white rounded-md p-2">
@@ -26,7 +26,7 @@ export default function CompanyLayouts() {
           >
             <TabsList className="bg-gray-200 w-full">
               <TabsTrigger
-                onClick={() => navigate("/admin/companyManagement")}
+                onClick={() => navigate("/admin/company-management")}
                 className="w-full"
                 value="dashboard"
               >
@@ -44,7 +44,7 @@ export default function CompanyLayouts() {
                 className="w-full"
                 value="add-company"
               >
-                Add-Company
+                Company
               </TabsTrigger>
               <TabsTrigger
                 onClick={() => navigate("add-vehicle")}

@@ -332,7 +332,7 @@ function Store() {
           <Route path="reports" element={<Reports />} />
         </Route>
         <Route
-          path="/companyManagement"
+          path="/company-management"
           element={
             <StoreProtectedRoute allowedRoles={["admin"]}>
               <CompanyLayouts />
@@ -412,7 +412,7 @@ function Store() {
         {/* Asset Management */}
         <Route path="/assets-dashboard" element={<AssetsDashboard />} />
         <Route path="/asset-creation" element={<AssetCreationForm />} />
-        <Route path="/branch-creation" element={<BranchCreationForm />} />
+        {/* <Route path="/branch-creation" element={<BranchCreationForm />} /> */}
         <Route path="/asset-transfer" element={<AssetTransferForm />} />
         <Route path="/asset-depreciation" element={<AssetDepreciationForm />} />
         <Route path="/asset-service" element={<AssetServiceForm />} />

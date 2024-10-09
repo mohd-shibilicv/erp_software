@@ -6,13 +6,13 @@ export default function EmployeeLayouts() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const employeRoueKeys = {
-    "/admin/employeeMangement": "dashboard",
-    "/admin/employeeMangement/add-employee": "add-employee",
-    "/admin/employeeMangement/employee-list": "employee-list",
-    "/admin/employeeMangement/leave-vacation": "leave-vacation",
-    "/admin/employeeMangement/vp-track": "vp-track",
-    "/admin/employeeMangement/uniform-report": "uniform-report",
-    "/admin/employeeMangement/reports": "reports",
+    "/employee-mangement": "dashboard",
+    "/employee-mangement/add-employee": "add-employee",
+    "/employee-mangement/employee-list": "employee-list",
+    "/employee-mangement/leave-vacation": "leave-vacation",
+    "/employee-mangement/vp-track": "vp-track",
+    "/employee-mangement/uniform-report": "uniform-report",
+    "/employee-mangement/reports": "reports",
   };
   return (
     <main className="w-full h-full bg-white rounded-md p-2">
@@ -24,7 +24,7 @@ export default function EmployeeLayouts() {
           >
             <TabsList className="bg-gray-200 w-full">
               <TabsTrigger
-                onClick={() => navigate("/admin/employeeMangement")}
+                onClick={() => navigate("/employee-mangement")}
                 className="w-full"
                 value="dashboard"
               >

@@ -94,7 +94,6 @@ const StoreSidebar = () => {
         { path: "/admin", icon: LayoutDashboard, label: "Dashboard" },
         { path: "/admin/products", icon: PackageSearch, label: "Products" },
         { path: "/admin/suppliers", icon: Truck, label: "Suppliers" },
-        { path: "/admin/branches", icon: Warehouse, label: "Branches" },
       ],
     },
     {
@@ -229,37 +228,37 @@ const StoreSidebar = () => {
       section: "Employee Management",
       items: [
         {
-          path: "/admin/employeeMangement",
+          path: "/admin/employee-mangement",
           icon: LayoutDashboard,
           label: "Employee Dashboard",
         },
         {
-          path: "/admin/employeeMangement/add-employee",
+          path: "/admin/employee-mangement/add-employee",
           icon: UserPlus,
           label: "Add Employee",
         },
         {
-          path: "/admin/employeeMangement/employee-list",
+          path: "/admin/employee-mangement/employee-list",
           icon: UsersRound,
           label: "Employee list",
         },
         {
-          path: "/admin/employeeMangement/leave-vacation",
+          path: "/admin/employee-mangement/leave-vacation",
           icon: PlaneTakeoff,
           label: "Leave Vacation",
         },
         {
-          path: "/admin/employeeMangement/vp-track",
+          path: "/admin/employee-mangement/vp-track",
           icon: PencilRuler,
           label: "Vp Track",
         },
         {
-          path: "/admin/employeeMangement/uniform-report",
+          path: "/admin/employee-mangement/uniform-report",
           icon: Shirt,
           label: "Uniform Report",
         },
         {
-          path: "/admin/employeeMangement/reports",
+          path: "/admin/employee-mangement/reports",
           icon: ChartNoAxesCombined,
           label: "Reports",
         },
@@ -278,11 +277,11 @@ const StoreSidebar = () => {
           icon: FilePlus,
           label: "Asset Creation",
         },
-        {
-          path: "/admin/branch-creation",
-          icon: Building,
-          label: "Branch Creation",
-        },
+        // {
+        //   path: "/admin/branch-creation",
+        //   icon: Building,
+        //   label: "Branch Creation",
+        // },
         {
           path: "/admin/asset-transfer",
           icon: RefreshCcw,
@@ -305,47 +304,48 @@ const StoreSidebar = () => {
       section: "Company Management",
       items: [
         {
-          path: "/admin/companyManagement",
+          path: "/admin/company-management",
           icon: LayoutDashboard,
           label: "Company Dashboard",
         },
         {
-          path: "/admin/companyManagement/company-list",
+          path: "/admin/company-management/company-list",
           icon: Building2,
           label: "Company List",
         },
         {
-          path: "/admin/companyManagement/add-company",
+          path: "/admin/company-management/add-company",
           icon: HousePlus,
-          label: "Add Company",
+          label: "Company",
         },
+        { path: "/admin/branches", icon: Warehouse, label: "Branches" },
         {
-          path: "/admin/companyManagement/vehicle-list",
+          path: "/admin/company-management/vehicle-list",
           icon: Bus,
           label: "Vehicle List",
         },
         {
-          path: "/admin/companyManagement/add-vehicle",
+          path: "/admin/company-management/add-vehicle",
           icon: Ambulance,
           label: "Add Vehicle",
         },
         {
-          path: "/admin/companyManagement/vehicle-expense",
+          path: "/admin/company-management/vehicle-expense",
           icon: FileChartLine,
           label: "Vehicle Expense",
         },
         {
-          path: "/admin/companyManagement/fire-certification",
+          path: "/admin/company-management/fire-certification",
           icon: ShieldAlert,
           label: "Fire and Certificate",
         },
         {
-          path: "/admin/companyManagement/rent-expense",
+          path: "/admin/company-management/rent-expense",
           icon: ChartScatter,
           label: "Rent and Expense",
         },
         {
-          path: "/admin/companyManagement/reports",
+          path: "/admin/company-management/reports",
           icon: ChartNoAxesCombinedIcon ,
           label: "Reports",
         },

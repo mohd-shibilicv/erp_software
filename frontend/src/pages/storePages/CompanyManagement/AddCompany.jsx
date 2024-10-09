@@ -21,7 +21,7 @@ export function AddCompany() {
       <section className="w-full p-2 flex justify-center">
         <div className="w-full mx-auto p-5 min-h-64 shadow-md rounded-md border">
           <div className="w-full border-b pb-3">
-            <h1 className="font-semibold text-2xl">Add Company</h1>
+            <h1 className="font-semibold text-2xl">Company</h1>
           </div>
           <form className="w-full mt-3" onSubmit={handleCompanyAdd}>
             <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-2">
