@@ -25,7 +25,6 @@ import {
   Pie,
   PieChart,
   XAxis,
-  
 } from "recharts";
 import { TrendingUp } from "lucide-react";
 export const description = "A multiple line chart";
@@ -69,8 +68,10 @@ export default function CompanyDashboard() {
         <div className="w-full">
           <Card className="rounded-none">
             <CardHeader>
-              <CardTitle>Line Chart - Multiple</CardTitle>
-              <CardDescription>January - June 2024</CardDescription>
+              <CardTitle>
+                Comparing Vehicle Expiry, Ruksa Expiry, and Card Expiry
+              </CardTitle>
+              <CardDescription>expiry docs</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer className="h-[200px] w-full" config={chartConfig}>
@@ -115,11 +116,10 @@ export default function CompanyDashboard() {
               <div className="flex w-full items-start gap-2 text-sm">
                 <div className="grid gap-2">
                   <div className="flex items-center gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month{" "}
-                    <TrendingUp className="h-4 w-4" />
+                    Comparing Expiry reports <TrendingUp className="h-4 w-4" />
                   </div>
                   <div className="flex items-center gap-2 leading-none text-muted-foreground">
-                    Showing total visitors for the last 6 months
+                    Yearly data
                   </div>
                 </div>
               </div>
@@ -129,9 +129,11 @@ export default function CompanyDashboard() {
         <div className="mt-3 w-full">
           <Card className="rounded-none">
             <CardHeader>
-              <CardTitle>Area Chart</CardTitle>
+              <CardTitle>
+                CR Expiry Over Time (Company CR Expiry Trend)
+              </CardTitle>
               <CardDescription>
-                Showing total visitors for the last 6 months
+                CR Expiry Over Time (Company CR Expiry Trend)
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -177,11 +179,11 @@ export default function CompanyDashboard() {
               <div className="flex w-full items-start gap-3 text-sm">
                 <div className="grid gap-2">
                   <div className="flex items-center gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month{" "}
+                    CR Expiry Over Time Company CR Expiry Trend{" "}
                     <TrendingUp className="h-4 w-4" />
                   </div>
                   <div className="flex items-center gap-2 leading-none text-muted-foreground">
-                    January - June 2024
+                    Yearly data
                   </div>
                 </div>
               </div>
@@ -191,8 +193,8 @@ export default function CompanyDashboard() {
         <div className="w-full mt-3">
           <Card className="rounded-none">
             <CardHeader>
-              <CardTitle>Line Chart</CardTitle>
-              <CardDescription>January - June 2024</CardDescription>
+              <CardTitle>Vehicle Expiry Over Time</CardTitle>
+              <CardDescription>Year wise</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer className="w-full h-[200px]" config={chartConfig}>
@@ -235,11 +237,10 @@ export default function CompanyDashboard() {
             </CardContent>
             <CardFooter className="flex-col items-start gap-3 text-sm">
               <div className="flex gap-2 font-medium leading-none">
-                Trending up by 5.2% this month{" "}
-                <TrendingUp className="h-4 w-4" />
+                Vehicle Expiry Over Time <TrendingUp className="h-4 w-4" />
               </div>
               <div className="leading-none text-muted-foreground">
-                Showing total visitors for the last 6 months
+                Showing Vehicle Expiry Over Time
               </div>
             </CardFooter>
           </Card>
@@ -248,8 +249,8 @@ export default function CompanyDashboard() {
           {/* md:col-span-4 rounded-none */}
           <Card className="md:col-span-4 rounded-none">
             <CardHeader>
-              <CardTitle>Bar Chart</CardTitle>
-              <CardDescription>January - June 2024</CardDescription>
+              <CardTitle>Number of Vehicle by owner</CardTitle>
+              <CardDescription>Overall</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer className="h-[200px] w-full" config={chartConfig}>
@@ -286,18 +287,18 @@ export default function CompanyDashboard() {
             </CardContent>
             <CardFooter className="flex-col items-start gap-2 text-sm">
               <div className="flex gap-2 font-medium leading-none">
-                Trending up by 5.2% this month{" "}
+              Number of Vehicle by owner{" "}
                 <TrendingUp className="h-4 w-4" />
               </div>
               <div className="leading-none text-muted-foreground">
-                Showing total visitors for the last 6 months
+                Showing overall Number of Vehicle by owner
               </div>
             </CardFooter>
           </Card>
           <Card className="flex flex-col md:col-span-2 rounded-none">
             <CardHeader className="items-center pb-0">
-              <CardTitle>Pie Chart - Donut with Text</CardTitle>
-              <CardDescription>January - June 2024</CardDescription>
+              <CardTitle>Vehicle - Status distribution</CardTitle>
+              <CardDescription>Vehicle Status distribution</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
               <ChartContainer
@@ -377,11 +378,11 @@ export default function CompanyDashboard() {
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">
               <div className="flex items-center gap-2 font-medium leading-none">
-                Trending up by 5.2% this month{" "}
+              Vehicle Status Distribution{" "}
                 <TrendingUp className="h-4 w-4" />
               </div>
               <div className="leading-none text-muted-foreground">
-                Showing total visitors for the last 6 months
+                Showing overall data
               </div>
             </CardFooter>
           </Card>

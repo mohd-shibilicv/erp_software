@@ -81,8 +81,8 @@ export default function EmployeDashboard() {
         <div className="w-full">
           <Card className="rounded-none">
             <CardHeader>
-              <CardTitle>Line Chart - Multiple</CardTitle>
-              <CardDescription>January - June 2024</CardDescription>
+              <CardTitle>Employee - Expiry Doc</CardTitle>
+              <CardDescription>Showing all employee expiry doc</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer className="h-[200px] w-full" config={chartConfig}>
@@ -127,11 +127,10 @@ export default function EmployeDashboard() {
               <div className="flex w-full items-start gap-2 text-sm">
                 <div className="grid gap-2">
                   <div className="flex items-center gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month{" "}
-                    <TrendingUp className="h-4 w-4" />
+                    Showing expiry doc report <TrendingUp className="h-4 w-4" />
                   </div>
                   <div className="flex items-center gap-2 leading-none text-muted-foreground">
-                    Showing total visitors for the last 6 months
+                    Jan - Dec
                   </div>
                 </div>
               </div>
@@ -141,9 +140,9 @@ export default function EmployeDashboard() {
         <div className="mt-3 w-full">
           <Card className="rounded-none">
             <CardHeader>
-              <CardTitle>Area Chart</CardTitle>
+              <CardTitle>Employee Joining</CardTitle>
               <CardDescription>
-                Showing total visitors for the last 6 months
+                Showing Employee joining trend over time
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -189,8 +188,7 @@ export default function EmployeDashboard() {
               <div className="flex w-full items-start gap-3 text-sm">
                 <div className="grid gap-2">
                   <div className="flex items-center gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month{" "}
-                    <TrendingUp className="h-4 w-4" />
+                    Employee joining trend <TrendingUp className="h-4 w-4" />
                   </div>
                   <div className="flex items-center gap-2 leading-none text-muted-foreground">
                     January - June 2024
@@ -203,8 +201,8 @@ export default function EmployeDashboard() {
         <div className="w-full mt-3">
           <Card className="rounded-none">
             <CardHeader>
-              <CardTitle>Line Chart</CardTitle>
-              <CardDescription>January - June 2024</CardDescription>
+              <CardTitle>Employee Contract Expiry</CardTitle>
+              <CardDescription>Year whise</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer className="w-full h-[200px]" config={chartConfig}>
@@ -247,11 +245,10 @@ export default function EmployeDashboard() {
             </CardContent>
             <CardFooter className="flex-col items-start gap-3 text-sm">
               <div className="flex gap-2 font-medium leading-none">
-                Trending up by 5.2% this month{" "}
-                <TrendingUp className="h-4 w-4" />
+                Employee Contract Expiry <TrendingUp className="h-4 w-4" />
               </div>
               <div className="leading-none text-muted-foreground">
-                Showing total visitors for the last 6 months
+                Showing contract expiry of employees
               </div>
             </CardFooter>
           </Card>
@@ -259,8 +256,8 @@ export default function EmployeDashboard() {
         <div className="mt-3 grid gap-3 grid-cols-1 md:grid-cols-6">
           <Card className="md:col-span-4 rounded-none">
             <CardHeader>
-              <CardTitle>Bar Chart - Horizontal</CardTitle>
-              <CardDescription>January - June 2024</CardDescription>
+              <CardTitle>Employee Count by Designation</CardTitle>
+              <CardDescription></CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer className="h-[200px] w-full" config={chartConfig}>
@@ -302,18 +299,18 @@ export default function EmployeDashboard() {
             </CardContent>
             <CardFooter className="flex-col items-start gap-3 text-sm">
               <div className="flex gap-2 font-medium leading-none">
-                Trending up by 5.2% this month{" "}
+                Showing Employee count by designation{" "}
                 <TrendingUp className="h-4 w-4" />
               </div>
               <div className="leading-none text-muted-foreground">
-                Showing total visitors for the last 6 months
+                {/* Showing total visitors for the last 6 months */}
               </div>
             </CardFooter>
           </Card>
           <Card className="flex flex-col md:col-span-2 rounded-none">
             <CardHeader className="items-center pb-0">
-              <CardTitle>Pie Chart - Donut with Text</CardTitle>
-              <CardDescription>January - June 2024</CardDescription>
+              <CardTitle>Employee - Nation distribution</CardTitle>
+              <CardDescription>Employee nation distribution</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
               <ChartContainer
@@ -327,11 +324,31 @@ export default function EmployeDashboard() {
                   />
                   <Pie
                     data={[
-                      { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-                      { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-                      { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-                      { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-                      { browser: "other", visitors: 190, fill: "var(--color-other)" },
+                      {
+                        browser: "chrome",
+                        visitors: 275,
+                        fill: "var(--color-chrome)",
+                      },
+                      {
+                        browser: "safari",
+                        visitors: 200,
+                        fill: "var(--color-safari)",
+                      },
+                      {
+                        browser: "firefox",
+                        visitors: 287,
+                        fill: "var(--color-firefox)",
+                      },
+                      {
+                        browser: "edge",
+                        visitors: 173,
+                        fill: "var(--color-edge)",
+                      },
+                      {
+                        browser: "other",
+                        visitors: 190,
+                        fill: "var(--color-other)",
+                      },
                     ]}
                     dataKey="visitors"
                     nameKey="browser"
@@ -373,11 +390,11 @@ export default function EmployeDashboard() {
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">
               <div className="flex items-center gap-2 font-medium leading-none">
-                Trending up by 5.2% this month{" "}
+              Grouped Employees with their nation{" "}
                 <TrendingUp className="h-4 w-4" />
               </div>
               <div className="leading-none text-muted-foreground">
-                Showing total visitors for the last 6 months
+                Showing group wise data
               </div>
             </CardFooter>
           </Card>
