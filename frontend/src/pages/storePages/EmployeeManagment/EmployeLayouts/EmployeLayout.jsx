@@ -17,14 +17,14 @@ export default function EmployeeLayouts() {
   return (
     <main className="w-full h-full bg-white rounded-md p-2">
       <div className="relative">
-        <div className="w-full hidden lg:block sticky top-0 z-10 left-0">
+        <div className="w-full hidden xl:block sticky top-0 z-10 left-0">
           <Tabs
             defaultValue={employeRoueKeys[pathname]}
             className="w-full flex flex-wrap "
           >
             <TabsList className="bg-gray-200 w-full">
               <TabsTrigger
-                onClick={() => navigate("/employee-mangement")}
+                onClick={() => navigate("/admin/employee-mangement")}
                 className="w-full"
                 value="dashboard"
               >

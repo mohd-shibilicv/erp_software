@@ -19,7 +19,7 @@ export default function CompanyLayouts() {
   return (
     <main className="w-full h-full bg-white rounded-md p-2">
       <div className="">
-        <div className="w-full hidden lg:block sticky top-0 z-10">
+        <div className="w-full hidden xl:block sticky top-0 z-10">
           <Tabs
             defaultValue={companyRouteKeys[pathname]}
             className="w-full flex flex-wrap "

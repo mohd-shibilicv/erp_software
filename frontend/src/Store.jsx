@@ -316,7 +316,7 @@ function Store() {
           }
         />
         <Route
-          path="/employeeMangement"
+          path="/employee-mangement"
           element={
             <StoreProtectedRoute allowedRoles={["admin"]}>
               <EmployeeLayouts />
