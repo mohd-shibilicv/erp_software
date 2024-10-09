@@ -59,6 +59,8 @@ import {
   ShieldAlert,
   ChartScatter,
   ChartNoAxesCombinedIcon,
+  LayoutDashboardIcon,
+  ShieldX,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -89,7 +91,71 @@ const StoreSidebar = () => {
 
   const menuItems = [
     {
-      section: "Main",
+      section: "CRM",
+      items: [
+        {
+          path: "/admin/crm-dashboard",
+          icon: LayoutDashboardIcon,
+          label: "CRM Dashboard",
+        },
+        {
+          path: "/admin/client-request",
+          icon: CalendarArrowDown,
+          label: "Client Requests",
+        },
+        {
+          path: "/admin/client-relationship",
+          icon: Contact,
+          label: "Client Relationship",
+        },
+        {
+          path: "/admin/client-requirements",
+          icon: Headset,
+          label: "Client Requirements",
+        },
+        { path: "/admin/quotation", icon: Handshake, label: "Quotation" },
+        { path: "/admin/agreement", icon: Signature, label: "Agreement" },
+      ],
+    },
+    {
+      section: "Transactions",
+      items: [
+        { path: "/admin/invoice", icon: StickyNote, label: "Invoice" },
+        {
+          path: "/admin/add-receipt-voucher",
+          icon: ReceiptText,
+          label: "Add Receipt",
+        },
+        {
+          path: "/admin/add-payment-transaction",
+          icon: CreditCard,
+          label: "Add Payment",
+        },
+        // { path: "/admin/job-order", icon: SendToBack, label: "Job Order" },
+      ],
+    },
+    {
+      section: "Job Order",
+      items: [
+        {
+          path: "/admin/projects",
+          icon: LayoutList,
+          label: "Projects",
+        },
+        {
+          path: "/admin/tasks",
+          icon: ClipboardCheck,
+          label: "Tasks",
+        },
+        {
+          path: "/admin/delivery-note",
+          icon: NotebookPen,
+          label: "Delivery Note",
+        },
+      ],
+    },
+    {
+      section: "Product Management",
       items: [
         { path: "/admin", icon: LayoutDashboard, label: "Dashboard" },
         { path: "/admin/products", icon: PackageSearch, label: "Products" },
@@ -107,9 +173,9 @@ const StoreSidebar = () => {
       section: "Inventory",
       items: [
         {
-          path: "/admin/damaged-products",
-          icon: HeartCrack,
-          label: "Damaged Products",
+          path: "/admin/product-inflow",
+          icon: ArrowDownToDot,
+          label: "Product Inflows",
         },
         {
           path: "/admin/product-requests",
@@ -117,14 +183,14 @@ const StoreSidebar = () => {
           label: "Product Requests",
         },
         {
-          path: "/admin/product-inflow",
-          icon: ArrowDownToDot,
-          label: "Product Inflows",
-        },
-        {
           path: "/admin/product-outflow",
           icon: ArrowUpFromDot,
           label: "Product Outflows",
+        },
+        {
+          path: "/admin/damaged-products",
+          icon: ShieldX,
+          label: "Defective Products",
         },
       ],
     },
@@ -162,50 +228,6 @@ const StoreSidebar = () => {
         },
       ],
     },
-    {
-      section: "Transactions",
-      items: [
-        {
-          path: "/admin/add-payment-transaction",
-          icon: CreditCard,
-          label: "Add Payment",
-        },
-        {
-          path: "/admin/add-receipt-voucher",
-          icon: ReceiptText,
-          label: "Add Receipt",
-        },
-        { path: "/admin/invoice", icon: StickyNote, label: "Invoice" },
-        { path: "/admin/job-order", icon: SendToBack, label: "Job Order" },
-        {
-          path: "/admin/delivery-note",
-          icon: NotebookPen,
-          label: "Delivery Note",
-        },
-      ],
-    },
-    {
-      section: "CRM",
-      items: [
-        {
-          path: "/admin/client-request",
-          icon: CalendarArrowDown,
-          label: "Client Requests",
-        },
-        {
-          path: "/admin/client-relationship",
-          icon: Contact,
-          label: "Client Relationship",
-        },
-        {
-          path: "/admin/client-requirements",
-          icon: Headset,
-          label: "Client Requirements",
-        },
-        { path: "/admin/quotation", icon: Handshake, label: "Quotation" },
-        { path: "/admin/agreement", icon: Signature, label: "Agreement" },
-      ],
-    },
     user.role === "staff"
       ? {
           section: "Tasks",
@@ -214,21 +236,6 @@ const StoreSidebar = () => {
           ],
         }
       : null,
-    {
-      section: "Job Order",
-      items: [
-        {
-          path: "/admin/projects",
-          icon: LayoutList,
-          label: "Projects",
-        },
-        {
-          path: "/admin/tasks",
-          icon: ClipboardCheck,
-          label: "Tasks",
-        },
-      ],
-    },
     {
       section: "Employee Management",
       items: [

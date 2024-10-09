@@ -76,6 +76,7 @@ import { FireAndCertfication } from "./pages/storePages/CompanyManagement/firean
 import { RentandExpense } from "./pages/storePages/CompanyManagement/rentAndExpense";
 import { CompanyReports } from "./pages/storePages/CompanyManagement/reports";
 import GroupMailing from "./components/store/GroupMailing";
+import CrmDashboard from "./components/store/CrmDashboard";
 
 function Store() {
   return (
@@ -367,6 +368,8 @@ function Store() {
           <Route path="reports" element={<Reports />} /> */}
         </Route>
 
+        {/* CRM */}
+        <Route path="/crm-dashboard" element={<CrmDashboard />} />
         <Route path="/client-request" element={<DemoRequestTable />} />
         <Route
           path="/staff-tasks"
@@ -415,6 +418,7 @@ function Store() {
           path="/quotation/new/:id"
           element={<AddEditQuotation isEditMode={true} />}
         />
+
 
         <Route path="/agreement" element={<ClientAgreementList />} />
         <Route path="/agreement/new" element={<AgreementAddEdit />} />

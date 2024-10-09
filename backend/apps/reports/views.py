@@ -4,7 +4,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.utils import timezone
-from django.db.models import Sum, F, Count, IntegerField
+from django.db.models import Sum, F, Count, IntegerField, Avg
 from django.db.models.functions import Coalesce, Cast
 from .serializers import (
     ProductInflowSerializer,
@@ -271,10 +271,8 @@ class DashboardView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        # Get query parameters for time period filtering
-        period = request.query_params.get("period", "daily")
+        period = request.query_params.get("period", "monthly")
 
-        # Calculate date range based on the period
         end_date = timezone.now().date()
         if period == "daily":
             start_date = end_date
@@ -285,7 +283,6 @@ class DashboardView(APIView):
         else:
             return Response({"error": "Invalid period specified"}, status=400)
 
-        # Fetch data for different sections of the dashboard
         total_products = Product.objects.count()
         total_branches = Branch.objects.count()
 
@@ -294,10 +291,7 @@ class DashboardView(APIView):
         ).aggregate(
             total_inflow=Coalesce(Sum("quantity_received"), 0),
             total_inflow_value=Coalesce(
-                Sum(
-                    F("quantity_received") * F("product__price"),
-                    output_field=IntegerField(),
-                ),
+                Sum(F("quantity_received") * F("product__price"), output_field=IntegerField()),
                 0,
             ),
         )
@@ -307,10 +301,7 @@ class DashboardView(APIView):
         ).aggregate(
             total_outflow=Coalesce(Sum("quantity_sent"), 0),
             total_outflow_value=Coalesce(
-                Sum(
-                    F("quantity_sent") * F("product__price"),
-                    output_field=IntegerField(),
-                ),
+                Sum(F("quantity_sent") * F("product__price"), output_field=IntegerField()),
                 0,
             ),
         )
@@ -334,7 +325,18 @@ class DashboardView(APIView):
             .order_by("-total_expired")[:5]
         )
 
-        # Prepare the response data
+        # Calculate inventory turnover
+        avg_inventory = Product.objects.aggregate(avg=Avg('quantity'))['avg'] or 1
+        inventory_turnover = outflow_data['total_outflow'] / avg_inventory
+
+        # Calculate revenue trend (simplified example)
+        revenue_trend = (
+            ProductOutflow.objects.filter(date_sent__range=[start_date, end_date])
+            .values('date_sent__month')
+            .annotate(revenue=Sum(F('quantity_sent') * F('product__price')))
+            .order_by('date_sent__month')
+        )
+
         response_data = {
             "total_products": total_products,
             "total_branches": total_branches,
@@ -349,6 +351,11 @@ class DashboardView(APIView):
             "low_stock_products": low_stock_products,
             "branch_stock": list(branch_stock),
             "expired_products": list(expired_products),
+            "inventory_turnover": round(inventory_turnover, 1),
+            "revenue_trend": [
+                {"month": item['date_sent__month'], "revenue": float(item['revenue'])}
+                for item in revenue_trend
+            ],
         }
 
         return Response(response_data)
