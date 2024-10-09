@@ -46,6 +46,12 @@ from apps.crm.views import (
     QuotationItemViewSet,
     QuotationViewSet,
     AgreementViewSet,
+    ProjectViewSet,
+    ProjectAssignedStaffsViewSet,
+    ProjectTaskViewSet,
+    ProjectIndividualTaskViewSet,
+    StaffProjectAssignmentViewSet,
+    SendProjectEmailView
 )
 from apps.accounts.views import (
    NatureGroupViewSet,
@@ -94,12 +100,23 @@ router.register(r'nature-groups', NatureGroupViewSet)
 router.register(r'main-groups', MainGroupViewSet)
 router.register(r'ledgers', LedgerViewSet)
 
+router.register(r'projects', ProjectViewSet, basename='project')
+router.register(r'project-assignments', ProjectAssignedStaffsViewSet, basename='project-assignments')
+router.register(r'project-tasks', ProjectTaskViewSet)
+router.register(r'individual-projects-tasks',ProjectIndividualTaskViewSet, basename="individual-projects-tasks")
+router.register(r'staff-assignments', StaffProjectAssignmentViewSet, basename='staff-assignments'),
+router.register(r'induvidual-listing', StaffProjectAssignmentViewSet, basename='staff-assignments-induvidual')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
+    path('api/send-project-email/', SendProjectEmailView.as_view(), name='send_project_email'),
+
     path("api/logout/", LogoutView.as_view({"post": "logout"}), name="logout"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # Store Reports
 urlpatterns += [

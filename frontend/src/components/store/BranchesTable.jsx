@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -37,6 +37,8 @@ import {
 import { api, fetchBranches } from "@/services/api";
 import BranchModal from "../modals/BranchModal";
 import ConfirmationModal from "../modals/ConfirmationModal";
+// import toast from "react-hot-toast";
+import { useToast } from "../ui/use-toast";
 
 export function BranchesTable() {
   const [sorting, setSorting] = useState([]);
@@ -48,7 +50,7 @@ export function BranchesTable() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [branchToDelete, setBranchToDelete] = useState(null);
-
+  const { toast } = useToast();
   useEffect(() => {
     fetchBranches()
       .then((data) => setData(data.results))
@@ -78,18 +80,29 @@ export function BranchesTable() {
     setBranchToDelete(branch);
     setIsDeleteModalOpen(true);
   };
-
+  const [branchSaveLoad, setBranchSaveLoad] = useState(false);
   const handleSaveBranch = async (formData) => {
     try {
+      setBranchSaveLoad(true);
       if (selectedBranch) {
         await api.put(`/branches/${selectedBranch.id}/`, formData);
       } else {
         await api.post("/branches/", formData);
       }
       handleFetchBranches();
+      setBranchSaveLoad(false);
       setIsBranchModalOpen(false);
     } catch (error) {
+      setBranchSaveLoad(false);
       console.error("Error saving branch:", error);
+      if (error?.response?.data) {
+        return toast({
+          title: "Error",
+          description:
+            error.response?.data[Object.keys(error.response?.data)[0]],
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -328,6 +341,7 @@ export function BranchesTable() {
         onClose={() => setIsBranchModalOpen(false)}
         onSave={handleSaveBranch}
         branch={selectedBranch}
+        branchSaveLoad={branchSaveLoad}
       />
       <ConfirmationModal
         open={isDeleteModalOpen}

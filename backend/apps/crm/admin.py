@@ -1,3 +1,4 @@
+from unfold.admin import ModelAdmin as UnfoldModelAdmin
 from django.contrib import admin
 from .models import (
     ClientRequest,
@@ -9,20 +10,22 @@ from .models import (
     Quotation,
     QuotationItem,
     Agreement,
-    PaymentTerm
+    PaymentTerm,
+    Project,
 )
 
-admin.site.register(Client)
-admin.site.register(ClientRequest)
-admin.site.register(ClientRelationship)
-admin.site.register(ClientRequirement)
-admin.site.register(RequirementImage)
+admin.site.register(Client, UnfoldModelAdmin)
+admin.site.register(ClientRequest, UnfoldModelAdmin)
+admin.site.register(ClientRelationship, UnfoldModelAdmin)
+admin.site.register(ClientRequirement, UnfoldModelAdmin)
+admin.site.register(RequirementImage, UnfoldModelAdmin)
 
 @admin.register(Feature)
-class FeatureAdmin(admin.ModelAdmin):
+class FeatureAdmin(UnfoldModelAdmin):
     list_display = ("name",)
 
-admin.site.register(Quotation)
-admin.site.register(QuotationItem)
-admin.site.register(Agreement)
-admin.site.register(PaymentTerm)
+admin.site.register(Quotation, UnfoldModelAdmin)
+admin.site.register(QuotationItem, UnfoldModelAdmin)
+admin.site.register(Agreement, UnfoldModelAdmin)
+admin.site.register(PaymentTerm, UnfoldModelAdmin)
+admin.site.register(Project, UnfoldModelAdmin)

@@ -12,6 +12,7 @@ import {
   ChevronDown,
   MoreHorizontal,
   PlusCircle,
+  Send,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -51,7 +52,14 @@ import {
 import ProductRequestModal from "../modals/ProductRequestModal";
 import ConfirmationModal from "../modals/ConfirmationModal";
 import { Label } from "../ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import OutflowModalForm from "../modals/OutflowModalForm";
 
 export const ProductRequestsTable = () => {
   const [sorting, setSorting] = useState([]);
@@ -64,6 +72,8 @@ export const ProductRequestsTable = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
+  const [isOutflowModalOpen, setIsOutflowModalOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
   useEffect(() => {
     fetchProductRequests()
@@ -108,6 +118,27 @@ export const ProductRequestsTable = () => {
       setIsDeleteModalOpen(false);
     } catch (error) {
       console.error("Failed to delete product request:", error);
+    }
+  };
+
+  const handleSendOutflow = (request) => {
+    setSelectedRequest(request);
+    setIsOutflowModalOpen(true);
+  };
+
+  const handleCreateOutflow = async (outflowData) => {
+    try {
+      await api.post("/product-outflow/", outflowData);
+      // Update the status of the product request to "fulfilled"
+      await api.patch(`/product-requests/${selectedRequest.id}/`, {
+        status: "fulfilled",
+      });
+      // Refresh the product requests data
+      const updatedRequests = await fetchProductRequests();
+      setData(updatedRequests.results);
+      setIsOutflowModalOpen(false);
+    } catch (error) {
+      console.error("Failed to create product outflow:", error);
     }
   };
 
@@ -266,11 +297,11 @@ export const ProductRequestsTable = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(request.id.toString())
-                }
+                onClick={() => handleSendOutflow(request)}
+                disabled={request.status === "fulfilled"}
               >
-                Copy request ID
+                <Send className="mr-2 h-4 w-4" />
+                Send Outflow
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -440,6 +471,35 @@ export const ProductRequestsTable = () => {
         title="Delete Product Request"
         description="Are you sure you want to delete this product request? This action cannot be undone."
       />
+      <Dialog open={isOutflowModalOpen} onOpenChange={setIsOutflowModalOpen}>
+        <DialogContent className="max-w-6xl">
+          <DialogHeader>
+            <DialogTitle>Create Product Outflow</DialogTitle>
+            <DialogDescription>
+              Send products to the requesting branch
+            </DialogDescription>
+          </DialogHeader>
+          <OutflowModalForm
+            products={products}
+            branches={branches}
+            onSubmit={handleCreateOutflow}
+            onCancel={() => setIsOutflowModalOpen(false)}
+            initialData={
+              selectedRequest
+                ? [
+                    {
+                      id: 1,
+                      product: selectedRequest.product.toString(),
+                      branch: selectedRequest.branch.toString(),
+                      quantity_sent: selectedRequest.quantity,
+                      expiry_date: "",
+                    },
+                  ]
+                : []
+            }
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

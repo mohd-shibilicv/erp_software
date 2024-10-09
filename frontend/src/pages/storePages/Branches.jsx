@@ -1,6 +1,5 @@
-import Layout from "@/components/layout/Layout";
+// import Layout from "@/components/layout/Layout";
 import { BranchesTable } from "@/components/store/BranchesTable";
-import React from "react";
 
 const Branches = () => {
   return (

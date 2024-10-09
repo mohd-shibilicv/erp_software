@@ -114,7 +114,7 @@ const Dashboard = () => {
           <CardHeader>
             <CardTitle>Top 5 Products by Outflow</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent >
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={dashboardData.top_products} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" />

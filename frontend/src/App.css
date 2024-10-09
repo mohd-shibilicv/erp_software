@@ -1,3 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Questrial&display=swap");
+
+body {
+  font-family: "Questrial", sans-serif;
+  font-weight: 400;
+}
 html {
   overflow: hidden;
 }
@@ -19,3 +25,4 @@ html {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: #00000037;
 }
+

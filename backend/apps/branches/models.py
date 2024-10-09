@@ -49,14 +49,6 @@ class BranchProduct(models.Model):
     def __str__(self):
         return f"{self.product.name} at {self.branch.name}"
 
-    def clean(self):
-        if self.quantity < 0:
-            raise ValidationError("Quantity cannot be negative.")
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-
     @property
     def product_name(self):
         return self.product.name

@@ -1,4 +1,87 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-  
+
+/* Sapphire with Purple Tints */
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* White background */
+    --foreground: 222.2 84% 4.9%; /* Black text */
+    --card: 0 0% 100%; /* White card */
+    --card-foreground: 222.2 84% 4.9%; /* Black text on card */
+    --popover: 0 0% 100%; /* White popover */
+    --popover-foreground: 222.2 84% 4.9%; /* Black text on popover */
+    
+    /* Adding subtle purple tint to the primary color */
+    --primary: 258.2 60% 63.3%; /* Light Purple-Blue */
+    --primary-foreground: 210 40% 98%; /* White text on primary */
+    
+    --secondary: 255 40% 96.1%; /* Light purple secondary */
+    --secondary-foreground: 222.2 47.4% 11.2%; /* Dark text on secondary */
+    
+    --muted: 255 40% 96.1%; /* Light purple muted */
+    --muted-foreground: 215.4 16.3% 44%; /* Muted foreground */
+    
+    --accent: 258 30% 90%; /* Slight purple tint on accent */
+    --accent-foreground: 222.2 47.4% 11.2%; /* Dark text on accent */
+    
+    --destructive: 0 72% 51%; /* Red for destructive */
+    --destructive-foreground: 210 40% 98%; /* White text on destructive */
+    
+    --border: 255 30% 91.4%; /* Subtle purple tint for borders */
+    --input: 255 30% 91.4%; /* Subtle purple tint for inputs */
+    
+    /* Subtle purple for ring and chart colors */
+    --ring: 258.2 60% 63.3%;
+    --chart-1: 258.2 60% 63.3%;
+    --chart-2: 265 60% 68%; /* More purple for charts */
+    --chart-3: 262 52% 60%; /* Purple tint on chart */
+    --chart-4: 260 65% 78%; /* Lighter purple tint */
+    --chart-5: 262 65% 87%; /* Lightest purple tint */
+  }
+
+  .dark {
+    --background: 240 10% 3.9%; /* Dark background */
+    --foreground: 0 0% 98%; /* White text */
+    --card: 240 10% 3.9%; /* Dark card */
+    --card-foreground: 0 0% 98%; /* White text on card */
+    --popover: 240 10% 3.9%; /* Dark popover */
+    --popover-foreground: 0 0% 98%; /* White text on popover */
+
+    /* Purple-blue tint in dark mode */
+    --primary: 258.2 60% 63.3%; /* Purple-blue for primary */
+    --primary-foreground: 210 40% 98%; /* White text on primary */
+    
+    --secondary: 255 40% 96.1%; /* Lighter purple for secondary */
+    --secondary-foreground: 222.2 47.4% 11.2%; /* Dark text on secondary */
+    
+    --muted: 255 30% 15.9%; /* Dark muted purple */
+    --muted-foreground: 240 5% 64.9%; /* Muted foreground */
+    
+    --accent: 255 30% 15.9%; /* Dark purple accent */
+    --accent-foreground: 0 0% 98%; /* White text on accent */
+    
+    --destructive: 0 72% 51%; /* Red for destructive */
+    --destructive-foreground: 210 40% 98%; /* White text on destructive */
+    
+    --border: 255 30% 15.9%; /* Subtle dark purple borders */
+    --input: 255 30% 15.9%; /* Dark purple for input */
+    
+    --ring: 258.2 60% 63.3%;
+    --chart-1: 258.2 60% 63.3%;
+    --chart-2: 265 60% 68%; /* More purple for charts */
+    --chart-3: 262 52% 60%; /* Purple tint on chart */
+    --chart-4: 260 65% 78%; /* Lighter purple tint */
+    --chart-5: 262 65% 87%; /* Lightest purple tint */
+  }
+}
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

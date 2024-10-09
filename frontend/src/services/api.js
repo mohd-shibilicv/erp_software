@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import { setTokenExpired } from "@/features/slices/authSlice";
 import store from "@/features/store";
 import axios from "axios";
@@ -85,5 +86,10 @@ export const fetchBranches = async () => {
 
 export const fetchProductRequests = async () => {
   const response = await api.get("/product-requests/");
+  return response.data;
+};
+
+export const refreshProductOutflows = async () => {
+  const response = await api.get("/product-outflow/");
   return response.data;
 };

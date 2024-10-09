@@ -72,6 +72,7 @@ const InvoiceGenerator = () => {
           setFooterImage(reader.result);
         }
       };
+      
       reader.readAsDataURL(file);
     } else {
       alert("Please upload an image file");
@@ -368,10 +369,10 @@ const InvoiceGenerator = () => {
               className="w-full mb-8 max-h-32"
             />
           )}
-          <div className="max-w-4xl mx-auto p-8 bg-white">
+          <div className="max-w-4xl mx-auto p-8 bg-white ">
             <div className="flex justify-between mb-8">
               <div>
-                <h2 className="text-3xl font-bold mb-2 uppercase">
+                <h2 className="text-2xl font-bold mb-2 uppercase">
                   {invoiceType} Invoice
                 </h2>
                 <p className="font-semibold">INVOICE NO: #{invoiceNumber}</p>
@@ -385,7 +386,7 @@ const InvoiceGenerator = () => {
               </div>
             </div>
 
-            <Table className="w-full mb-8">
+            <Table className="w-full mb-8 ">
               <TableHeader>
                 <TableRow className="bg-gray-100">
                   <TableHead className="font-bold py-2 px-4 text-left">
@@ -404,7 +405,7 @@ const InvoiceGenerator = () => {
               </TableHeader>
               <TableBody>
                 {items.map((item, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={index} >
                     <TableCell className="py-2 px-4">{item.Item}</TableCell>
                     <TableCell className="py-2 px-4 text-right">
                       {item.Quantity}
@@ -420,15 +421,15 @@ const InvoiceGenerator = () => {
               </TableBody>
             </Table>
 
-            <div className="flex justify-end mb-8">
-              <div className="w-1/3">
+            <div className="flex justify-end mb-8 ">
+              <div className="w-full">
                 <div className="flex justify-between border-t border-gray-200 pt-2">
-                  <span className="font-semibold">Subtotal</span>
-                  <span>QAR {calculateSubtotal().toFixed(2)}</span>
+                  <span className="font-semibold text-sm">Subtotal</span>
+                  <span className="text-sm">QAR {calculateSubtotal().toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between border-t border-gray-200 pt-2">
-                  <span className="font-semibold">Discount</span>
-                  <span>QAR {discount.toFixed(2)}</span>
+                  <span className="font-semibold text-sm">Discount</span>
+                  <span className="text-sm">QAR {discount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between border-t border-b border-gray-200 py-2">
                   <span className="font-bold">Total Amount</span>
