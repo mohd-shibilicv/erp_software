@@ -359,6 +359,8 @@ class Project(models.Model):
         User, related_name="assigned_projects", blank=True
     )
     active = models.BooleanField(default=False)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.status == "completed":

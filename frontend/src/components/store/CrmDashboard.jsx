@@ -15,6 +15,8 @@ import {
   PieChart,
   Pie,
   Cell,
+  LineChart,
+  Line,
 } from "recharts";
 import {
   Users,
@@ -23,123 +25,179 @@ import {
   ClipboardList,
   DollarSign,
   Calendar,
+  Clock,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-// Simulated API call
-const fetchDashboardData = async () => {
-  // In a real application, this would be an API call
-  return {
-    totalClients: 150,
-    totalProjects: 45,
-    totalQuotations: 78,
-    totalAgreements: 62,
-    recentClients: [
-      { name: "Acme Corp", value: 5 },
-      { name: "TechGiant Inc", value: 3 },
-      { name: "StartUp Ltd", value: 2 },
-      { name: "MegaCorp", value: 4 },
-      { name: "InnovaTech", value: 1 },
-    ],
-    projectStatus: [
-      { name: "Not Started", value: 10 },
-      { name: "In Progress", value: 25 },
-      { name: "On Hold", value: 5 },
-      { name: "Completed", value: 5 },
-    ],
-    monthlyRevenue: [
-      { name: "Jan", revenue: 45000 },
-      { name: "Feb", revenue: 52000 },
-      { name: "Mar", revenue: 48000 },
-      { name: "Apr", revenue: 61000 },
-      { name: "May", revenue: 55000 },
-      { name: "Jun", revenue: 67000 },
-    ],
-  };
-};
+import { api } from "@/services/api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
+const ProjectStatusCard = ({ dashboardData, isLoading }) => {
+  const formatProjectStatus = (status) => {
+    if (typeof status === "string") {
+      return status
+        .split("_")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    }
+    return status;
+  };
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="custom-tooltip bg-white p-2 border border-gray-200 rounded shadow">
+          <p className="label font-semibold">{`${formatProjectStatus(
+            data.status
+          )}`}</p>
+          <p className="intro">{`Count: ${data.count}`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderCustomizedLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+    index,
+  }) => {
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? "start" : "end"}
+        dominantBaseline="central"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
+  return (
+    <Card className="col-span-3">
+      <CardHeader>
+        <CardTitle>Project Status</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <Skeleton className="h-[300px] w-full" />
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={dashboardData.project_status}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="count"
+                label={renderCustomizedLabel}
+              >
+                {dashboardData.project_status.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+              <Legend formatter={(value) => formatProjectStatus(value)} />
+            </PieChart>
+          </ResponsiveContainer>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
 export default function CrmDashboard() {
   const [dashboardData, setDashboardData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadData = async () => {
-      const data = await fetchDashboardData();
-      setDashboardData(data);
+    const fetchDashboardData = async () => {
+      try {
+        const response = await api.get("/crm-dashboard/");
+        setDashboardData(response.data);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    loadData();
+    fetchDashboardData();
   }, []);
 
-  if (!dashboardData) return <div>Loading...</div>;
+  const StatCard = ({ title, value, icon: Icon, onClick }) => (
+    <Card
+      onClick={onClick}
+      className="cursor-pointer transition-all hover:shadow-md"
+    >
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">
+          {isLoading ? <Skeleton className="h-8 w-20" /> : value}
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const formatProjectStatus = (status) => {
+    if (typeof status === "string") {
+      return status
+        .split("_")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    }
+    return status;
+  };
 
   return (
     <div className="p-8 bg-background">
       <h1 className="text-3xl font-bold mb-6">CRM Dashboard</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card
-          onClick={() => navigate("/admin/crm-dashboard")}
-          className="cursor-pointer"
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {dashboardData.totalClients}
-            </div>
-          </CardContent>
-        </Card>
-        <Card
-          onClick={() => navigate("/admin/crm-dashboard")}
-          className="cursor-pointer"
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Active Projects
-            </CardTitle>
-            <Briefcase className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {dashboardData.totalProjects}
-            </div>
-          </CardContent>
-        </Card>
-        <Card
-          onClick={() => navigate("/admin/crm-dashboard")}
-          className="cursor-pointer"
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Open Quotations
-            </CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {dashboardData.totalQuotations}
-            </div>
-          </CardContent>
-        </Card>
-        <Card
-          onClick={() => navigate("/admin/crm-dashboard")}
-          className="cursor-pointer"
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Active Agreements
-            </CardTitle>
-            <ClipboardList className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {dashboardData.totalAgreements}
-            </div>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Total Clients"
+          value={dashboardData?.total_clients}
+          icon={Users}
+          onClick={() => navigate("/admin/client-request")}
+        />
+        <StatCard
+          title="Active Projects"
+          value={dashboardData?.total_projects}
+          icon={Briefcase}
+          onClick={() => navigate("/admin/projects")}
+        />
+        <StatCard
+          title="Open Quotations"
+          value={dashboardData?.total_quotations}
+          icon={FileText}
+          onClick={() => navigate("/admin/quotation")}
+        />
+        <StatCard
+          title="Active Agreements"
+          value={dashboardData?.total_agreements}
+          icon={ClipboardList}
+          onClick={() => navigate("/admin/agreement")}
+        />
       </div>
       <Tabs defaultValue="overview" className="mt-6">
         <TabsList>
@@ -155,50 +213,71 @@ export default function CrmDashboard() {
                 <CardTitle>Monthly Revenue</CardTitle>
               </CardHeader>
               <CardContent className="pl-2">
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={dashboardData.monthlyRevenue}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="revenue" fill="#8884d8" />
-                  </BarChart>
-                </ResponsiveContainer>
+                {isLoading ? (
+                  <Skeleton className="h-[300px] w-full" />
+                ) : (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={dashboardData.monthly_revenue}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Line
+                        type="monotone"
+                        dataKey="revenue"
+                        stroke="#8884d8"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                )}
               </CardContent>
             </Card>
-            <Card className="col-span-3">
-              <CardHeader>
-                <CardTitle>Project Status</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={dashboardData.projectStatus}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, percent }) =>
-                        `${name} ${(percent * 100).toFixed(0)}%`
-                      }
-                    >
-                      {dashboardData.projectStatus.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
+            <ProjectStatusCard
+              dashboardData={dashboardData}
+              isLoading={isLoading}
+            />
           </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Key Metrics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="flex items-center space-x-2 border border-gray-300 p-2 rounded">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span>Avg. Project Duration:</span>
+                  <span className="font-bold">
+                    {isLoading ? (
+                      <Skeleton className="h-4 w-16" />
+                    ) : (
+                      `${dashboardData.avg_project_duration} days`
+                    )}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2 border border-gray-300 p-2 rounded">
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                  <span>Total Revenue (Last 12 Months):</span>
+                  <span className="font-bold">
+                    {isLoading ? (
+                      <Skeleton className="h-4 w-16" />
+                    ) : (
+                      `$${dashboardData.monthly_revenue
+                        .reduce((sum, month) => sum + month.revenue, 0)
+                        .toFixed(2)}`
+                    )}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2 border border-gray-300 p-2 rounded">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span>Client Retention Rate:</span>
+                  <span className="font-bold">
+                    {isLoading ? <Skeleton className="h-4 w-16" /> : "85%"}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
         <TabsContent value="clients">
           <Card>
@@ -206,16 +285,32 @@ export default function CrmDashboard() {
               <CardTitle>Recent Clients</CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={dashboardData.recentClients} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="name" type="category" width={150} />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" fill="#8884d8" name="Projects" />
-                </BarChart>
-              </ResponsiveContainer>
+              {isLoading ? (
+                <Skeleton className="h-[300px] w-full" />
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart
+                    data={dashboardData.recent_clients}
+                    layout="vertical"
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" />
+                    <YAxis dataKey="name" type="category" width={150} />
+                    <Tooltip />
+                    <Legend />
+                    <Bar
+                      dataKey="project_count"
+                      fill="#8884d8"
+                      name="Projects"
+                    />
+                    <Bar
+                      dataKey="total_revenue"
+                      fill="#82ca9d"
+                      name="Revenue"
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -225,49 +320,92 @@ export default function CrmDashboard() {
               <CardTitle>Project Status Overview</CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={dashboardData.projectStatus}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, value }) => `${name}: ${value}`}
-                  >
-                    {dashboardData.projectStatus.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
+              {isLoading ? (
+                <Skeleton className="h-[300px] w-full" />
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={dashboardData.project_status}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="count"
+                      label={({ status, count }) => `${status}: ${count}`}
+                    >
+                      {dashboardData.project_status.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend formatter={(value) => formatProjectStatus(value)} />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="finance">
-          <Card>
-            <CardHeader>
-              <CardTitle>Revenue Trend</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={dashboardData.monthlyRevenue}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="revenue" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue Trend</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <Skeleton className="h-[300px] w-full" />
+                ) : (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={dashboardData.monthly_revenue}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Line
+                        type="monotone"
+                        dataKey="revenue"
+                        stroke="#8884d8"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Top Clients by Revenue</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <Skeleton className="h-[300px] w-full" />
+                ) : (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart
+                      data={dashboardData.top_clients}
+                      layout="vertical"
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis type="number" />
+                      <YAxis dataKey="name" type="category" width={150} />
+                      <Tooltip />
+                      <Legend />
+                      <Bar
+                        dataKey="total_revenue"
+                        fill="#8884d8"
+                        name="Total Revenue"
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

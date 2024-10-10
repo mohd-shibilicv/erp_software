@@ -26,6 +26,7 @@ google-api-python-client = "^2.145.0"
 whitenoise = "^6.7.0"
 gunicorn = "^23.0.0"
 django-unfold = "^0.39.0"
+django-templated-email = "^3.0.1"
 
 
 [build-system]

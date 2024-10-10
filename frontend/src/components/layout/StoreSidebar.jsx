@@ -136,7 +136,7 @@ const StoreSidebar = () => {
       ],
     },
     {
-      section: "Job Order",
+      section: "Project Management",
       items: [
         {
           path: "/admin/projects",
@@ -200,7 +200,7 @@ const StoreSidebar = () => {
       items: [
         { path: "/admin/reports", icon: Layers3, label: "Reports" },
         { path: "/admin/sales", icon: SheetIcon, label: "Sales" },
-        { path: "/admin/van-sales", icon: NotebookText, label: "Van Sales" },
+        { path: "/admin/van-sales", icon: NotebookText, label: "Join Venture Sales" },
       ],
     },
     {
@@ -208,7 +208,6 @@ const StoreSidebar = () => {
       items: [
         // { path: "/admin/packing", icon: Package, label: "Packing" }, renamed `Product Grouping`
         { path: "/admin/packing", icon: Package, label: "Product Grouping" },
-
         {
           path: "/admin/physical-stock",
           icon: Blocks,
@@ -255,7 +254,7 @@ const StoreSidebar = () => {
         {
           path: "/admin/employee-mangement/employee-list",
           icon: UsersRound,
-          label: "Employee list",
+          label: "Employees",
         },
         {
           path: "/admin/employee-mangement/leave-vacation",
@@ -352,12 +351,12 @@ const StoreSidebar = () => {
         {
           path: "/admin/company-management/fire-certification",
           icon: ShieldAlert,
-          label: "Fire and Certificate",
+          label: "AMC Contract",
         },
         {
           path: "/admin/company-management/rent-expense",
           icon: ChartScatter,
-          label: "Rent and Expense",
+          label: "Rental Expense",
         },
         {
           path: "/admin/company-management/reports",

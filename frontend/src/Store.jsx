@@ -61,7 +61,7 @@ import AssetReports from "./components/asset-management/AssetReports";
 import EmployeeLayouts from "./pages/storePages/EmployeeManagment/EmployeLayouts/EmployeLayout";
 import EmployeDashboard from "./pages/storePages/EmployeeManagment/EmployeDashboard";
 import AddEmployee from "./pages/storePages/EmployeeManagment/AddEmployee";
-import EmployeeList from "./pages/storePages/EmployeeManagment/EmployeeLIst";
+import EmployeeList from "./pages/storePages/EmployeeManagment/EmployeeList";
 import LeaveAndVacation from "./pages/storePages/EmployeeManagment/LeaveAndVacation";
 import VpTrack from "./pages/storePages/EmployeeManagment/vpTrack";
 import UniformReport from "./pages/storePages/EmployeeManagment/UniformReport";

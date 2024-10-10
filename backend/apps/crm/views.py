@@ -14,7 +14,7 @@ from .models import (
     Project,
     ProjectAssignedStaffs,
     ProjectTask,
-    SubTask
+    SubTask,
 )
 from .serializers import (
     ClientSerializer,
@@ -29,11 +29,10 @@ from .serializers import (
     ProjectAssignedStaffsSerializer,
     ProjectTaskSerializer,
     StaffProjectAssignmentSerializer,
-    SubTaskSerializer
+    SubTaskSerializer,
 )
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from .utils import create_google_calendar_event, send_calendar_invite_email
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 import logging
 from rest_framework.views import APIView
@@ -44,6 +43,13 @@ from django.utils import timezone
 from django.core.files.base import ContentFile
 import json
 from django.http import QueryDict
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import permissions
+from django.db.models import Count, Sum, F, Avg
+from django.db.models.functions import TruncMonth
+from dateutil.relativedelta import relativedelta
+from .models import Client, Project, Quotation, Agreement
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +70,9 @@ class ClientRequestViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def get_queryset(self):
         queryset = ClientRequest.objects.all()
@@ -145,6 +153,7 @@ class QuotationItemViewSet(viewsets.ModelViewSet):
     queryset = QuotationItem.objects.all()
     serializer_class = QuotationItemSerializer
 
+
 class AgreementViewSet(viewsets.ModelViewSet):
     queryset = Agreement.objects.all()
     serializer_class = AgreementSerializer
@@ -152,34 +161,39 @@ class AgreementViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         logger.info(f"Received data for create: {request.data}")
-        
+
         if isinstance(request.data, QueryDict):
             data = request.data.dict()
         else:
             data = request.data.copy()
 
-        if 'payment_terms' in data and isinstance(data['payment_terms'], str):
+        if "payment_terms" in data and isinstance(data["payment_terms"], str):
             try:
-                data['payment_terms'] = json.loads(data['payment_terms'])
+                data["payment_terms"] = json.loads(data["payment_terms"])
             except json.JSONDecodeError:
-                return Response({"error": "Invalid payment_terms data"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "Invalid payment_terms data"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
     def update(self, request, *args, **kwargs):
         logger.info(f"Received data for update: {request.data}")
-        partial = kwargs.pop('partial', False)
+        partial = kwargs.pop("partial", False)
         instance = self.get_object()
         mutable_data = request.data.copy()
 
-        for field in ['tc_file', 'signed_agreement']:
+        for field in ["tc_file", "signed_agreement"]:
             if field in mutable_data:
                 file_data = mutable_data.get(field)
                 if not isinstance(file_data, ContentFile):
@@ -192,18 +206,23 @@ class AgreementViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save()
 
+
 from django_filters import rest_framework as filters
 
+
 class ProjectFilter(filters.FilterSet):
-    assigned_staff = filters.NumberFilter(field_name='assigned_staffs', method='filter_assigned_staff')
+    assigned_staff = filters.NumberFilter(
+        field_name="assigned_staffs", method="filter_assigned_staff"
+    )
 
     class Meta:
         model = Project
-        fields = ['assigned_staff']
+        fields = ["assigned_staff"]
 
     def filter_assigned_staff(self, queryset, name, value):
         return queryset.filter(assigned_staffs__id=value)
-    
+
+
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -211,18 +230,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
     def create(self, request, *args, **kwargs):
-        if 'assigned_staffs' in request.data and isinstance(request.data['assigned_staffs'], str):
-            request.data['assigned_staffs'] = [int(id) for id in request.data['assigned_staffs'].split(',') if id.isdigit()]
-        
+        if "assigned_staffs" in request.data and isinstance(
+            request.data["assigned_staffs"], str
+        ):
+            request.data["assigned_staffs"] = [
+                int(id)
+                for id in request.data["assigned_staffs"].split(",")
+                if id.isdigit()
+            ]
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         instance = self.perform_create(serializer)
-        
+
         headers = self.get_success_headers(serializer.data)
         return Response(
             self.get_serializer(instance).data,
             status=status.HTTP_201_CREATED,
-            headers=headers
+            headers=headers,
         )
 
     def perform_create(self, serializer):
@@ -232,27 +257,28 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class ProjectAssignedStaffsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProjectAssignedStaffsSerializer
     pagination_class = None
-    
+
     def get_queryset(self):
         return ProjectAssignedStaffs.objects.filter(is_active=True)
+
 
 class ProjectAssignedStaffsFilter(filters.FilterSet):
     class Meta:
         model = ProjectAssignedStaffs
-        fields = ['project', 'staff', 'is_active']
+        fields = ["project", "staff", "is_active"]
 
 
 class ProjectTaskFilter(filters.FilterSet):
-    project = filters.NumberFilter(field_name='project_staff__project')
-    staff = filters.NumberFilter(field_name='project_staff__staff')
+    project = filters.NumberFilter(field_name="project_staff__project")
+    staff = filters.NumberFilter(field_name="project_staff__staff")
     status = filters.ChoiceFilter(choices=ProjectTask.STATUS_CHOICES)
     priority = filters.ChoiceFilter(choices=ProjectTask.PRIORITY_CHOICES)
-    deadline_before = filters.DateTimeFilter(field_name='deadline', lookup_expr='lte')
-    deadline_after = filters.DateTimeFilter(field_name='deadline', lookup_expr='gte')
+    deadline_before = filters.DateTimeFilter(field_name="deadline", lookup_expr="lte")
+    deadline_after = filters.DateTimeFilter(field_name="deadline", lookup_expr="gte")
 
     class Meta:
         model = ProjectTask
-        fields = ['project', 'staff', 'priority']
+        fields = ["project", "staff", "priority"]
 
 
 class ProjectTaskViewSet(viewsets.ModelViewSet):
@@ -269,60 +295,68 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     def create(self, request, *args, **kwargs):
-        data = request.data.copy() 
+        data = request.data.copy()
 
-        if 'deadline' in data and isinstance(data['deadline'], str):
+        if "deadline" in data and isinstance(data["deadline"], str):
             try:
-                deadline = datetime.datetime.strptime(data['deadline'], "%Y-%m-%d %H:%M")
+                deadline = datetime.datetime.strptime(
+                    data["deadline"], "%Y-%m-%d %H:%M"
+                )
                 deadline = timezone.make_aware(deadline)
-                data['deadline'] = deadline
+                data["deadline"] = deadline
             except ValueError:
                 return Response(
-                    {'deadline': 'Invalid datetime format. Please use format YYYY-MM-DD HH:MM'},
-                    status=status.HTTP_400_BAD_REQUEST
+                    {
+                        "deadline": "Invalid datetime format. Please use format YYYY-MM-DD HH:MM"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
-        
-        if 'subtasks' in data:
+
+        if "subtasks" in data:
             try:
-                subtasks = json.loads(data['subtasks'])
+                subtasks = json.loads(data["subtasks"])
                 if isinstance(subtasks, list):
-                    data['subtasks'] = subtasks
+                    data["subtasks"] = subtasks
                 else:
                     return Response(
-                        {'subtasks': 'Invalid format. Expected a JSON array.'},
-                        status=status.HTTP_400_BAD_REQUEST
+                        {"subtasks": "Invalid format. Expected a JSON array."},
+                        status=status.HTTP_400_BAD_REQUEST,
                     )
             except json.JSONDecodeError:
                 return Response(
-                    {'subtasks': 'Invalid JSON format for subtasks.'},
-                    status=status.HTTP_400_BAD_REQUEST
+                    {"subtasks": "Invalid JSON format for subtasks."},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
-        if 'attachment' in request.FILES:
-            data['attachment'] = request.FILES['attachment']
-        elif 'attachment' in data:
-            del data['attachment']
+        if "attachment" in request.FILES:
+            data["attachment"] = request.FILES["attachment"]
+        elif "attachment" in data:
+            del data["attachment"]
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def perform_create(self, serializer):
         instance = serializer.save()
-        subtasks_data = self.request.data.get('subtasks')
+        subtasks_data = self.request.data.get("subtasks")
         if subtasks_data:
             subtasks = json.loads(subtasks_data)
             for subtask in subtasks:
                 SubTask.objects.create(project_task=instance, **subtask)
 
-    @action(detail=True, methods=['put'], url_path=r'subtask/(?P<subtask_id>\d+)')
+    @action(detail=True, methods=["put"], url_path=r"subtask/(?P<subtask_id>\d+)")
     def update_subtask(self, request, pk=None, subtask_id=None):
         task = self.get_object()
         try:
             subtask = task.subtasks.get(id=subtask_id)
         except SubTask.DoesNotExist:
-            return Response({"error": "Subtask not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Subtask not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = SubTaskSerializer(subtask, data=request.data, partial=True)
         if serializer.is_valid():
@@ -330,100 +364,105 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class ProjectIndividualTaskViewSet(viewsets.ModelViewSet):
     queryset = ProjectTask.objects.all()
     serializer_class = ProjectTaskSerializer
     parser_classes = (JSONParser, MultiPartParser, FormParser)
     filterset_class = ProjectTaskFilter
 
-    @action(detail=False, methods=['get'], url_path='staff-tasks/(?P<staff_assignment_id>[^/.]+)')
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="staff-tasks/(?P<staff_assignment_id>[^/.]+)",
+    )
     def staff_tasks(self, request, staff_assignment_id=None):
         """
         Get all tasks for a specific ProjectAssignedStaff
         """
         try:
             staff_assignment = get_object_or_404(
-                ProjectAssignedStaffs, 
-                id=staff_assignment_id,
-                is_active=True
-            )            
-            tasks = self.queryset.filter(project_staff=staff_assignment)
-            tasks = self.filter_queryset(tasks)            
-            tasks = tasks.order_by('-created_at')
-            
-            serializer = self.serializer_class(
-                tasks, 
-                many=True,
-                context={'request': request}
+                ProjectAssignedStaffs, id=staff_assignment_id, is_active=True
             )
-            
+            tasks = self.queryset.filter(project_staff=staff_assignment)
+            tasks = self.filter_queryset(tasks)
+            tasks = tasks.order_by("-created_at")
+
+            serializer = self.serializer_class(
+                tasks, many=True, context={"request": request}
+            )
+
             response_data = {
-                'staff_assignment': {
-                    'id': staff_assignment.id,
-                    'project_name': staff_assignment.project_name,
-                    'staff_name': staff_assignment.staff.username,
-                    'staff_email': staff_assignment.staff.email,
-                    'assigned_date': staff_assignment.assigned_date
+                "staff_assignment": {
+                    "id": staff_assignment.id,
+                    "project_name": staff_assignment.project_name,
+                    "staff_name": staff_assignment.staff.username,
+                    "staff_email": staff_assignment.staff.email,
+                    "assigned_date": staff_assignment.assigned_date,
                 },
-                'tasks': serializer.data
+                "tasks": serializer.data,
             }
-            
+
             return Response(response_data)
-            
+
         except ValueError:
             return Response(
-                {'error': 'Invalid staff assignment ID'},
-                status=status.HTTP_400_BAD_REQUEST
+                {"error": "Invalid staff assignment ID"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        
-  
+
+
 class StaffProjectAssignmentViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = StaffProjectAssignmentSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get_queryset(self):
-        user = self.request.user        
-        if user.role != 'staff':
+        user = self.request.user
+        if user.role != "staff":
             return ProjectAssignedStaffs.objects.none()
-            
-        return ProjectAssignedStaffs.objects.filter(
-            staff=user,
-            is_active=True
-        ).select_related('project').order_by('-assigned_date')
-    
+
+        return (
+            ProjectAssignedStaffs.objects.filter(staff=user, is_active=True)
+            .select_related("project")
+            .order_by("-assigned_date")
+        )
+
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        
+
         if not queryset.exists():
-            return Response({
-                "message": "No projects are currently assigned to you.",
-                "assignments": []
-            })
-            
+            return Response(
+                {
+                    "message": "No projects are currently assigned to you.",
+                    "assignments": [],
+                }
+            )
+
         serializer = self.get_serializer(queryset, many=True)
         response_data = {
             "staff_details": {
                 "id": request.user.id,
                 "username": request.user.username,
                 "email": request.user.email,
-                "phone_number": request.user.phone_number
+                "phone_number": request.user.phone_number,
             },
             "total_assignments": queryset.count(),
-            "assignments": serializer.data
+            "assignments": serializer.data,
         }
-        
+
         return Response(response_data)
-    
+
+
 class SendProjectEmailView(APIView):
     def post(self, request):
-        deadline = request.data.get('deadline')
+        deadline = request.data.get("deadline")
         description = request.data.get("description")
-        staff_id = request.data.get('staff_id')
-        staff_name = request.data.get('staff_name')
-        project_name = request.data.get('project_name')
-        staff_email = request.data.get('staff_email')
-        prev_deadline = request.data.get('prev_deadline')
-        project_reference_id = request.data.get('project_reference_id')
+        staff_id = request.data.get("staff_id")
+        staff_name = request.data.get("staff_name")
+        project_name = request.data.get("project_name")
+        staff_email = request.data.get("staff_email")
+        prev_deadline = request.data.get("prev_deadline")
+        project_reference_id = request.data.get("project_reference_id")
         subject = f"Deadline Revision: {staff_name} for {project_name}"
 
         message = f"""
@@ -452,11 +491,79 @@ class SendProjectEmailView(APIView):
         {staff_name}
         """
 
-        from_email = 'nashirnoor2002@gmail.com'
-        recipient_list = ['nashirnoor1718@gmail.com']  
+        from_email = "nashirnoor2002@gmail.com"
+        recipient_list = ["nashirnoor1718@gmail.com"]
 
         try:
             send_mail(subject, message, from_email, recipient_list)
-            return Response({"message": "Email sent successfully"}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Email sent successfully"}, status=status.HTTP_200_OK
+            )
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class CrmDashboardView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        end_date = timezone.now().date()
+        start_date = end_date - relativedelta(months=12)
+
+        total_clients = Client.objects.count()
+        total_projects = Project.objects.count()
+        total_quotations = Quotation.objects.count()
+        total_agreements = Agreement.objects.count()
+
+        recent_clients = (
+            Client.objects.annotate(
+                project_count=Count("requirements__projects"),
+                total_revenue=Sum("requirements__projects__agreement__total_amount")
+            )
+            .order_by("-created_at")[:10]
+            .values("name", "project_count", "total_revenue")
+        )
+
+        project_status = Project.objects.values("status").annotate(count=Count("id"))
+
+        monthly_revenue = (
+            Agreement.objects.filter(created_at__range=[start_date, end_date])
+            .annotate(month=TruncMonth('created_at'))
+            .values("month")
+            .annotate(revenue=Sum("total_amount"))
+            .order_by("month")
+        )
+
+        top_clients = (
+            Client.objects.annotate(
+                total_revenue=Sum("requirements__projects__agreement__total_amount")
+            )
+            .order_by("-total_revenue")[:5]
+            .values("name", "total_revenue")
+        )
+
+        avg_project_duration = Project.objects.filter(
+            status="Completed"
+        ).aggregate(avg_duration=Avg(F('end_date') - F('start_date')))['avg_duration']
+
+        response_data = {
+            "total_clients": total_clients,
+            "total_projects": total_projects,
+            "total_quotations": total_quotations,
+            "total_agreements": total_agreements,
+            "recent_clients": list(recent_clients),
+            "project_status": list(project_status),
+            "monthly_revenue": [
+                {
+                    "name": data["month"].strftime("%b %Y"),
+                    "revenue": float(data["revenue"]),
+                }
+                for data in monthly_revenue
+            ],
+            "top_clients": list(top_clients),
+            "avg_project_duration": avg_project_duration.days if avg_project_duration else None,
+        }
+
+        return Response(response_data)

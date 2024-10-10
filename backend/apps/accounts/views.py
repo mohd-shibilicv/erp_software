@@ -1,4 +1,4 @@
-from rest_framework import viewsets,status
+from rest_framework import viewsets, status
 
 from apps.accounts.models import (
     NatureGroup,
@@ -9,7 +9,6 @@ from apps.accounts.serializers import (
     NatureGroupSerializer,
     MainGroupSerializer,
     LedgerSerializer,
-    
 )
 
 
@@ -29,7 +28,7 @@ class NatureGroupViewSet(viewsets.ModelViewSet):
         queryset (QuerySet): A queryset of all NatureGroup objects.
         serializer_class (Serializer): The serializer class used to handle NatureGroup serialization and deserialization.
     """
-    
+
     queryset = NatureGroup.objects.all()
     serializer_class = NatureGroupSerializer
 
@@ -50,7 +49,7 @@ class MainGroupViewSet(viewsets.ModelViewSet):
         queryset (QuerySet): A queryset of all MainGroup objects.
         serializer_class (Serializer): The serializer class used to handle MainGroup serialization and deserialization.
     """
-    
+
     queryset = MainGroup.objects.all()
     serializer_class = MainGroupSerializer
 
@@ -71,7 +70,6 @@ class LedgerViewSet(viewsets.ModelViewSet):
         queryset (QuerySet): A queryset of all Ledger objects.
         serializer_class (Serializer): The serializer class used to handle Ledger serialization and deserialization.
     """
-    
+
     queryset = Ledger.objects.all()
     serializer_class = LedgerSerializer
-

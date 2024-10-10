@@ -17,11 +17,18 @@ const TopHeader = () => {
 
   const iconVariants = {
     initial: { rotate: 0 },
-    // animate: { rotate: 0, transition: { duration: 2, repeat: Infinity, ease: "linear" } }
+    animate: { 
+      rotate: [0, 15, 0, -15, 0], 
+      transition: { 
+        duration: 2, 
+        repeat: Infinity, 
+        ease: "easeInOut" 
+      } 
+    }
   };
 
   return (
-    <header className="bg-white shadow-sm py-[2.5px] px-4 sm:px-6 border-b">
+    <header className="bg-white shadow-sm py-[8.5px] px-4 sm:px-6 border-b">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {insights.map((item, index) => (

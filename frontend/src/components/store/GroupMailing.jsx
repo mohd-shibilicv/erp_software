@@ -33,38 +33,16 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { fetchStaff, fetchManagers, fetchSuppliers, fetchClients, api } from '@/services/api';
+import axios from 'axios';
 
-// Mock data for groups and recipients
-const mockGroups = [
-  { id: 1, name: "Customers" },
-  { id: 2, name: "Suppliers" },
-  { id: 3, name: "Employees" },
+const groups = [
+  { id: 'staff', name: "Staff" },
+  { id: 'managers', name: "Branch Managers" },
+  { id: 'suppliers', name: "Suppliers" },
+  { id: 'clients', name: "Clients" },
 ];
-
-const mockRecipients = {
-  1: [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "testcustomer@gmail.com",
-      selected: true,
-    },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", selected: true },
-  ],
-  2: [
-    { id: 3, name: "Acme Corp", email: "acme@example.com", selected: true },
-    { id: 4, name: "XYZ Industries", email: "xyz@example.com", selected: true },
-  ],
-  3: [
-    { id: 5, name: "Bob Johnson", email: "bob@example.com", selected: true },
-    {
-      id: 6,
-      name: "Alice Williams",
-      email: "alice@example.com",
-      selected: true,
-    },
-  ],
-};
 
 const formSchema = z.object({
   group: z.string().min(1, { message: "Please select a group" }),
@@ -85,6 +63,51 @@ const GroupMailing = () => {
     },
   });
 
+  const { data: staffData } = useQuery({
+    queryKey: ['staff'],
+    queryFn: fetchStaff,
+  });
+
+  const { data: managersData } = useQuery({
+    queryKey: ['managers'],
+    queryFn: fetchManagers,
+  });
+
+  const { data: suppliersData } = useQuery({
+    queryKey: ['suppliers'],
+    queryFn: fetchSuppliers,
+  });
+
+  const { data: clientsData } = useQuery({
+    queryKey: ['clients'],
+    queryFn: fetchClients,
+  });
+
+  const sendEmailMutation = useMutation({
+    mutationFn: (formData) => {
+      return api.post('/group-mailing/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Email sent successfully",
+      });
+      form.reset();
+      setRecipients([]);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.response?.data?.error || "Failed to send email",
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = async (values) => {
     const selectedRecipients = recipients.filter((r) => r.selected);
 
@@ -94,32 +117,49 @@ const GroupMailing = () => {
     formData.append("message", values.message);
     formData.append("recipients", JSON.stringify(selectedRecipients));
 
-    // const result = await sendEmail(formData);
-
-    // if (result.success) {
-    //   toast({
-    //     title: "Success",
-    //     description: result.message,
-    //   });
-    //   form.reset();
-    // } else {
-    //   toast({
-    //     title: "Error",
-    //     description: result.message,
-    //     variant: "destructive",
-    //   });
-    // }
-
-    toast({
-      title: "Success",
-      description: result.message,
-    });
-    form.reset();
+    sendEmailMutation.mutate(formData);
   };
 
-  const handleGroupChange = (value) => {
-    setRecipients(mockRecipients[value] || []);
-  };
+  const handleGroupChange = useCallback((value) => {
+    let selectedRecipients = [];
+    switch (value) {
+      case 'staff':
+        selectedRecipients = staffData?.map(staff => ({
+          id: staff.id,
+          name: `${staff.username}`,
+          email: staff.email,
+          selected: true
+        })) || [];
+        break;
+      case 'managers':
+        selectedRecipients = managersData?.results?.map(manager => ({
+          id: manager.id,
+          name: `${manager.username}`,
+          email: manager.email,
+          selected: true
+        })) || [];
+        break;
+      case 'suppliers':
+        selectedRecipients = suppliersData?.results?.map(supplier => ({
+          id: supplier.id,
+          name: supplier.name,
+          email: supplier.email,
+          selected: true
+        })) || [];
+        break;
+      case 'clients':
+        selectedRecipients = clientsData?.results?.map(client => ({
+          id: client.id,
+          name: client.name,
+          email: client.email,
+          selected: true
+        })) || [];
+        break;
+      default:
+        selectedRecipients = [];
+    }
+    setRecipients(selectedRecipients);
+  }, [staffData, managersData, suppliersData, clientsData]);
 
   const toggleRecipient = useCallback((id) => {
     setRecipients((prev) =>
@@ -138,7 +178,7 @@ const GroupMailing = () => {
       }
     });
     return () => subscription.unsubscribe();
-  }, [form.watch]);
+  }, [form, handleGroupChange]);
 
   return (
     <motion.div
@@ -176,10 +216,10 @@ const GroupMailing = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {mockGroups.map((group) => (
+                          {groups.map((group) => (
                             <SelectItem
                               key={group.id}
-                              value={group.id.toString()}
+                              value={group.id}
                             >
                               {group.name}
                             </SelectItem>
@@ -227,8 +267,8 @@ const GroupMailing = () => {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full">
-                  Send Email
+                <Button type="submit" className="w-full" disabled={sendEmailMutation.isLoading}>
+                  {sendEmailMutation.isLoading ? "Sending..." : "Send Email"}
                 </Button>
               </form>
             </Form>

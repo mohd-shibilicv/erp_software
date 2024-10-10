@@ -51,13 +51,16 @@ from apps.crm.views import (
     ProjectTaskViewSet,
     ProjectIndividualTaskViewSet,
     StaffProjectAssignmentViewSet,
-    SendProjectEmailView
+    SendProjectEmailView,
+    CrmDashboardView,
 )
 from apps.accounts.views import (
    NatureGroupViewSet,
    MainGroupViewSet,
    LedgerViewSet,
 )
+from apps.operations.views import GroupMailingView
+from apps.employees.views import EmployeeViewSet, AttendanceViewSet, LeaveViewSet
 
 
 router = DefaultRouter()
@@ -107,11 +110,16 @@ router.register(r'individual-projects-tasks',ProjectIndividualTaskViewSet, basen
 router.register(r'staff-assignments', StaffProjectAssignmentViewSet, basename='staff-assignments'),
 router.register(r'induvidual-listing', StaffProjectAssignmentViewSet, basename='staff-assignments-induvidual')
 
+# Employees
+router.register(r'employees', EmployeeViewSet, basename='employees')
+router.register(r'attendance', AttendanceViewSet, basename='attendance')
+router.register(r'leave', LeaveViewSet, basename='leave')
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path('api/send-project-email/', SendProjectEmailView.as_view(), name='send_project_email'),
-
+    path('api/group-mailing/', GroupMailingView.as_view(), name='group-mailing'),
     path("api/logout/", LogoutView.as_view({"post": "logout"}), name="logout"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -186,4 +194,5 @@ urlpatterns += [
 urlpatterns += [
     path("api/dashboard/", DashboardView.as_view(), name="dashboard"),
     path('api/branch-dashboard/', BranchDashboardView.as_view(), name='branch-dashboard'),
+    path('api/crm-dashboard/', CrmDashboardView.as_view(), name='crm-dashboard'),
 ]

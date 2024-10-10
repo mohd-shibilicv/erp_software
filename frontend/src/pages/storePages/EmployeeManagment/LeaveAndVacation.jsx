@@ -1,7 +1,24 @@
+import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { EmployeeCompanyCommonTable } from "./Components/EmployeListTable";
+import { api } from "@/services/api";
 
 export default function LeaveAndVacation() {
+  const [leaves, setLeaves] = useState([]);
+
+  useEffect(() => {
+    fetchLeaves();
+  }, []);
+
+  const fetchLeaves = async () => {
+    try {
+      const response = await api.get("/leave/");
+      setLeaves(response.data);
+    } catch (error) {
+      console.error("Error fetching leaves:", error);
+    }
+  };
+
   const leaveColumns = [
     {
       accessorKey: "name",
@@ -91,7 +108,9 @@ export default function LeaveAndVacation() {
       accessorKey: "_id",
       header: () => <div className="font-semibold">Actions</div>,
       cell: ({ row }) => (
-        <div className="flex">{/* <LeaveEdit id={row.original._id} /> */}</div>
+        <div className="flex">
+          {/* Add actions for leave management if needed */}
+        </div>
       ),
     },
   ];
@@ -99,7 +118,7 @@ export default function LeaveAndVacation() {
     <main className="w-full h-full bg-white rounded-md p-2">
       <EmployeeCompanyCommonTable
         columns={leaveColumns}
-        data={[]}
+        data={leaves}
         from="leave"
       />
     </main>

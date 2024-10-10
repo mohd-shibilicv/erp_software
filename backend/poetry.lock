@@ -293,6 +293,36 @@ files = [
 Django = ">=4.2"
 
 [[package]]
+name = "django-render-block"
+version = "0.10"
+description = "Render a particular block from a template to a string."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "django_render_block-0.10-py3-none-any.whl", hash = "sha256:4deeec70a360aa90385443aeae1213ffb2acbfe2b5fb09d4afe47e75a29240c3"},
+    {file = "django_render_block-0.10.tar.gz", hash = "sha256:23fbc9cfed17aac47e936e65f0c29ae186765a41234cdc8dbf88d4a9377fdd76"},
+]
+
+[package.dependencies]
+django = ">=3.2"
+
+[package.extras]
+dev = ["Jinja2 (>=2.8)"]
+
+[[package]]
+name = "django-templated-email"
+version = "3.0.1"
+description = "A Django oriented templated / transaction email abstraction"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-templated-email-3.0.1.tar.gz", hash = "sha256:432430293b0be35495faa23fcd8d60b33ff59d9a10b3366d7e01f75d9ff843f2"},
+]
+
+[package.dependencies]
+django-render-block = ">=0.5"
+
+[[package]]
 name = "django-unfold"
 version = "0.39.0"
 description = "Modern Django admin theme for seamless interface development"
@@ -1087,4 +1117,4 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c29904db04bf862bf27b6db44497db39e2be1e36aec7b8f8b4596ea0adf7ce5c"
+content-hash = "45ee88e432a0421422e2799723f96530fe685548ed52fdc7e470188c0a266c50"

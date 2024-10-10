@@ -1,0 +1,65 @@
+{% block subject %}{{ subject }}{% endblock %}
+
+{% block plain %}
+Dear {{ recipient_name }},
+
+{{ message }}
+
+Best regards,
+Nasscript Software Innovations
+
+---
+This email was sent by Nasscript Software Innovations
+801, Salata Tower, Near Qatar National Museum, Doha, Qatar
+www.nasscript.com
+{% endblock %}
+
+{% block html %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject }}</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; line-height: 1.6; background-color: #f4f4f4; color: #333333;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 0;">
+                <table role="presentation" style="width: 600px; margin: auto; background-color: #ffffff; padding: 40px; border-radius: 8px; margin-top: 40px; margin-bottom: 40px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    <tr>
+                        <td align="center">
+                            <img src="https://res.cloudinary.com/dibz3fmef/image/upload/v1728548930/ph9w3bpga2y44po0dhm7.png" alt="Nasscript Logo" style="max-width: 150px; height: auto; margin-bottom: 20px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h1 style="color: #333333; font-size: 24px; margin-bottom: 20px;">{{ subject }}</h1>
+                            <p style="margin-bottom: 20px;">Dear {{ recipient_name }},</p>
+                            <div style="background-color: #f9f9f9; border-left: 4px solid #007bff; padding: 15px; margin-bottom: 20px;">
+                                {{ message|safe }}
+                            </div>
+                            <p style="margin-bottom: 20px;">If you have any questions, please don't hesitate to contact us.</p>
+                            <p style="margin-bottom: 20px;">
+                                Best regards,<br>
+                                Nasscript Software Innovations
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <hr style="border: none; border-top: 1px solid #dddddd; margin: 30px 0;">
+                            <p style="font-size: 12px; color: #666666; text-align: center;">
+                                This email was sent by Nasscript Software Innovations<br>
+                                801, Salata Tower, Near Qatar National Museum, Doha, Qatar<br>
+                                <a href="http://www.nasscript.com" style="color: #007bff; text-decoration: none;">www.nasscript.com</a>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+{% endblock %}

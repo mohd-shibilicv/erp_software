@@ -74,8 +74,23 @@ export const fetchBranchProducts = async () => {
   return response.data;
 };
 
+export const fetchStaff = async () => {
+  const response = await api.get("/staff/");
+  return response.data;
+};
+
+export const fetchManagers = async () => {
+  const response = await api.get("/branch-managers/");
+  return response.data;
+};
+
 export const fetchSuppliers = async () => {
   const response = await api.get("/suppliers/");
+  return response.data;
+};
+
+export const fetchClients = async () => {
+  const response = await api.get("/clients/");
   return response.data;
 };
 

@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     "apps.suppliers.apps.SuppliersConfig",
     "apps.reports.apps.ReportsConfig",
     "apps.crm.apps.CrmConfig",
-    "apps.accounts.apps.AccountsConfig"
+    "apps.accounts.apps.AccountsConfig",
+    "apps.operations.apps.OperationsConfig",
+    "apps.employees.apps.EmployeesConfig",
 ]
 
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS")
@@ -86,7 +88,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -425,6 +427,26 @@ UNFOLD = {
                     },
                 ],
             },
+            {
+                "title": _("Employee Management"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Employees"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:employees_employee_changelist"),
+                    },
+                ],
+            },
         ],
     },
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env.str("EMAIL_HOST")
+EMAIL_PORT = env.int("EMAIL_PORT")
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS")
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL")
