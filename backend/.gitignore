@@ -16,5 +16,3 @@ staticfiles/
 test_data.json
 
 db.sqlite3
-
-sidebar.txt

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "apps.accounts.apps.AccountsConfig",
     "apps.operations.apps.OperationsConfig",
     "apps.employees.apps.EmployeesConfig",
+    "apps.transactions.apps.TransactionsConfig",
 ]
 
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS")
