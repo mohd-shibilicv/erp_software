@@ -1,68 +1,10 @@
-/* eslint-disable react/prop-types */
 "use client";
 
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Bell,
-  LayoutDashboard,
-  PackageSearch,
-  Truck,
-  Warehouse,
-  ArrowDownToDot,
-  ArrowUpFromDot,
-  Layers3,
-  HeartCrack,
-  PhoneIncoming,
-  SheetIcon,
-  NotebookText,
-  Package,
-  Blocks,
-  Replace,
-  Handshake,
-  FileText,
-  ChevronDown,
-  CreditCard,
-  ReceiptText,
-  Contact,
-  Headset,
-  Signature,
-  StickyNote,
-  NotebookPen,
-  SendToBack,
-  User,
-  UserCog,
-  CalendarArrowDown,
-  Book,
-  LayoutList,
-  ClipboardCheck,
-  ListTodo,
-  MenuIcon,
-  X,
-  FilePlus,
-  Building,
-  RefreshCcw,
-  TrendingDown,
-  Wrench,
-  UserPlus,
-  UsersRound,
-  PlaneTakeoff,
-  PencilRuler,
-  Shirt,
-  ChartNoAxesCombined,
-  Building2,
-  HousePlus,
-  Bus,
-  Ambulance,
-  FileChartLine,
-  ShieldAlert,
-  ChartScatter,
-  ChartNoAxesCombinedIcon,
-  LayoutDashboardIcon,
-  ShieldX,
-} from "lucide-react";
+import { Bell, ChevronDown, MenuIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -70,12 +12,30 @@ import { Tabs } from "@/components/ui/tabs";
 import LogoutBtn from "./LogoutBtn";
 import { useTheme } from "../ui/them-provider";
 
-const StoreSidebar = () => {
+// Import all icons
+import * as Icons from "lucide-react";
+import { api } from "@/services/api";
+
+const UpdatedStoreSidebar = () => {
   const location = useLocation();
   const [expandedSections, setExpandedSections] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const { theme, setTheme } = useTheme();
+  const [menuItems, setMenuItems] = useState([]);
+
+  useEffect(() => {
+    const fetchSidebarConfig = async () => {
+      try {
+        const response = await api.get("/sidebar-config/");
+        setMenuItems(response.data);
+      } catch (error) {
+        console.error("Failed to fetch sidebar configuration:", error);
+      }
+    };
+
+    fetchSidebarConfig();
+  }, []);
 
   const isActive = (path) => {
     return location.pathname === path
@@ -90,318 +50,30 @@ const StoreSidebar = () => {
     }));
   };
 
-  const menuItems = [
-    {
-      section: "CRM",
-      items: [
-        {
-          path: "/admin/crm-dashboard",
-          icon: LayoutDashboardIcon,
-          label: "CRM Dashboard",
-        },
-        {
-          path: "/admin/client-request",
-          icon: CalendarArrowDown,
-          label: "Client Requests",
-        },
-        {
-          path: "/admin/client-relationship",
-          icon: Contact,
-          label: "Client Relationship",
-        },
-        {
-          path: "/admin/client-requirements",
-          icon: Headset,
-          label: "Client Requirements",
-        },
-        { path: "/admin/quotation", icon: Handshake, label: "Quotation" },
-        { path: "/admin/agreement", icon: Signature, label: "Agreement" },
-      ],
-    },
-    {
-      section: "Transactions",
-      items: [
-        { path: "/admin/invoice", icon: StickyNote, label: "Invoice" },
-        {
-          path: "/admin/add-receipt-voucher",
-          icon: ReceiptText,
-          label: "Add Receipt",
-        },
-        {
-          path: "/admin/add-payment-transaction",
-          icon: CreditCard,
-          label: "Add Payment",
-        },
-        // { path: "/admin/job-order", icon: SendToBack, label: "Job Order" },
-      ],
-    },
-    {
-      section: "Project Management",
-      items: [
-        {
-          path: "/admin/projects",
-          icon: LayoutList,
-          label: "Projects",
-        },
-        {
-          path: "/admin/tasks",
-          icon: ClipboardCheck,
-          label: "Tasks",
-        },
-        {
-          path: "/admin/delivery-note",
-          icon: NotebookPen,
-          label: "Delivery Note",
-        },
-      ],
-    },
-    {
-      section: "Product Management",
-      items: [
-        { path: "/admin", icon: LayoutDashboard, label: "Dashboard" },
-        { path: "/admin/products", icon: PackageSearch, label: "Products" },
-        { path: "/admin/suppliers", icon: Truck, label: "Suppliers" },
-      ],
-    },
-    {
-      section: "Users",
-      items: [
-        { path: "/admin/managers", icon: UserCog, label: "Managers" },
-        { path: "/admin/staff", icon: User, label: "Staff" },
-      ],
-    },
-    {
-      section: "Inventory",
-      items: [
-        {
-          path: "/admin/product-inflow",
-          icon: ArrowDownToDot,
-          label: "Product Inflows",
-        },
-        {
-          path: "/admin/product-requests",
-          icon: PhoneIncoming,
-          label: "Product Requests",
-        },
-        {
-          path: "/admin/product-outflow",
-          icon: ArrowUpFromDot,
-          label: "Product Outflows",
-        },
-        {
-          path: "/admin/damaged-products",
-          icon: ShieldX,
-          label: "Defective Products",
-        },
-      ],
-    },
-    {
-      section: "Reports",
-      items: [
-        { path: "/admin/reports", icon: Layers3, label: "Reports" },
-        { path: "/admin/sales", icon: SheetIcon, label: "Sales" },
-        { path: "/admin/van-sales", icon: NotebookText, label: "Join Venture Sales" },
-      ],
-    },
-    {
-      section: "Operations",
-      items: [
-        // { path: "/admin/packing", icon: Package, label: "Packing" }, renamed `Product Grouping`
-        { path: "/admin/packing", icon: Package, label: "Product Grouping" },
-        {
-          path: "/admin/physical-stock",
-          icon: Blocks,
-          label: "Physical Stock",
-        },
-        {
-          path: "/admin/material-transfer",
-          icon: Replace,
-          label: "Material Transfer",
-        },
-        {
-          path: "/admin/invoice-generator",
-          icon: FileText,
-          label: "Invoice Generator",
-        },
-        {
-          path: "/admin/group-mailing",
-          icon: FileText,
-          label: "Group Mailing",
-        },
-      ],
-    },
-    user.role === "staff"
-      ? {
-          section: "Tasks",
-          items: [
-            { path: "/admin/staff-tasks", icon: ListTodo, label: "Tasks" },
-          ],
-        }
-      : null,
-    {
-      section: "Employee Management",
-      items: [
-        {
-          path: "/admin/employee-mangement",
-          icon: LayoutDashboard,
-          label: "Employee Dashboard",
-        },
-        {
-          path: "/admin/employee-mangement/add-employee",
-          icon: UserPlus,
-          label: "Add Employee",
-        },
-        {
-          path: "/admin/employee-mangement/employee-list",
-          icon: UsersRound,
-          label: "Employees",
-        },
-        {
-          path: "/admin/employee-mangement/leave-vacation",
-          icon: PlaneTakeoff,
-          label: "Leave Vacation",
-        },
-        {
-          path: "/admin/employee-mangement/vp-track",
-          icon: PencilRuler,
-          label: "Vp Track",
-        },
-        {
-          path: "/admin/employee-mangement/uniform-report",
-          icon: Shirt,
-          label: "Uniform Report",
-        },
-        {
-          path: "/admin/employee-mangement/reports",
-          icon: ChartNoAxesCombined,
-          label: "Reports",
-        },
-      ],
-    },
-    {
-      section: "Asset Management",
-      items: [
-        {
-          path: "/admin/assets-dashboard",
-          icon: LayoutDashboard,
-          label: "Assets Dashboard",
-        },
-        {
-          path: "/admin/asset-creation",
-          icon: FilePlus,
-          label: "Asset Creation",
-        },
-        // {
-        //   path: "/admin/branch-creation",
-        //   icon: Building,
-        //   label: "Branch Creation",
-        // },
-        {
-          path: "/admin/asset-transfer",
-          icon: RefreshCcw,
-          label: "Asset Transfer",
-        },
-        {
-          path: "/admin/asset-depreciation",
-          icon: TrendingDown,
-          label: "Asset Depreciation",
-        },
-        { path: "/admin/asset-service", icon: Wrench, label: "Asset Service" },
-        {
-          path: "/admin/asset-reports",
-          icon: FileText,
-          label: "Asset Reports",
-        },
-      ],
-    },
-    {
-      section: "Company Management",
-      items: [
-        {
-          path: "/admin/company-management",
-          icon: LayoutDashboard,
-          label: "Company Dashboard",
-        },
-        {
-          path: "/admin/company-management/company-list",
-          icon: Building2,
-          label: "Company List",
-        },
-        {
-          path: "/admin/company-management/add-company",
-          icon: HousePlus,
-          label: "Company",
-        },
-        { path: "/admin/branches", icon: Warehouse, label: "Branches" },
-        {
-          path: "/admin/company-management/vehicle-list",
-          icon: Bus,
-          label: "Vehicle List",
-        },
-        {
-          path: "/admin/company-management/add-vehicle",
-          icon: Ambulance,
-          label: "Add Vehicle",
-        },
-        {
-          path: "/admin/company-management/vehicle-expense",
-          icon: FileChartLine,
-          label: "Vehicle Expense",
-        },
-        {
-          path: "/admin/company-management/fire-certification",
-          icon: ShieldAlert,
-          label: "AMC Contract",
-        },
-        {
-          path: "/admin/company-management/rent-expense",
-          icon: ChartScatter,
-          label: "Rental Expense",
-        },
-        {
-          path: "/admin/company-management/reports",
-          icon: ChartNoAxesCombinedIcon ,
-          label: "Reports",
-        },
-      ],
-    },
-    {
-      section: "Accounts",
-      items: [
-        {
-          path: "/admin/ledger",
-          icon: Book,
-          label: "Ledger",
-        },
-      ],
-    },
-  ].filter(Boolean);
+  const renderMenuItem = (item) => {
+    const IconComponent = Icons[item.icon] || Icons.FileText;
 
-  const filteredMenuItems =
-    user?.role === "staff"
-      ? menuItems.filter((item) => ["CRM", "Tasks"].includes(item.section))
-      : menuItems;
-
-  const renderMenuItem = (item) => (
-    <motion.div
-      key={item.path}
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.2 }}
-    >
-      <Link
-        to={item.path}
-        className={`flex items-center space-x-2 p-2 rounded-[5px] transition-colors duration-200 ${isActive(
-          item.path
-        )}`}
-        onClick={() => setIsOpen(false)}
+    return (
+      <motion.div
+        key={item.path}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.2 }}
       >
-        <item.icon className="w-5 h-5" />
-        <span>{item.label}</span>
-      </Link>
-    </motion.div>
-  );
+        <Link
+          to={item.path}
+          className={`flex items-center space-x-2 p-2 rounded-[5px] transition-colors duration-200 ${isActive(
+            item.path
+          )}`}
+          onClick={() => setIsOpen(false)}
+        >
+          <IconComponent className="w-5 h-5" />
+          <span>{item.label}</span>
+        </Link>
+      </motion.div>
+    );
+  };
 
   const renderSection = (section) => (
     <div key={section.section} className="mb-4">
@@ -435,16 +107,18 @@ const StoreSidebar = () => {
     </div>
   );
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setIsOpen(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const filteredMenuItems = menuItems.filter((item) => {
+    if (user?.role === "staff") {
+      // Only allow staff to access specific sections
+      return ["Tasks", "CRM"].includes(item.section);
+    }
+    if (user?.role === "admin") {
+      // Exclude "Tasks" section for admin roles
+      return item.section !== "Tasks";
+    }
+    // For other roles, show all menu items except "Tasks"
+    return item.section !== "Tasks";
+  });
 
   return (
     <>
@@ -566,25 +240,8 @@ const DesktopSidebar = ({
 
 const ThemeToggle = ({ theme, setTheme }) => (
   <Tabs defaultValue={theme} className="w-full">
-    {/* <TabsList className="w-full">
-      <TabsTrigger
-        value="light"
-        onClick={() => setTheme("light")}
-        className="w-full"
-      >
-        <Sun className="w-4 h-4 mr-2" />
-        Light
-      </TabsTrigger>
-      <TabsTrigger
-        value="dark"
-        onClick={() => setTheme("dark")}
-        className="w-full"
-      >
-        <Moon className="w-4 h-4 mr-2" />
-        Dark
-      </TabsTrigger>
-    </TabsList> */}
+    {/* Theme toggle implementation */}
   </Tabs>
 );
 
-export default StoreSidebar;
+export default UpdatedStoreSidebar;

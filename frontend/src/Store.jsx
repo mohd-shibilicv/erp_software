@@ -52,16 +52,12 @@ import AdminTaskDetails from "./pages/storePages/TasksForSfaff/AdminTaskdetail";
 import StaffTaskDetail from "./pages/staffPages/staffTaskdetail";
 import AssetsDashboard from "./components/asset-management/AssetsDashboardForm";
 import AssetCreationForm from "./components/asset-management/AssetCreation";
-import BranchCreationForm from "./components/asset-management/BranchCreationForm";
 import AssetTransferForm from "./components/asset-management/AssetTransferForm";
 import AssetDepreciationForm from "./components/asset-management/AssetDepreciationForm";
 import AssetServiceForm from "./components/asset-management/AssetServiceForm";
 import AssetReports from "./components/asset-management/AssetReports";
 
-import EmployeeLayouts from "./pages/storePages/EmployeeManagment/EmployeLayouts/EmployeLayout";
 import EmployeDashboard from "./pages/storePages/EmployeeManagment/EmployeDashboard";
-import AddEmployee from "./pages/storePages/EmployeeManagment/AddEmployee";
-import EmployeeList from "./pages/storePages/EmployeeManagment/EmployeeList";
 import LeaveAndVacation from "./pages/storePages/EmployeeManagment/LeaveAndVacation";
 import VpTrack from "./pages/storePages/EmployeeManagment/vpTrack";
 import UniformReport from "./pages/storePages/EmployeeManagment/UniformReport";
@@ -78,6 +74,12 @@ import { RentandExpense } from "./pages/storePages/CompanyManagement/rentAndExpe
 import { CompanyReports } from "./pages/storePages/CompanyManagement/reports";
 import GroupMailing from "./components/store/GroupMailing";
 import CrmDashboard from "./components/store/CrmDashboard";
+import { EmployeeTable } from "./components/employee-management/EmployeeTable";
+import { EmployeeForm } from "./components/employee-management/EmployeeForm";
+import AttendanceTable from "./components/employee-management/AttendanceTable";
+import AttendanceForm from "./components/employee-management/AttendanceForm";
+import LeaveForm from "./components/employee-management/LeaveForm";
+import LeaveTable from "./components/employee-management/LeaveTable";
 
 function Store() {
   return (
@@ -329,22 +331,7 @@ function Store() {
             </StoreProtectedRoute>
           }
         />
-        <Route
-          path="/employee-mangement"
-          element={
-            <StoreProtectedRoute allowedRoles={["admin"]}>
-              <EmployeeLayouts />
-            </StoreProtectedRoute>
-          }
-        >
-          <Route index element={<EmployeDashboard />} />
-          <Route path="add-employee" element={<AddEmployee />} />
-          <Route path="employee-list" element={<EmployeeList />} />
-          <Route path="leave-vacation" element={<LeaveAndVacation />} />
-          <Route path="vp-track" element={<VpTrack />} />
-          <Route path="uniform-report" element={<UniformReport />} />
-          <Route path="reports" element={<Reports />} />
-        </Route>
+
         <Route
           path="/company-management"
           element={
@@ -421,11 +408,26 @@ function Store() {
           element={<AddEditQuotation isEditMode={true} />}
         />
 
-
         <Route path="/agreement" element={<ClientAgreementList />} />
         <Route path="/agreement/new" element={<AgreementAddEdit />} />
         <Route path="/agreement/new/:id" element={<AgreementAddEdit />} />
         <Route path="/agreement/:id" element={<ClientAgreementDetails />} />
+
+        {/* Employee Management */}
+        <Route path="/employee-dashboard" element={<EmployeDashboard />} />
+        <Route path="/employees" element={<EmployeeTable />} />
+        <Route path="/employees/new" element={<EmployeeForm />} />
+        <Route path="/employees/:id" element={<EmployeeForm />} />
+        <Route path="/attendance" element={<AttendanceTable />} />
+        <Route path="/attendance/new" element={<AttendanceForm />} />
+        <Route path="/attendance/:id" element={<AttendanceForm />} />
+        <Route path="/leaves" element={<LeaveTable />} />
+        <Route path="/leaves/new" element={<LeaveForm />} />
+        <Route path="/leaves/:id" element={<LeaveForm />} />
+        <Route path="/leave-vacation" element={<LeaveAndVacation />} />
+        <Route path="/vp-track" element={<VpTrack />} />
+        <Route path="/uniform-report" element={<UniformReport />} />
+        <Route path="/reports" element={<Reports />} />
 
         {/* Asset Management */}
         <Route path="/assets-dashboard" element={<AssetsDashboard />} />

@@ -108,3 +108,9 @@ export const refreshProductOutflows = async () => {
   const response = await api.get("/product-outflow/");
   return response.data;
 };
+
+// Employee API endpoints
+export const fetchEmployees = async () => {
+  const response = await api.get("/employees/");
+  return response.data;
+};

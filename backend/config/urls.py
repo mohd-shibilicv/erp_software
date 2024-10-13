@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from apps.users.views import (
+    landing,
     UserRegisterViewSet,
     LogoutView,
     LoginViewSet,
@@ -59,8 +60,17 @@ from apps.accounts.views import (
    MainGroupViewSet,
    LedgerViewSet,
 )
-from apps.operations.views import GroupMailingView
-from apps.employees.views import EmployeeViewSet, AttendanceViewSet, LeaveViewSet
+from apps.operations.views import GroupMailingView, SidebarConfigView
+from apps.employees.views import (
+    DepartmentViewSet,
+    PositionViewSet,
+    EmployeeViewSet,
+    AttendanceViewSet,
+    LeaveViewSet,
+    PerformanceViewSet,
+    PayrollViewSet,
+    TrainingViewSet,
+)
 
 
 router = DefaultRouter()
@@ -111,14 +121,21 @@ router.register(r'staff-assignments', StaffProjectAssignmentViewSet, basename='s
 router.register(r'induvidual-listing', StaffProjectAssignmentViewSet, basename='staff-assignments-induvidual')
 
 # Employees
-router.register(r'employees', EmployeeViewSet, basename='employees')
-router.register(r'attendance', AttendanceViewSet, basename='attendance')
-router.register(r'leave', LeaveViewSet, basename='leave')
+router.register(r'departments', DepartmentViewSet)
+router.register(r'positions', PositionViewSet)
+router.register(r'employees', EmployeeViewSet)
+router.register(r'attendance', AttendanceViewSet)
+router.register(r'leaves', LeaveViewSet)
+router.register(r'performance', PerformanceViewSet)
+router.register(r'payroll', PayrollViewSet)
+router.register(r'training', TrainingViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", landing, name="landing"),
     path("api/", include(router.urls)),
     path('api/send-project-email/', SendProjectEmailView.as_view(), name='send_project_email'),
+    path('api/sidebar-config/', SidebarConfigView.as_view(), name='sidebar-config'),
     path('api/group-mailing/', GroupMailingView.as_view(), name='group-mailing'),
     path("api/logout/", LogoutView.as_view({"post": "logout"}), name="logout"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
