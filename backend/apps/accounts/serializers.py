@@ -13,11 +13,18 @@ class NatureGroupSerializer(serializers.ModelSerializer):
 
 
 class MainGroupSerializer(serializers.ModelSerializer):
+    # This field will be used for read operations (GET requests)
     nature_group = NatureGroupSerializer(read_only=True)
+    
+    # This field will be used for write operations (POST, PUT requests)
+    nature_group_id = serializers.PrimaryKeyRelatedField(
+        queryset=NatureGroup.objects.all(), source='nature_group', write_only=True
+    )
 
     class Meta:
         model = MainGroup
-        fields = "__all__"
+        fields = "__all__"  # Includes both nature_group and nature_group_id
+
 
 
 class LedgerSerializer(serializers.ModelSerializer):

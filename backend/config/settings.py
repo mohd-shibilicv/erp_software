@@ -439,6 +439,28 @@ UNFOLD = {
                     },
                 ],
             },
+            {
+                "title": _("Accounts MasterData"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Nature Group"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:accounts_naturegroup_changelist"),
+                    },
+                    {
+                        "title": _("Main Group"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:accounts_maingroup_changelist"),
+                    },
+                    {
+                        "title": _("Ledger"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:accounts_ledger_changelist"),
+                    },
+                ],
+            },
         ],
     },
 }

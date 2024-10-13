@@ -1,4 +1,6 @@
 from django.contrib import admin
+from unfold.admin import ModelAdmin as UnfoldModelAdmin
+
 from apps.accounts.models import (
     NatureGroup,
     MainGroup,
@@ -6,7 +8,7 @@ from apps.accounts.models import (
     )
 
 
-admin.site.register(NatureGroup)
-admin.site.register(MainGroup)
-admin.site.register(Ledger)
+admin.site.register(NatureGroup,UnfoldModelAdmin)
+admin.site.register(MainGroup,UnfoldModelAdmin)
+admin.site.register(Ledger,UnfoldModelAdmin)
 
