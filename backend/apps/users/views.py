@@ -1,18 +1,22 @@
+from django.shortcuts import render
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework.permissions import IsAdminUser
+from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
 from .serializers import UserSerializer, LoginSerializer, UserCreateUpdateSerializer
 from .models import User
-from rest_framework.permissions import IsAdminUser
-
-from rest_framework.decorators import api_view
 
 
 User = get_user_model()
+
+
+def landing(request):
+    return render(request, 'users/landing.html')
 
 
 class UserRegisterViewSet(viewsets.ModelViewSet):

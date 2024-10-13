@@ -1,13 +1,13 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin as UnfoldAdmin
-from .models import Employee
+from .models import Employee, Department, Position, Attendance, Leave
 
 
 class EmployeeAdmin(UnfoldAdmin):
-    list_display = ('user', 'employee_id', 'department', 'position', 'hire_date', 'nation', 'work_branch', 'joining_date', 'is_active')
-    search_fields = ('user__first_name', 'user__last_name', 'employee_id', 'department', 'position')
-    list_filter = ('nation', 'work_branch', 'is_active')
-    ordering = ('-joining_date',)
-
+    pass
 
 admin.site.register(Employee, EmployeeAdmin)
+admin.site.register(Department, UnfoldAdmin)
+admin.site.register(Position, UnfoldAdmin)
+admin.site.register(Attendance, UnfoldAdmin)
+admin.site.register(Leave, UnfoldAdmin)

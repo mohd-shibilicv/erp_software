@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect to Admin Panel</title>
+    <style>
+        /* Basic styling for the page */
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Button container */
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Button styling */
+        .btn {
+            padding: 12px 25px;
+            background-color: #4A90E2;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        /* Button hover and active states */
+        .btn:hover {
+            background-color: #357ABD;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="btn" onclick="redirectToAdmin()">Go to Admin</button>
+    </div>
+
+    <script>
+        // Function to redirect the user to /admin URL
+        function redirectToAdmin() {
+            window.location.href = "/admin";
+        }
+    </script>
+</body>
+</html>

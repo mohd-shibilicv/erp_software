@@ -1,5 +1,5 @@
 from datetime import timedelta
-from environs import Env # type: ignore
+from environs import Env  # type: ignore
 from pathlib import Path
 from django.templatetags.static import static
 from django.urls import reverse_lazy
@@ -224,9 +224,7 @@ UNFOLD = {
         "light": lambda request: static(
             "images/nasscript_full_banner_logo.png"
         ),  # light mode
-        "dark": lambda request: static(
-            "images/nasscript_logo.png"
-        ),  # dark mode
+        "dark": lambda request: static("images/nasscript_logo.png"),  # dark mode
     },
     "SITE_SYMBOL": "restaurant",
     "SITE_FAVICONS": [
@@ -241,9 +239,7 @@ UNFOLD = {
     "SHOW_VIEW_ON_SITE": True,
     "LOGIN": {
         "image": lambda request: static("images/nasscript_logo.png"),
-        "redirect_after": lambda request: reverse_lazy(
-            "admin:users_user_changelist"
-        ),
+        "redirect_after": lambda request: reverse_lazy("admin:users_user_changelist"),
     },
     "COLORS": {
         "primary": {
@@ -332,7 +328,9 @@ UNFOLD = {
                     {
                         "title": _("Product requests"),
                         "icon": "near_me",
-                        "link": reverse_lazy("admin:branches_productrequest_changelist"),
+                        "link": reverse_lazy(
+                            "admin:branches_productrequest_changelist"
+                        ),
                     },
                 ],
             },
@@ -437,13 +435,52 @@ UNFOLD = {
                         "icon": "step_into",
                         "link": reverse_lazy("admin:employees_employee_changelist"),
                     },
+                    {
+                        "title": _("Positions"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:employees_position_changelist"),
+                    },
+                    {
+                        "title": _("Departments"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:employees_department_changelist"),
+                    },
+                    {
+                        "title": _("Attendances"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:employees_attendance_changelist"),
+                    },
+                    {
+                        "title": _("Leaves"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:employees_leave_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Operations"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Sidebar Sections"),
+                        "icon": "view_sidebar",
+                        "link": reverse_lazy(
+                            "admin:operations_sidebarsection_changelist"
+                        ),
+                    },
+                    {
+                        "title": _("Sidebar Items"),
+                        "icon": "settings",
+                        "link": reverse_lazy("admin:operations_sidebaritem_changelist"),
+                    },
                 ],
             },
         ],
     },
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = env.str("EMAIL_HOST")
 EMAIL_PORT = env.int("EMAIL_PORT")
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS")
