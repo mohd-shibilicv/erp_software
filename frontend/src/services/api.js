@@ -114,3 +114,9 @@ export const fetchEmployees = async () => {
   const response = await api.get("/employees/");
   return response.data;
 };
+
+// Comany Details
+export const fetchCompanies = async () => {
+  const response = await api.get("/company-details/");
+  return response.data;
+};

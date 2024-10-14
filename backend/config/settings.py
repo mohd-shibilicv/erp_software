@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "apps.operations.apps.OperationsConfig",
     "apps.employees.apps.EmployeesConfig",
     "apps.transactions.apps.TransactionsConfig",
+    "apps.companies.apps.CompaniesConfig",
 ]
 
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS")
@@ -456,6 +457,19 @@ UNFOLD = {
                         "icon": "step_into",
                         "link": reverse_lazy("admin:employees_leave_changelist"),
                     },
+                ],
+            },
+            {
+                "title": _("Company Management"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Company Details"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:companies_companydetails_changelist"),
+                    },
+                    
                 ],
             },
             {

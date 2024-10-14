@@ -71,6 +71,8 @@ from apps.employees.views import (
     PayrollViewSet,
     TrainingViewSet,
 )
+from apps.companies.views import (
+    CompanyDetailsViewSet)
 
 
 router = DefaultRouter()
@@ -129,6 +131,10 @@ router.register(r'leaves', LeaveViewSet)
 router.register(r'performance', PerformanceViewSet)
 router.register(r'payroll', PayrollViewSet)
 router.register(r'training', TrainingViewSet)
+
+# Companies
+router.register(r'company-details', CompanyDetailsViewSet)
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),

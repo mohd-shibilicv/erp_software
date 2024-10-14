@@ -344,29 +344,20 @@ function Store() {
           }
         />
 
-        <Route
-          path="/company-management"
-          element={
-            <StoreProtectedRoute allowedRoles={["admin"]}>
-              <CompanyLayouts />
-            </StoreProtectedRoute>
-          }
-        >
-          <Route index element={<CompanyDashboard />} />
-          <Route path="company-list" element={<CompanyList />} />
-          <Route path="add-company" element={<AddCompany />} />
-          <Route path="add-vehicle" element={<AddVehicle />} />
-          <Route path="vehicle-list" element={<VehicleList />} />
-          <Route path="vehicle-expense" element={<VehicleExpense />} />
-          <Route path="fire-certification" element={<FireAndCertfication />} />
-          <Route path="rent-expense" element={<RentandExpense />} />
-          <Route path="reports" element={<CompanyReports />} />
-          {/* <Route path="employee-list" element={<EmployeeList />} />
+        <Route path="/company-management" element={<CompanyDashboard />} />
+        {/* <Route path="/company-list" element={<CompanyList />} /> */}
+        <Route path="/add-company" element={<AddCompany />} />
+        <Route path="/add-vehicle" element={<AddVehicle />} />
+        <Route path="/vehicle-list" element={<VehicleList />} />
+        <Route path="/vehicle-expense" element={<VehicleExpense />} />
+        <Route path="/fire-certification" element={<FireAndCertfication />} />
+        <Route path="/rent-expense" element={<RentandExpense />} />
+        <Route path="/reports" element={<CompanyReports />} />
+        {/* <Route path="employee-list" element={<EmployeeList />} />
           <Route path="leave-vacation" element={<LeaveAndVacation />} />
           <Route path="vp-track" element={<VpTrack />} />
           <Route path="uniform-report" element={<UniformReport />} />
           <Route path="reports" element={<Reports />} /> */}
-        </Route>
 
         {/* CRM */}
         <Route path="/crm-dashboard" element={<CrmDashboard />} />
