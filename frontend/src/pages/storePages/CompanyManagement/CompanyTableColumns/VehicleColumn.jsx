@@ -11,72 +11,56 @@ import { useNavigate } from "react-router-dom";
 
 export const vehicleColumn = [
   {
-    accessorKey: "vehicleName",
+    accessorKey: "vehicle_name",
     header: () => <div className="font-semibold">Vehicle name</div>,
   },
   {
-    accessorKey: "vehicleNo",
+    accessorKey: "vehicle_no",
     header: () => <div className="font-semibold">Vehicle number</div>,
     cell: ({ row }) => (
       <div>
-        {!row.getValue("vehicleNo") && "Pending"}
-        {row.getValue("vehicleNo")}
+        {!row.getValue("vehicle_no") && "Pending"}
+        {row.getValue("vehicle_no")}
       </div>
     ),
   },
   {
-    accessorKey: "ownerId",
+    accessorKey: "owner_id",
     header: () => <div className="font-semibold">Owner Id.</div>,
     cell: ({ row }) => (
       <div>
-        {!row.getValue("ownerId") && "Pending"}
-        {row.getValue("ownerId")}
+        {!row.getValue("owner_id") && "Pending"}
+        {row.getValue("owner_id")}
       </div>
     ),
   },
+
   {
-    accessorKey: "status",
-    header: () => <div className="font-semibold">Vehicle status</div>,
+    accessorKey: "vehicle_model",
+    header: () => <div className="font-semibold">Vehicle Model</div>,
     cell: ({ row }) => (
       <div>
-        <div
-          className={`h-7 text-sm w-20 rounded-xl ${
-            row.getValue("status") == "Active"
-              ? "bg-green-500"
-              : "bg-yellow-500"
-          }  text-white font-semibold px-2 border flex-center`}
-        >
-          {row.getValue("status")}
-        </div>
+        {!row.getValue("vehicle_model") && "Pending"}
+        {row.getValue("vehicle_model")}
       </div>
     ),
   },
   {
-    accessorKey: "shopName",
-    header: () => <div className="font-semibold">Shope name</div>,
-    cell: ({ row }) => (
-      <div>
-        {!row.getValue("shopName") && "Pending"}
-        {row.getValue("shopName")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "expiryDate",
+    accessorKey: "expiry_date",
     header: () => <div className="font-semibold">Vehicle expiry</div>,
     cell: ({ row }) => {
       return (
         <div
           className={
-            //   row.getValue("expiryDate")
-            //     ? checkExpiryStatus(String(row.getValue("expiryDate")))
+            //   row.getValue("expiry_date")
+            //     ? checkExpiryStatus(String(row.getValue("expiry_date")))
             //     : ""
             ""
           }
         >
-          {!row.getValue("expiryDate") && "Pending"}
-          {row.getValue("expiryDate") &&
-            format(String(row.getValue("expiryDate")), "PPP")}
+          {!row.getValue("expiry_date") && "Pending"}
+          {row.getValue("expiry_date") &&
+            format(String(row.getValue("expiry_date")), "PPP")}
         </div>
       );
     },

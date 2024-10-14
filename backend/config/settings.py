@@ -469,7 +469,11 @@ UNFOLD = {
                         "icon": "step_into",
                         "link": reverse_lazy("admin:companies_companydetails_changelist"),
                     },
-                    
+                    {
+                        "title": _("Vehicles Details"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:companies_vehicledetails_changelist"),
+                    },
                 ],
             },
             {

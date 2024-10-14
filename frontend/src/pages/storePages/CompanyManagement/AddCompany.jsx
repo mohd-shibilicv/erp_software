@@ -2,12 +2,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InputWithLabel } from "@/components/ui/InputWithLabel";
 import { UploadIcon, X } from "lucide-react";
-import { useState } from "react";
-import { api } from "@/services/api"; 
+import React, { useState, useEffect, useCallback } from "react";
+import { api, fetchCompanies } from "@/services/api"; 
 import { CompanyList } from "./CompanyList";
 import { toast } from "@/components/ui/use-toast";
+import CompanyTable from "./CompanyTableColumns/CompanyTable";
 
 export function AddCompany() {
+  const [companies, setCompanies] = useState([]);
+
+  const fetchCompanyData = useCallback(async () => {
+    try {
+      const data = await fetchCompanies();
+      if (Array.isArray(data.results)) {
+        setCompanies(data.results);
+      }
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load companies.",
+        variant: "destructive",
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCompanyData();
+  }, [fetchCompanyData]);
+
+  const handleCompanyUpdated = useCallback((updatedData) => {
+    setCompanies(updatedData);
+  }, []);
+
   const handleCompanyAdd = async (e) => {
     e.preventDefault(); 
 

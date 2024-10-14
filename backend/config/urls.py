@@ -72,7 +72,8 @@ from apps.employees.views import (
     TrainingViewSet,
 )
 from apps.companies.views import (
-    CompanyDetailsViewSet)
+    CompanyDetailsViewSet,
+    VehicleDetailsViewSet)
 
 
 router = DefaultRouter()
@@ -134,6 +135,7 @@ router.register(r'training', TrainingViewSet)
 
 # Companies
 router.register(r'company-details', CompanyDetailsViewSet)
+router.register(r'vehicles', VehicleDetailsViewSet)
 
 
 urlpatterns = [

@@ -120,3 +120,9 @@ export const fetchCompanies = async () => {
   const response = await api.get("/company-details/");
   return response.data;
 };
+
+// Vehicle Details
+export const fetchVehicles = async () => {
+  const response = await api.get("/vehicles/");
+  return response.data;
+};

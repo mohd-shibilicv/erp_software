@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import { EmployeeCompanyCommonTable } from "../EmployeeManagment/Components/EmployeListTable";
 import { fetchCompanies } from "@/services/api"; 
+import CompanyTable from "./CompanyTableColumns/CompanyTable";
 
 export function CompanyList() {
   const [srch, setSrch] = useState("");
@@ -38,7 +38,7 @@ export function CompanyList() {
           />
         </div>
 
-        <EmployeeCompanyCommonTable
+        <CompanyTable
           from="company"
           data={filteredCompanies} 
           onCompanyUpdated={getCompanies}
