@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Calendar, Search, Plus, Minus, X } from "lucide-react";
+import {
+  Calendar,
+  Search,
+  Plus,
+  Minus,
+  X,
+  Move3DIcon,
+  RotateCw,
+  StepBack,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -26,6 +35,7 @@ import {
 import { Combobox } from "../ui/Combobox";
 import Layout from "../layout/Layout";
 import { Textarea } from "../ui/textarea";
+import { Label } from "../ui/label";
 
 const customerAccounts = [
   { label: "Cash Account - 0003", value: "cash-0003" },
@@ -127,7 +137,7 @@ const Invoice = () => {
   return (
     <>
       <div className="container mx-auto p-4 bg-gray-100 min-h-screen">
-        <h1 className="text-3xl font-bold mb-6">Invoice</h1>
+        <h1 className="text-3xl font-bold mb-6">Purchase Request</h1>
 
         <Card className="mb-6 ">
           <CardHeader className="flex flex-row justify-between items-center">
@@ -138,32 +148,40 @@ const Invoice = () => {
                 defaultValue={new Date().toISOString().split("T")[0]}
               />
               <Input
-                placeholder="Voucher Number"
-                defaultValue="SL#00034"
+                placeholder="PR Number"
+                defaultValue="PR00034"
                 className="w-40"
               />
+              <Input placeholder="Reference" className="w-40" />
             </div>
-            <div className="flex space-x-2">
-              <Button variant="outline">
-                <Search className="h-4 w-4 mr-2" /> Item Lookup
-              </Button>
+            <div className="flex flex-col items-start">
+              <Combobox
+                options={customerAccounts}
+                value={customerAccount}
+                onChange={setCustomerAccount}
+                placeholder="Select Master Data"
+                className="w-full"
+              />
             </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="flex gap-2 items-center">
-                <Combobox
-                  options={customerAccounts}
-                  value={customerAccount}
-                  onChange={setCustomerAccount}
-                  placeholder="Select Cash Account"
-                  className="w-full"
-                />
-                <div className="p-2 border rounded cursor-pointer">
-                  <Plus />
-                </div>
+                {/* <div className="flex flex-col items-start">
+                  <Label className="text-sm">Master Data</Label>
+                  <Combobox
+                    options={customerAccounts}
+                    value={customerAccount}
+                    onChange={setCustomerAccount}
+                    placeholder="Select Master Data"
+                    className="w-full"
+                  />
+                </div> */}
+                {/* <div className="p-1.5 border rounded cursor-pointer">
+                  <StepBack />
+                </div> */}
               </div>
-              <div>
+              {/* <div>
                 <Combobox
                   options={quotations}
                   value={quotation}
@@ -171,8 +189,8 @@ const Invoice = () => {
                   placeholder="Select Quotation"
                   className="w-full"
                 />
-              </div>
-              <Select value={salesman} onValueChange={setSalesman}>
+              </div> */}
+              {/* <Select value={salesman} onValueChange={setSalesman}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Salesman" />
                 </SelectTrigger>
@@ -183,7 +201,7 @@ const Invoice = () => {
                     </SelectItem>
                   ))}
                 </SelectContent>
-              </Select>
+              </Select> */}
             </div>
 
             <Table>
@@ -314,45 +332,44 @@ const Invoice = () => {
               </TableBody>
             </Table>
 
-            <div className="w-full flex justify-end">
-              <Button onClick={addItem} className="mt-4">
+            <div className="w-full flex justify-end mb-4">
+              <Button onClick={addItem}>
                 <Plus className="h-4 w-4 mr-2" /> Add Item
               </Button>
             </div>
+            <div className="grid grid-cols-2 gap-6">
+              <div></div>
+              <Card>
+                <CardContent className="mt-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span>Sub Total</span>
+                      <Input
+                        type="number"
+                        value={calculateSubTotal().toFixed(2)}
+                        className="w-32"
+                        readOnly
+                      />
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Discount</span>
+                      <Input type="number" defaultValue={0} className="w-32" />
+                    </div>
+                    <div className="flex justify-between font-bold">
+                      <span>Grand Total</span>
+                      <Input
+                        type="number"
+                        value={calculateSubTotal().toFixed(2)}
+                        className="w-32"
+                        readOnly
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </CardContent>
         </Card>
-
-        <div className="grid grid-cols-2 gap-6">
-          <div></div>
-          <Card className="-mt-4">
-            <CardContent className="mt-6">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Sub Total</span>
-                  <Input
-                    type="number"
-                    value={calculateSubTotal().toFixed(2)}
-                    className="w-32"
-                    readOnly
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <span>Discount</span>
-                  <Input type="number" defaultValue={0} className="w-32" />
-                </div>
-                <div className="flex justify-between font-bold">
-                  <span>Grand Total</span>
-                  <Input
-                    type="number"
-                    value={calculateSubTotal().toFixed(2)}
-                    className="w-32"
-                    readOnly
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
         <div className="flex justify-end mt-6">
           <div className="space-x-2">

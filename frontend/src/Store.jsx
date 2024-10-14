@@ -80,6 +80,7 @@ import AttendanceTable from "./components/employee-management/AttendanceTable";
 import AttendanceForm from "./components/employee-management/AttendanceForm";
 import LeaveForm from "./components/employee-management/LeaveForm";
 import LeaveTable from "./components/employee-management/LeaveTable";
+import Purchase from "./components/transactions/Purchase";
 
 function Store() {
   return (
@@ -211,6 +212,7 @@ function Store() {
           }
         />
 
+        {/* Transactions */}
         <Route
           path="/add-payment-transaction"
           element={
@@ -227,6 +229,16 @@ function Store() {
             </StoreProtectedRoute>
           }
         />
+        <Route
+          path="/purchase"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <Purchase />
+            </StoreProtectedRoute>
+          }
+        />
+
+        {/* User Management */}
         <Route
           path="/managers"
           element={
