@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { api } from "@/services/api";
-import { VehicleTable } from "./CompanyTableColumns/VehicleTable";
+import { VehicleTable } from "./VehicleTable";
 import { EditVehicle } from "./EditVehicle";
 
 export function VehicleList({ onVehicleUpdated }) {
@@ -18,7 +18,7 @@ export function VehicleList({ onVehicleUpdated }) {
       toast({
         title: "Error",
         description: "Failed to load vehicles.",
-        variant: "destructive",
+        variant: "destructive", 
       });
     }
   };

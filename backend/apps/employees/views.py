@@ -3,11 +3,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.utils import timezone
-from .models import Department, Position, Employee, Attendance, Leave, Performance, Payroll, Training
+from .models import Department, Position, Employee, Attendance, Leave, Performance, Payroll, Training, VPTrack
 from .serializers import (
     DepartmentSerializer, PositionSerializer, EmployeeSerializer, 
     AttendanceSerializer, LeaveSerializer, PerformanceSerializer, 
-    PayrollSerializer, TrainingSerializer
+    PayrollSerializer, TrainingSerializer, VPTrackSerializer
 )
 
 
@@ -180,3 +180,11 @@ class TrainingViewSet(viewsets.ModelViewSet):
             return Response({"message": f"{employee} removed from {training}"})
         except Employee.DoesNotExist:
             return Response({"error": "Employee not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VPTrackViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing VPTrack instances.
+    """
+    queryset = VPTrack.objects.all()
+    serializer_class = VPTrackSerializer

@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import Department, Position, Employee, Attendance, Leave, Performance, Payroll, Training
+from .models import Department, Position, Employee, Attendance, Leave, Performance, Payroll, Training, VPTrack
 from django.contrib.auth import get_user_model
+from apps.companies.serializers import CompanyDetailsSerializer
 
 User = get_user_model()
 
@@ -140,3 +141,15 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
+
+
+class VPTrackSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the VPTrack model, including all fields.
+    """
+    company_name = serializers.CharField(source='company.company_name', read_only=True)
+    employee_name = serializers.CharField(source='employee.employee_name', read_only=True)
+
+    class Meta:
+        model = VPTrack 
+        fields = ['id', 'company', 'company_name', 'employee', 'employee_name', 'computer_card', 'nation', 'vp_no', 'vp_expiry', 'employee_designation', 'visa_count']

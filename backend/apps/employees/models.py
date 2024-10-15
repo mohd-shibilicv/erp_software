@@ -4,6 +4,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.conf import settings
 from django.utils import timezone
 
+from apps.companies.models import CompanyDetails
+
 User = get_user_model()
 
 
@@ -189,3 +191,45 @@ class Training(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class VPTrack(models.Model):
+    """
+    Model representing VP tracking information for a company.
+
+    Attributes:
+    -----------
+    company : ForeignKey
+        A foreign key relation to the Company model.
+    employee : ForeignKey
+        A foreign key relation to the Employee model.
+    computer_card : CharField
+        The computer card number associated with the VP.
+    nation : CharField
+        The nation of the VP or employee.
+    vp_no : CharField
+        The VP (Visa Permit) number.
+    vp_expiry : DateField
+        The expiry date of the VP.
+    employee_designation : CharField
+        The designation of the employee associated with the VP.
+    visa_count : IntegerField
+        The number of visas issued or associated with the VP.
+    """
+
+    company = models.ForeignKey(CompanyDetails, on_delete=models.CASCADE, related_name='vp_tracks')
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='vp_tracks')
+    computer_card = models.CharField(max_length=100, blank=True, null=True)
+    nation = models.CharField(max_length=100, blank=True, null=True)
+    vp_no = models.CharField(max_length=100, blank=True, null=True)
+    vp_expiry = models.DateField(blank=True, null=True)
+    employee_designation = models.CharField(max_length=100, blank=True, null=True)
+    visa_count = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.company.name} - VP {self.vp_no}"
+
+    class Meta:
+        verbose_name = "VP Track"   
+        verbose_name_plural = "VP Tracks"
+        ordering = ['-vp_expiry']

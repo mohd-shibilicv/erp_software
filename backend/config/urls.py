@@ -70,6 +70,7 @@ from apps.employees.views import (
     PerformanceViewSet,
     PayrollViewSet,
     TrainingViewSet,
+    VPTrackViewSet,
 )
 from apps.transactions.views import (
     PurchaseRequestViewSet,
@@ -153,6 +154,7 @@ router.register(
 )
 
 # Employees
+router.register(r'vptracks', VPTrackViewSet)
 router.register(r"departments", DepartmentViewSet)
 router.register(r"positions", PositionViewSet)
 router.register(r"employees", EmployeeViewSet)

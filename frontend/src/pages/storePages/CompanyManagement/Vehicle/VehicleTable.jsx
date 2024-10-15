@@ -15,7 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Edit } from "lucide-react";
-import { EditVehicle } from "@/pages/storePages/CompanyManagement/EditVehicle";
+import { EditVehicle } from "@/pages/storePages/CompanyManagement/Vehicle/EditVehicle";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export function VehicleTable({ data, onVehicleUpdated, from = "vehicle" }) {
