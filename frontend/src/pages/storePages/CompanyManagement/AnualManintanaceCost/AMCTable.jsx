@@ -91,6 +91,21 @@ export function AMCTable({ data, onAMCUpdated }) {
       cell: ({ row }) => <div>{row.getValue("amc_contract_remark") || "No Remark"}</div>,
     },
     {
+      accessorKey: "amc_percentage",
+      header: () => <div className="font-semibold">AMC Percentage</div>,
+      cell: ({ row }) => <div>{row.getValue("amc_percentage") || "N/A"}%</div>,
+    },
+    {
+      accessorKey: "amc_percentage_amount",
+      header: () => <div className="font-semibold">AMC Percentage Amount</div>,
+      cell: ({ row }) => <div>{row.getValue("amc_percentage_amount") || "N/A"}</div>,
+    },
+    {
+      accessorKey: "amc_total_amount",
+      header: () => <div className="font-semibold">AMC Total Amount</div>,
+      cell: ({ row }) => <div>{row.getValue("amc_total_amount") || "N/A"}</div>,
+    },
+    {
       accessorKey: "_id",
       header: () => <div className="font-semibold">Actions</div>,
       cell: ({ row }) => (
@@ -192,5 +207,5 @@ export function AMCTable({ data, onAMCUpdated }) {
         </Table>
       </div>
     </div>
-  );    
+  );
 }

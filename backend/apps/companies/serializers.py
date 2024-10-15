@@ -61,4 +61,7 @@ class AnnualMaintenanceCostSerializer(serializers.ModelSerializer):
             'amc_start_date',
             'amc_end_date',
             'amc_contract_remark',
+            'amc_percentage',
+            'amc_percentage_amount',
+            'amc_total_amount',
         ]

@@ -14,6 +14,18 @@ export function EditAMC({ amcData, onClose, onUpdate }) {
   const [amcContractStart, setAmcContractStart] = useState(new Date(amcData.amc_start_date));
   const [amcContractEnd, setAmcContractEnd] = useState(new Date(amcData.amc_end_date));
   const [amcRemarks, setAmcRemarks] = useState(amcData.amc_contract_remark);
+  const [amcPercentage, setAmcPercentage] = useState(amcData.amc_percentage || "");
+  const [amcPercentageAmount, setAmcPercentageAmount] = useState(amcData.amc_percentage_amount || "");
+  const [amcTotalAmount, setAmcTotalAmount] = useState(amcData.amc_total_amount || "");
+
+  useEffect(() => {
+    if (amcTotalAmount && amcPercentage) {
+      const calculatedAmount = (parseFloat(amcTotalAmount) * parseFloat(amcPercentage)) / 100;
+      setAmcPercentageAmount(calculatedAmount.toFixed(2));
+    } else {
+      setAmcPercentageAmount("");
+    }
+  }, [amcTotalAmount, amcPercentage]);
 
   const handleEditAMC = async (e) => {
     e.preventDefault();
@@ -32,6 +44,9 @@ export function EditAMC({ amcData, onClose, onUpdate }) {
     formData.append("amc_start_date", amcContractStart.toISOString().split("T")[0]);
     formData.append("amc_end_date", amcContractEnd.toISOString().split("T")[0]);
     formData.append("amc_contract_remark", amcRemarks);
+    formData.append("amc_percentage", amcPercentage);
+    formData.append("amc_percentage_amount", amcPercentageAmount);
+    formData.append("amc_total_amount", amcTotalAmount);
 
     try {
       const response = await api.put(`/amc/${amcData.id}/`, formData, {
@@ -135,6 +150,24 @@ export function EditAMC({ amcData, onClose, onUpdate }) {
           setValue={setAmcRemarks}
           value={amcRemarks}
           placeholder="Enter AMC remark"
+        />
+        <InputWithLabel
+          label="AMC Percentage"
+          setValue={setAmcPercentage}
+          value={amcPercentage}
+          placeholder="Enter AMC percentage"
+        />
+        <InputWithLabel
+          label="AMC Percentage Amount"
+          value={amcPercentageAmount}
+          placeholder="Calculated automatically"
+          disabled
+        />
+        <InputWithLabel
+          label="AMC Total Amount"
+          setValue={setAmcTotalAmount}
+          value={amcTotalAmount}
+          placeholder="Enter AMC total amount"
         />
       </div>
 

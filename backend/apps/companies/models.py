@@ -124,18 +124,31 @@ class AnnualMaintenanceCost(models.Model):
         The ending date of the AMC contract.
     amc_contract_remark : TextField
         A text field to provide additional remarks related to the AMC contract.
+    amc_percentage : DecimalField
+        A decimal field representing the percentage of the AMC.
+    amc_amount : DecimalField
+        A decimal field representing the total amount of the AMC.
+
+    Methods:
+    --------
+    __str__():
+        Returns a string representation of the AMC instance, showing the start and end date.
     """
-    
+
     fire_certification_image = models.ImageField(upload_to='fire_certifications/', blank=True, null=True)
     amc_contract_image = models.ImageField(upload_to='amc_contracts/', blank=True, null=True)
     fire_contract_remark = models.TextField(blank=True, null=True)
     amc_start_date = models.DateField(blank=True, null=True)
     amc_end_date = models.DateField(blank=True, null=True)
     amc_contract_remark = models.TextField(blank=True, null=True)
+    amc_percentage = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    amc_percentage_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    amc_total_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
 
     def __str__(self):
         return f"AMC from {self.amc_start_date} to {self.amc_end_date}"
-    
+
     class Meta:
         verbose_name = "Annual Maintenance Cost"
         verbose_name_plural = "Annual Maintenance Costs"
