@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import (
+    AnnualMaintenanceCost,
     CompanyDetails,
     VehicleDetails)
 
@@ -42,3 +43,22 @@ class VehicleDetailsSerializer(serializers.ModelSerializer):
         if VehicleDetails.objects.exclude(pk=instance.pk if instance else None).filter(vehicle_no=value).exists():
             raise serializers.ValidationError("A vehicle with this number already exists.")
         return value
+
+
+class AnnualMaintenanceCostSerializer(serializers.ModelSerializer):
+    """
+    Serializer for AnnualMaintenanceCost model. Transforms the model instance into JSON
+    and validates incoming data for creating or updating an AMC record.
+    """
+    
+    class Meta:
+        model = AnnualMaintenanceCost
+        fields = [
+            'id',
+            'fire_certification_image',
+            'amc_contract_image',
+            'fire_contract_remark',
+            'amc_start_date',
+            'amc_end_date',
+            'amc_contract_remark',
+        ]

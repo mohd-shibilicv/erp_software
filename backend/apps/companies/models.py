@@ -104,3 +104,39 @@ class VehicleDetails(models.Model):
         verbose_name = "Vehicle Detail"
         verbose_name_plural = "Vehicle Details"
         ordering = ['-created_at']
+
+
+class AnnualMaintenanceCost(models.Model):
+    """
+    Model representing the annual maintenance cost (AMC) details for a company.
+
+    Attributes:
+    -----------
+    fire_certification_image : ImageField
+        An image field to upload the fire certification document.
+    amc_contract_image : ImageField
+        An image field to upload the AMC (Annual Maintenance Contract) document.
+    fire_contract_remark : TextField
+        A text field to provide remarks or notes about the fire certification and contract.
+    amc_start_date : DateField
+        The starting date of the AMC contract.
+    amc_end_date : DateField
+        The ending date of the AMC contract.
+    amc_contract_remark : TextField
+        A text field to provide additional remarks related to the AMC contract.
+    """
+    
+    fire_certification_image = models.ImageField(upload_to='fire_certifications/', blank=True, null=True)
+    amc_contract_image = models.ImageField(upload_to='amc_contracts/', blank=True, null=True)
+    fire_contract_remark = models.TextField(blank=True, null=True)
+    amc_start_date = models.DateField(blank=True, null=True)
+    amc_end_date = models.DateField(blank=True, null=True)
+    amc_contract_remark = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"AMC from {self.amc_start_date} to {self.amc_end_date}"
+    
+    class Meta:
+        verbose_name = "Annual Maintenance Cost"
+        verbose_name_plural = "Annual Maintenance Costs"
+        ordering = ['-amc_end_date']

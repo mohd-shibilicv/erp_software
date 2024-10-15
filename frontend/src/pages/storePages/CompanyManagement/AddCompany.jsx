@@ -6,7 +6,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { api, fetchCompanies } from "@/services/api"; 
 import { CompanyList } from "./CompanyList";
 import { toast } from "@/components/ui/use-toast";
-import CompanyTable from "./CompanyTableColumns/CompanyTable";
 
 export function AddCompany() {
   const [companies, setCompanies] = useState([]);

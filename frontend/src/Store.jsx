@@ -81,6 +81,7 @@ import AttendanceForm from "./components/employee-management/AttendanceForm";
 import LeaveForm from "./components/employee-management/LeaveForm";
 import LeaveTable from "./components/employee-management/LeaveTable";
 import Purchase from "./components/transactions/Purchase";
+import { AnualManintananceCost } from "./pages/storePages/CompanyManagement/AnualManintanaceCost/AnualMaintananceCost";
 
 function Store() {
   return (
@@ -344,15 +345,17 @@ function Store() {
           }
         />
 
+        {/* Company Management */}
         <Route path="/company-management" element={<CompanyDashboard />} />
-        {/* <Route path="/company-list" element={<CompanyList />} /> */}
         <Route path="/add-company" element={<AddCompany />} />
         <Route path="/add-vehicle" element={<AddVehicle />} />
         <Route path="/vehicle-list" element={<VehicleList />} />
         <Route path="/vehicle-expense" element={<VehicleExpense />} />
-        <Route path="/fire-certification" element={<FireAndCertfication />} />
-        <Route path="/rent-expense" element={<RentandExpense />} />
+        <Route path="/anual-maintanace-cost" element={<AnualManintananceCost />} />
         <Route path="/reports" element={<CompanyReports />} />
+        {/* <Route path="/rent-expense" element={<RentandExpense />} /> */}
+        {/* <Route path="/company-list" element={<CompanyList />} /> */}
+        {/* <Route path="/fire-certification" element={<FireAndCertfication />} /> */}
         {/* <Route path="employee-list" element={<EmployeeList />} />
           <Route path="leave-vacation" element={<LeaveAndVacation />} />
           <Route path="vp-track" element={<VpTrack />} />

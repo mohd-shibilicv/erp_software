@@ -474,6 +474,11 @@ UNFOLD = {
                         "icon": "step_into",
                         "link": reverse_lazy("admin:companies_vehicledetails_changelist"),
                     },
+                                        {
+                        "title": _("Annual Maintenance Cost"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:companies_annualmaintenancecost_changelist"),
+                    },
                 ],
             },
             {

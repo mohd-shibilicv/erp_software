@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import CompanyDetails, VehicleDetails
-from .serializers import CompanyDetailsSerializer, VehicleDetailsSerializer
+from .models import AnnualMaintenanceCost, CompanyDetails, VehicleDetails
+from .serializers import AnnualMaintenanceCostSerializer, CompanyDetailsSerializer, VehicleDetailsSerializer
 from rest_framework.permissions import IsAuthenticated
 
 class CompanyDetailsViewSet(viewsets.ModelViewSet):
@@ -23,3 +23,13 @@ class VehicleDetailsViewSet(viewsets.ModelViewSet):
     queryset = VehicleDetails.objects.all()
     serializer_class = VehicleDetailsSerializer
     permission_classes = [IsAuthenticated]
+
+
+class AnnualMaintenanceCostViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for viewing, creating, updating, and deleting AnnualMaintenanceCost records.
+    Provides standard actions like list, retrieve, create, update, and delete.
+    """
+    
+    queryset = AnnualMaintenanceCost.objects.all()
+    serializer_class = AnnualMaintenanceCostSerializer

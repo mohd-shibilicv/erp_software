@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
 import {
   useReactTable,
@@ -17,12 +16,10 @@ import {
 } from "@/components/ui/table";
 import { Edit } from "lucide-react";
 import { EditVehicle } from "@/pages/storePages/CompanyManagement/EditVehicle";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-export function VehicleTable({ data, onVehicleUpdated }) {
-  const [searchParam, setSearchParam] = useSearchParams();
+export function VehicleTable({ data, onVehicleUpdated, from = "vehicle" }) {
   const [columnFilters, setColumnFilters] = useState([]);
-  const [searchVal, setSearchVal] = useState("");
   const [editingVehicleId, setEditingVehicleId] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -87,33 +84,23 @@ export function VehicleTable({ data, onVehicleUpdated }) {
     },
   });
 
-  useEffect(() => {
-    const param = new URLSearchParams(window.location.search);
-    const key = "vehicleSearchOptions"; // Adjust key as necessary
-    setSearchVal(param.get(key) || "");
-  }, [searchParam]);
-
-
-
   return (
     <div>
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent className="max-w-[50vw] w-full">
+          <DialogHeader>
+            <DialogTitle></DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
           {editingVehicleId && (
             <EditVehicle
               vehicleId={editingVehicleId}
               onClose={() => {
                 setIsEditModalOpen(false);
                 setEditingVehicleId(null);
-                if (typeof onVehicleUpdated === 'function') {
-                  onVehicleUpdated();
-                }
+                onVehicleUpdated();
               }}
-              onVehicleUpdated={() => {
-                if (typeof onVehicleUpdated === 'function') {
-                  onVehicleUpdated();
-                }
-              }}
+              onVehicleUpdated={onVehicleUpdated} 
             />
           )}
         </DialogContent>

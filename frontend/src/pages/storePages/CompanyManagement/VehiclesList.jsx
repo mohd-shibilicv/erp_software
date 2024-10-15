@@ -33,10 +33,8 @@ export function VehicleList({ onVehicleUpdated }) {
 
   const handleVehicleUpdated = () => {
     fetchVehicles();  
-    onVehicleUpdated();  
   };
   
-
   const filteredVehicles = vehicles.filter(vehicle =>
     vehicle.vehicle_name.toLowerCase().includes(srch.toLowerCase())
   );
@@ -55,16 +53,9 @@ export function VehicleList({ onVehicleUpdated }) {
 
         <VehicleTable
           from="vehicle"
-          data={filteredVehicles} 
+          data={filteredVehicles}
+          onVehicleUpdated={handleVehicleUpdated}
         />
-
-        {editingVehicle && (
-          <EditVehicle
-            vehicleId={editingVehicle}
-            onClose={handleCloseEdit}
-            onVehicleUpdated={handleVehicleUpdated}
-          />
-        )}
       </section>
     </main>
   );

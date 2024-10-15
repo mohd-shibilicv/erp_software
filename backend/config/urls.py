@@ -72,6 +72,7 @@ from apps.employees.views import (
     TrainingViewSet,
 )
 from apps.companies.views import (
+    AnnualMaintenanceCostViewSet,
     CompanyDetailsViewSet,
     VehicleDetailsViewSet)
 
@@ -136,6 +137,7 @@ router.register(r'training', TrainingViewSet)
 # Companies
 router.register(r'company-details', CompanyDetailsViewSet)
 router.register(r'vehicles', VehicleDetailsViewSet)
+router.register(r'amc', AnnualMaintenanceCostViewSet)
 
 
 urlpatterns = [

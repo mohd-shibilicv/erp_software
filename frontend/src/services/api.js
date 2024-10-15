@@ -126,3 +126,9 @@ export const fetchVehicles = async () => {
   const response = await api.get("/vehicles/");
   return response.data;
 };
+
+// Amc Details
+export const fetchAmc = async () => {
+  const response = await api.get("/amc/");
+  return response.data;
+};
