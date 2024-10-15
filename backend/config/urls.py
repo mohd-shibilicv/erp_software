@@ -154,14 +154,6 @@ router.register(
 )
 
 # Employees
-router.register(r'departments', DepartmentViewSet)
-router.register(r'positions', PositionViewSet)
-router.register(r'employees', EmployeeViewSet)
-router.register(r'attendance', AttendanceViewSet)
-router.register(r'leaves', LeaveViewSet)
-router.register(r'performance', PerformanceViewSet)
-router.register(r'payroll', PayrollViewSet)
-router.register(r'training', TrainingViewSet)
 router.register(r'vptracks', VPTrackViewSet)
 router.register(r"departments", DepartmentViewSet)
 router.register(r"positions", PositionViewSet)
