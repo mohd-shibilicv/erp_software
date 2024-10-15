@@ -106,8 +106,11 @@ const LedgerCreationModal = ({ isOpen, onClose, refreshLedgerOptions }) => {
       name,
       opening_balance: openingBalance ? parseFloat(openingBalance) : 0,
       group_id: group,
-      master_data: masterDataType, 
     };
+
+    if (masterDataType) {
+      ledgerData.master_data = masterDataType;
+    }
   
     if (masterDataType === "customer") {
       ledgerData.customer_ref = selectedMasterData; 
@@ -201,7 +204,6 @@ const LedgerCreationModal = ({ isOpen, onClose, refreshLedgerOptions }) => {
                 setEmployees([]);
               }}
               className="border rounded p-2 w-full"
-              required
             >
               <option value="">Select Master Data Type</option>
               <option value="customer">Customer</option>
@@ -218,7 +220,6 @@ const LedgerCreationModal = ({ isOpen, onClose, refreshLedgerOptions }) => {
                 value={selectedMasterData}
                 onChange={(e) => setSelectedMasterData(e.target.value)}
                 className="border rounded p-2 w-full"
-                required
               >
                 <option value="">Select {masterDataType}</option>
                 {(masterDataType === "customer" ? customers : employees).map((data) => (

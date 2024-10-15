@@ -75,37 +75,62 @@ const UpdatedStoreSidebar = () => {
     );
   };
 
-  const renderSection = (section) => (
-    <div key={section.section} className="mb-4">
-      <Button
-        variant="ghost"
-        className="w-full justify-between"
-        onClick={() => toggleSection(section.section)}
-      >
-        <span className="font-semibold">{section.section}</span>
-        <motion.span
-          animate={{ rotate: expandedSections[section.section] ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
+  // Define the desired order for each section
+  const sectionOrder = {
+    CRM: ["CRM Dashboard", "Client Requests", "Client Relationship", "Client Requirements", "Quotation", "Agreement"],
+    Transactions: ["Purchase Request", "Local Purchase Order", "Purchase", "Purchase Return", "Sales Order", "Sales", "Sales Return", "Join Venture Sales", "Invoice", "Add Receipt", "Add Payment"],
+    "Project Management": ["Projects", "Tasks", "Delivery Note"],
+    "Product Management": ["Dashboard", "Products", "Suppliers"],
+    Users: ["Managers", "Staff"],
+    Inventory: ["Product Inflows", "Product Requests", "Product Outflows", "Defective Products"],
+    Reports: ["Reports", "Sales", "Join Venture Sales"],
+    Operations: ["Product Grouping", "Physical Stock", "Material Transfer", "Invoice Generator", "Group Mailing"],
+    "Employee Management": ["Employee Dashboard", "Employees", "Attendance", "Leave / Vacation", "Vp Track", "Uniform Report", "Reports"],
+    "Asset Management": ["Assets Dashboard", "Asset Creation", "Asset Transfer", "Asset Depreciation", "Asset Service", "Asset Reports"],
+    "Company Management": ["Company Dashboard", "Company List", "Company", "Branches", "Vehicle List", "Add Vehicle", "Vehicle Expense", "AMC Contract", "Rental Expense", "Reports"],
+    Accounts: ["Ledger"],
+  };
+
+  const renderSection = (section) => {
+    // Sort the items based on the predefined order
+    const sortedItems = section.items.sort((a, b) => {
+      const orderA = sectionOrder[section.section]?.indexOf(a.label) ?? Infinity;
+      const orderB = sectionOrder[section.section]?.indexOf(b.label) ?? Infinity;
+      return orderA - orderB;
+    });
+
+    return (
+      <div key={section.section} className="mb-4">
+        <Button
+          variant="ghost"
+          className="w-full justify-between"
+          onClick={() => toggleSection(section.section)}
         >
-          <ChevronDown className="w-4 h-4" />
-        </motion.span>
-      </Button>
-      <AnimatePresence>
-        {expandedSections[section.section] && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+          <span className="font-semibold">{section.section}</span>
+          <motion.span
+            animate={{ rotate: expandedSections[section.section] ? 180 : 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="ml-4 mt-2 space-y-1">
-              {section.items.map(renderMenuItem)}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
+            <ChevronDown className="w-4 h-4" />
+          </motion.span>
+        </Button>
+        <AnimatePresence>
+          {expandedSections[section.section] && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="ml-4 mt-2 space-y-1">
+                {sortedItems.map(renderMenuItem)}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  };
 
   const filteredMenuItems = menuItems.filter((item) => {
     if (user?.role === "staff") {

@@ -56,9 +56,9 @@ from apps.crm.views import (
     CrmDashboardView,
 )
 from apps.accounts.views import (
-   NatureGroupViewSet,
-   MainGroupViewSet,
-   LedgerViewSet,
+    NatureGroupViewSet,
+    MainGroupViewSet,
+    LedgerViewSet,
 )
 from apps.operations.views import GroupMailingView, SidebarConfigView
 from apps.employees.views import (
@@ -70,6 +70,22 @@ from apps.employees.views import (
     PerformanceViewSet,
     PayrollViewSet,
     TrainingViewSet,
+)
+from apps.transactions.views import (
+    PurchaseRequestViewSet,
+    PurchaseRequestItemViewSet,
+    LocalPurchaseOrderViewSet,
+    LocalPurchaseOrderItemViewSet,
+    PurchaseViewSet,
+    PurchaseItemViewSet,
+    PurchaseReturnViewSet,
+    PurchaseReturnItemViewSet,
+    SalesOrderViewSet,
+    SalesOrderItemViewSet,
+    SaleViewSet,
+    SaleItemViewSet,
+    SalesReturnViewSet,
+    SalesReturnItemViewSet,
 )
 
 
@@ -109,34 +125,66 @@ router.register(r"quotation-items", QuotationItemViewSet, basename="quotation_it
 router.register(r"agreements", AgreementViewSet, basename="agreements")
 
 # Accounts
-router.register(r'nature-groups', NatureGroupViewSet)
-router.register(r'main-groups', MainGroupViewSet)
-router.register(r'ledgers', LedgerViewSet)
+router.register(r"nature-groups", NatureGroupViewSet)
+router.register(r"main-groups", MainGroupViewSet)
+router.register(r"ledgers", LedgerViewSet)
 
-router.register(r'projects', ProjectViewSet, basename='project')
-router.register(r'project-assignments', ProjectAssignedStaffsViewSet, basename='project-assignments')
-router.register(r'project-tasks', ProjectTaskViewSet)
-router.register(r'individual-projects-tasks',ProjectIndividualTaskViewSet, basename="individual-projects-tasks")
-router.register(r'staff-assignments', StaffProjectAssignmentViewSet, basename='staff-assignments'),
-router.register(r'induvidual-listing', StaffProjectAssignmentViewSet, basename='staff-assignments-induvidual')
+router.register(r"projects", ProjectViewSet, basename="project")
+router.register(
+    r"project-assignments", ProjectAssignedStaffsViewSet, basename="project-assignments"
+)
+router.register(r"project-tasks", ProjectTaskViewSet)
+router.register(
+    r"individual-projects-tasks",
+    ProjectIndividualTaskViewSet,
+    basename="individual-projects-tasks",
+)
+router.register(
+    r"staff-assignments", StaffProjectAssignmentViewSet, basename="staff-assignments"
+),
+router.register(
+    r"induvidual-listing",
+    StaffProjectAssignmentViewSet,
+    basename="staff-assignments-induvidual",
+)
 
 # Employees
-router.register(r'departments', DepartmentViewSet)
-router.register(r'positions', PositionViewSet)
-router.register(r'employees', EmployeeViewSet)
-router.register(r'attendance', AttendanceViewSet)
-router.register(r'leaves', LeaveViewSet)
-router.register(r'performance', PerformanceViewSet)
-router.register(r'payroll', PayrollViewSet)
-router.register(r'training', TrainingViewSet)
+router.register(r"departments", DepartmentViewSet)
+router.register(r"positions", PositionViewSet)
+router.register(r"employees", EmployeeViewSet)
+router.register(r"attendance", AttendanceViewSet)
+router.register(r"leaves", LeaveViewSet)
+router.register(r"performance", PerformanceViewSet)
+router.register(r"payroll", PayrollViewSet)
+router.register(r"training", TrainingViewSet)
+
+# Transactions
+router.register(r"purchase-requests", PurchaseRequestViewSet)
+router.register(r"purchase-request-items", PurchaseRequestItemViewSet)
+router.register(r"local-purchase-orders", LocalPurchaseOrderViewSet)
+router.register(r"local-purchase-order-items", LocalPurchaseOrderItemViewSet)
+router.register(r"purchases", PurchaseViewSet)
+router.register(r"purchase-items", PurchaseItemViewSet)
+router.register(r"purchase-returns", PurchaseReturnViewSet)
+router.register(r"purchase-return-items", PurchaseReturnItemViewSet)
+router.register(r"sales-orders", SalesOrderViewSet)
+router.register(r"sales-order-items", SalesOrderItemViewSet)
+router.register(r"sales", SaleViewSet)
+router.register(r"sale-items", SaleItemViewSet)
+router.register(r"sales-returns", SalesReturnViewSet)
+router.register(r"sales-return-items", SalesReturnItemViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", landing, name="landing"),
     path("api/", include(router.urls)),
-    path('api/send-project-email/', SendProjectEmailView.as_view(), name='send_project_email'),
-    path('api/sidebar-config/', SidebarConfigView.as_view(), name='sidebar-config'),
-    path('api/group-mailing/', GroupMailingView.as_view(), name='group-mailing'),
+    path(
+        "api/send-project-email/",
+        SendProjectEmailView.as_view(),
+        name="send_project_email",
+    ),
+    path("api/sidebar-config/", SidebarConfigView.as_view(), name="sidebar-config"),
+    path("api/group-mailing/", GroupMailingView.as_view(), name="group-mailing"),
     path("api/logout/", LogoutView.as_view({"post": "logout"}), name="logout"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -210,6 +258,8 @@ urlpatterns += [
 # Dashboard URL
 urlpatterns += [
     path("api/dashboard/", DashboardView.as_view(), name="dashboard"),
-    path('api/branch-dashboard/', BranchDashboardView.as_view(), name='branch-dashboard'),
-    path('api/crm-dashboard/', CrmDashboardView.as_view(), name='crm-dashboard'),
+    path(
+        "api/branch-dashboard/", BranchDashboardView.as_view(), name="branch-dashboard"
+    ),
+    path("api/crm-dashboard/", CrmDashboardView.as_view(), name="crm-dashboard"),
 ]

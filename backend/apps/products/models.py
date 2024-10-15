@@ -23,20 +23,34 @@ class Brand(models.Model):
     def __str__(self):
         return self.name
 
-
 class Product(models.Model):
+    UNIT_CHOICES = [
+        ('piece', 'Piece'),
+        ('kg', 'Kilogram'),
+        ('g', 'Gram'),
+        ('l', 'Liter'),
+        ('ml', 'Milliliter'),
+        ('m', 'Meter'),
+        ('cm', 'Centimeter'),
+        ('box', 'Box'),
+        ('pack', 'Pack'),
+        ('dozen', 'Dozen'),
+        ('pair', 'Pair'),
+    ]
+
     name = models.CharField(max_length=255)
     sku = models.CharField(max_length=100, unique=True, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField()
+    unit = models.CharField(max_length=10, choices=UNIT_CHOICES, default='piece')
+    reorder_level = models.PositiveIntegerField(default=0)
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, related_name="products"
     )
     brand = models.ForeignKey(
         Brand, on_delete=models.SET_NULL, null=True, related_name="products"
     )
-    opening_stock = models.PositiveIntegerField()
     barcode_image = models.ImageField(upload_to="barcodes/", null=True, blank=True)
 
     class Meta:

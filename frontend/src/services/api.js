@@ -99,6 +99,7 @@ export const fetchBranches = async () => {
   return response.data;
 };
 
+// Product Request API endpoints
 export const fetchProductRequests = async () => {
   const response = await api.get("/product-requests/");
   return response.data;
@@ -112,5 +113,22 @@ export const refreshProductOutflows = async () => {
 // Employee API endpoints
 export const fetchEmployees = async () => {
   const response = await api.get("/employees/");
+  return response.data;
+};
+
+// Purchase Request API endpoints
+export const fetchPurchaseRequests = async () => {
+  const response = await api.get("/purchase-requests/");
+  return response.data;
+};
+
+export const fetchPurchaseRequest = async (id) => {
+  const response = await api.get(`/purchase-requests/${id}/`);
+  return response.data;
+};
+
+// Local Purchase Order API endpoints
+export const fetchLPO = async (id) => {
+  const response = await api.get(`/local-purchase-orders/${id}/`);
   return response.data;
 };

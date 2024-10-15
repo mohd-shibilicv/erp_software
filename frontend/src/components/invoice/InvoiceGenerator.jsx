@@ -294,8 +294,8 @@ const InvoiceGenerator = () => {
             </Button>
           </div>
         </CardContent>
-        <div className="w-full flex justify-between m-4">
-          <Card className="flex flex-col p-5 mr-6">
+        <div className= "grid grid-cols-2 gap-4 m-4">
+          <Card className="flex flex-col p-5">
             <h3 className="text-lg font-semibold mb-2">Issued To:</h3>
             <Input
               type="text"
@@ -324,7 +324,7 @@ const InvoiceGenerator = () => {
               }
             />
           </Card>
-          <Card className="flex flex-col p-5 mr-6">
+          <Card className="flex flex-col p-5">
             <div className="flex justify-between border-gray-200 pt-2">
               <span className="font-semibold">Subtotal</span>
               <span>QAR {calculateSubtotal().toFixed(2)}</span>

@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/services/api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Combobox } from "../ui/Combobox";
 
 export function ProductModal({ isOpen, onClose, productId, onProductChange }) {
   const [product, setProduct] = useState({
@@ -19,8 +21,9 @@ export function ProductModal({ isOpen, onClose, productId, onProductChange }) {
     description: "",
     price: "",
     quantity: "",
-    opening_stock: "",
   });
+
+  const PRODUCT_UNIT_CHOICES = ["piece", "kg", "g", "l", "ml", "m", "cm", "box", "pack", "dozen", "pair"];
 
   useEffect(() => {
     if (productId) {
@@ -31,7 +34,6 @@ export function ProductModal({ isOpen, onClose, productId, onProductChange }) {
         description: "",
         price: "",
         quantity: "",
-        opening_stock: "",
       });
     }
   }, [productId]);
@@ -117,29 +119,44 @@ export function ProductModal({ isOpen, onClose, productId, onProductChange }) {
               />
             </div>
             <div className="flex flex-col gap-1">
+              <Label htmlFor="unit" className="text-start">
+                Unit
+              </Label>
+              <Combobox
+                options={PRODUCT_UNIT_CHOICES.map(unit => ({ value: unit, label: unit }))}
+                value={product.unit}
+                onChange={(value) => handleInputChange({ target: { name: 'unit', value } })}
+                placeholder="Select Unit"
+                emptyMessage="No unit found."
+                searchPlaceholder="Search unit..."
+                className="w-full"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="reorder_level" className="text-start">
+                Minimum Stock Level
+              </Label>
+              <Input
+                id="reorder_level"
+                name="reorder_level"
+                placeholder="Enter Reorder Level"
+                type="number"
+                value={product.reorder_level}
+                defaultValue={0}
+                onChange={handleInputChange}
+                className="col-span-3 shadow-sm bg-gray-100/50 focus-visible:bg-white"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
               <Label htmlFor="quantity" className="text-start">
                 Quantity
               </Label>
               <Input
                 id="quantity"
                 name="quantity"
-                 placeholder="Enter Product Quantity"
+                placeholder="Enter Product Quantity"
                 type="number"
                 value={product.quantity}
-                onChange={handleInputChange}
-                className="col-span-3 shadow-sm bg-gray-100/50 focus-visible:bg-white"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <Label htmlFor="opening_stock" className="text-start">
-                Opening Stock
-              </Label>
-              <Input
-                id="opening_stock"
-                name="opening_stock"
-                 placeholder="Enter Product Opening Stock"
-                type="number"
-                value={product.opening_stock}
                 onChange={handleInputChange}
                 className="col-span-3 shadow-sm bg-gray-100/50 focus-visible:bg-white"
               />

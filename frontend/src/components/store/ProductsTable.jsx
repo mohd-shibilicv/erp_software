@@ -172,15 +172,7 @@ export function ProductsTable() {
       ),
       cell: ({ row }) => {
         const quantity = row.getValue("quantity");
-        if (quantity > 0 && quantity <= 10) {
-          return (
-            <div className="flex justify-center items-center">
-              <p className="text-yellow-800 bg-yellow-100 p-2 rounded-lg">
-                {quantity}
-              </p>
-            </div>
-          );
-        } else if (quantity === 0) {
+        if (quantity < row.original.reorder_level) {
           return (
             <div className="flex justify-center items-center">
               <p className="text-red-800 bg-red-100 p-2 rounded-lg">
