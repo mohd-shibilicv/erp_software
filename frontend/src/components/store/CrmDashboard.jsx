@@ -130,17 +130,54 @@ export default function CrmDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const response = await api.get("/crm-dashboard/");
-        setDashboardData(response.data);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setIsLoading(false);
-      }
+    // Commented out API call
+    // const fetchDashboardData = async () => {
+    //   try {
+    //     const response = await api.get("/crm-dashboard/");
+    //     setDashboardData(response.data);
+    //   } catch (error) {
+    //     console.error("Error fetching dashboard data:", error);
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // };
+    // fetchDashboardData();
+
+    // Dummy data
+    const dummyData = {
+      total_clients: 150,
+      total_projects: 45,
+      total_quotations: 20,
+      total_agreements: 35,
+      avg_project_duration: 45,
+      monthly_revenue: [
+        { name: 'Jan', revenue: 5000 },
+        { name: 'Feb', revenue: 6000 },
+        { name: 'Mar', revenue: 7500 },
+        { name: 'Apr', revenue: 8000 },
+        { name: 'May', revenue: 9000 },
+        { name: 'Jun', revenue: 10000 },
+      ],
+      project_status: [
+        { status: 'In Progress', count: 20 },
+        { status: 'Completed', count: 15 },
+        { status: 'On Hold', count: 5 },
+        { status: 'Cancelled', count: 2 },
+      ],
+      recent_clients: [
+        { name: 'Client A', project_count: 3, total_revenue: 15000 },
+        { name: 'Client B', project_count: 2, total_revenue: 10000 },
+        { name: 'Client C', project_count: 1, total_revenue: 5000 },
+      ],
+      top_clients: [
+        { name: 'Top Client 1', total_revenue: 50000 },
+        { name: 'Top Client 2', total_revenue: 40000 },
+        { name: 'Top Client 3', total_revenue: 30000 },
+      ],
     };
-    fetchDashboardData();
+
+    setDashboardData(dummyData);
+    setIsLoading(false);
   }, []);
 
   const StatCard = ({ title, value, icon: Icon, onClick }) => (

@@ -22,7 +22,6 @@ import AddReceipt from "./components/sales/AddReceipt";
 // import ClientRelationshipPage from "./pages/storePages/ClientRelationshipPage";
 // import ClientRequirementsPage from "./pages/storePages/ClientRequirementsPage";
 import AgreementAddEdit from "./pages/storePages/agreement/AgreementAddEdit";
-import Invoice from "./components/sales/Invoice";
 import DeliveryNote from "./components/sales/DeliveryNote";
 import JobOrder from "./components/sales/JobOrder";
 import DemoRequestTable from "./pages/storePages/demoRequests/DemoRequestTable";
@@ -80,7 +79,14 @@ import AttendanceTable from "./components/employee-management/AttendanceTable";
 import AttendanceForm from "./components/employee-management/AttendanceForm";
 import LeaveForm from "./components/employee-management/LeaveForm";
 import LeaveTable from "./components/employee-management/LeaveTable";
-import Purchase from "./components/transactions/Purchase";
+import PurchaseRequestsTable from "./components/transactions/PurchaseRequestsTable";
+import LPOTable from "./components/transactions/LPOTable";
+import PurchaseTable from "./components/transactions/PurchaseTable";
+import PurchaseReturnTable from "./components/transactions/PurchaseReturnTable";
+import Clients from "./components/client/Clients";
+import SalesTable from "./components/transactions/SalesTable";
+import SalesReturnTable from "./components/transactions/SalesReturnTable";
+import SalesOrderTable from "./components/transactions/SalesOrderTable";
 import { AnualManintananceCost } from "./pages/storePages/CompanyManagement/AnualManintanaceCost/AnualMaintananceCost";
 
 function Store() {
@@ -231,15 +237,71 @@ function Store() {
           }
         />
         <Route
+          path="/purchase-request"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <PurchaseRequestsTable />
+            </StoreProtectedRoute>
+          }
+        />
+        <Route
+          path="/lpo"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <LPOTable />
+            </StoreProtectedRoute>
+          }
+        />
+        <Route
           path="/purchase"
           element={
             <StoreProtectedRoute allowedRoles={["admin"]}>
-              <Purchase />
+              <PurchaseTable />
+            </StoreProtectedRoute>
+          }
+        />
+        <Route
+          path="/purchase-return"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <PurchaseReturnTable />
+            </StoreProtectedRoute>
+          }
+        />
+        <Route
+          path="/sales-order"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <SalesOrderTable />
+            </StoreProtectedRoute>
+          }
+        />
+        <Route
+          path="/sales"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <SalesTable />
+            </StoreProtectedRoute>
+          }
+        />
+        <Route
+          path="/sales-return"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <SalesReturnTable />
             </StoreProtectedRoute>
           }
         />
 
         {/* User Management */}
+        <Route
+          path="/customers"
+          element={
+            <StoreProtectedRoute allowedRoles={["admin"]}>
+              <Clients />
+            </StoreProtectedRoute>
+          }
+        />
         <Route
           path="/managers"
           element={
@@ -256,14 +318,8 @@ function Store() {
             </StoreProtectedRoute>
           }
         />
-        <Route
-          path="/invoice"
-          element={
-            <StoreProtectedRoute allowedRoles={["admin"]}>
-              <Invoice />
-            </StoreProtectedRoute>
-          }
-        />
+
+        {/* Project Management */}
         <Route
           path="/job-order"
           element={
@@ -277,14 +333,6 @@ function Store() {
           element={
             <StoreProtectedRoute allowedRoles={["admin"]}>
               <DeliveryNote />
-            </StoreProtectedRoute>
-          }
-        />
-        <Route
-          path="/notifications"
-          element={
-            <StoreProtectedRoute allowedRoles={["admin", "staff"]}>
-              <NotificationsPage />
             </StoreProtectedRoute>
           }
         />

@@ -1,14 +1,8 @@
-import React, { useState } from "react";
-import {
-  Calendar,
-  Search,
-  Plus,
-  Minus,
-  X,
-  Move3DIcon,
-  RotateCw,
-  StepBack,
-} from "lucide-react";
+import React, { useState, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
+import { File, Printer, Upload } from "lucide-react";
+import InvoicePrint from "./templates/InvoicePrint";
+import { Calendar, Search, Plus, X } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -33,9 +27,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Combobox } from "../ui/Combobox";
-import Layout from "../layout/Layout";
-import { Textarea } from "../ui/textarea";
-import { Label } from "../ui/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import CustomerAccountModal from "../modals/CustomerAccountModal";
+import ModalOptions from "./templates/ModalOptions";
 
 const customerAccounts = [
   { label: "Cash Account - 0003", value: "cash-0003" },
@@ -43,10 +42,10 @@ const customerAccounts = [
   { label: "Jane Smith - 0005", value: "jane-0005" },
 ];
 
-const quotations = [
-  { label: "Quotation 1", value: "quotation_1" },
-  { label: "Quotation 2", value: "quotation_2" },
-  { label: "Quotation 3", value: "quotation_3" },
+const salesAccounts = [
+  { label: "0001 - General Sales", value: "0001" },
+  { label: "0002 - Online Sales", value: "0002" },
+  { label: "0003 - Retail Sales", value: "0003" },
 ];
 
 const salesmen = [
@@ -66,23 +65,36 @@ const barcodeOptions = dummyProducts.map((product) => ({
   label: `${product.barcode}`,
 }));
 
-const Invoice = () => {
+const LocalPurchaseOrder = () => {
   const [items, setItems] = useState([
     {
       id: 1,
       product: null,
       barcode: "",
       quantity: 1,
-      discount: 0,
       unitPrice: 0,
       total: 0,
     },
   ]);
+
   const [customerAccount, setCustomerAccount] = useState(
     customerAccounts[0].value
   );
-  const [salesman, setSalesman] = useState("");
-  const [quotation, setQuotation] = useState("");
+  const [isCustomerAccountModalOpen, setIsCustomerAccountModalOpen] =
+    useState();
+
+  const [invoiceNumber, setInvoiceNumber] = useState("SL#00034");
+  const [invoiceDate, setInvoiceDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+
+  const invoicePrintRef = useRef();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handlePrintContent = useReactToPrint({
+    content: () => invoicePrintRef.current,
+  });
 
   const addItem = () => {
     const newItem = {
@@ -92,6 +104,7 @@ const Invoice = () => {
       quantity: 1,
       discount: 0,
       unitPrice: 0,
+      taxRate: 0,
       total: 0,
     };
     setItems([...items, newItem]);
@@ -127,19 +140,36 @@ const Invoice = () => {
 
   const calculateItemTotal = (item) => {
     const subtotal = item.quantity * item.unitPrice;
-    const discountAmount = subtotal * (item.discount / 100);
-    return subtotal - discountAmount;
+    return subtotal;
   };
 
   const calculateSubTotal = () =>
     items.reduce((sum, item) => sum + item.total, 0);
 
+  const handleSaveCustomerAccount = async (formData) => {
+    console.log("Customer Account Created:", formData);
+    setIsCustomerAccountModalOpen(false);
+  };
+
+  const calculateTotalDiscount = () => {
+    return items.reduce((sum, item) => {
+      const subtotal = item.quantity * item.unitPrice;
+      return sum + subtotal;
+    }, 0);
+  };
+
+  const calculateTotalTax = () => {
+    return items.reduce((sum, item) => {
+      const subtotal = item.quantity * item.unitPrice;
+      return sum + subtotal;
+    }, 0);
+  };
   return (
     <>
       <div className="container mx-auto p-4 bg-gray-100 min-h-screen">
-        <h1 className="text-3xl font-bold mb-6">Purchase Request</h1>
+        <h1 className="text-3xl font-bold mb-6">Local Purchase Order</h1>
 
-        <Card className="mb-6 ">
+        <Card className="mb-6">
           <CardHeader className="flex flex-row justify-between items-center">
             <div className="flex items-center space-x-4">
               <Input
@@ -148,60 +178,49 @@ const Invoice = () => {
                 defaultValue={new Date().toISOString().split("T")[0]}
               />
               <Input
-                placeholder="PR Number"
-                defaultValue="PR00034"
+                placeholder="LPO Number"
+                defaultValue="LPO#00034"
                 className="w-40"
               />
               <Input placeholder="Reference" className="w-40" />
             </div>
-            <div className="flex flex-col items-start">
-              <Combobox
-                options={customerAccounts}
-                value={customerAccount}
-                onChange={setCustomerAccount}
-                placeholder="Select Master Data"
-                className="w-full"
-              />
+            <div className="flex space-x-2">
+              <Button variant="outline">
+                <Search className="h-4 w-4 mr-2" /> Item Lookup
+              </Button>
+              <Button>Get Purchase Request</Button>
             </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="flex gap-2 items-center">
-                {/* <div className="flex flex-col items-start">
-                  <Label className="text-sm">Master Data</Label>
-                  <Combobox
-                    options={customerAccounts}
-                    value={customerAccount}
-                    onChange={setCustomerAccount}
-                    placeholder="Select Master Data"
-                    className="w-full"
-                  />
-                </div> */}
-                {/* <div className="p-1.5 border rounded cursor-pointer">
-                  <StepBack />
-                </div> */}
-              </div>
-              {/* <div>
                 <Combobox
-                  options={quotations}
-                  value={quotation}
-                  onChange={setQuotation}
-                  placeholder="Select Quotation"
+                  options={customerAccounts}
+                  value={customerAccount}
+                  onChange={setCustomerAccount}
+                  placeholder="Select Master Data"
                   className="w-full"
                 />
-              </div> */}
-              {/* <Select value={salesman} onValueChange={setSalesman}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Salesman" />
-                </SelectTrigger>
-                <SelectContent>
-                  {salesmen.map((sm) => (
-                    <SelectItem key={sm.value} value={sm.value}>
-                      {sm.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select> */}
+              </div>
+              <div></div>
+              <div className="flex items-center justify-end">
+                <Input
+                  type="file"
+                  id="quotation"
+                  accept=".pdf"
+                  className="hidden"
+                  onChange={(e) => {
+                    // Handle file upload logic here
+                    console.log(e.target.files[0]);
+                  }}
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => document.getElementById("quotation").click()}
+                >
+                  <Upload className="h-4 w-4 mr-2" /> Upload Quotation
+                </Button>
+              </div>
             </div>
 
             <Table>
@@ -212,7 +231,6 @@ const Invoice = () => {
                   <TableHead>Code</TableHead>
                   <TableHead>Product</TableHead>
                   <TableHead>Quantity</TableHead>
-                  <TableHead>Discount (%)</TableHead>
                   <TableHead>Unit Price</TableHead>
                   <TableHead>Total</TableHead>
                   <TableHead></TableHead>
@@ -285,20 +303,6 @@ const Invoice = () => {
                     <TableCell>
                       <Input
                         type="number"
-                        value={item.discount}
-                        onChange={(e) =>
-                          updateItem(
-                            item.id,
-                            "discount",
-                            parseFloat(e.target.value)
-                          )
-                        }
-                        className="w-20"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Input
-                        type="number"
                         value={item.unitPrice}
                         onChange={(e) =>
                           updateItem(
@@ -333,28 +337,17 @@ const Invoice = () => {
             </Table>
 
             <div className="w-full flex justify-end mb-4">
-              <Button onClick={addItem}>
+              <Button onClick={addItem} className="mt-4">
                 <Plus className="h-4 w-4 mr-2" /> Add Item
               </Button>
             </div>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-3 gap-6">
               <div></div>
+              <div></div>
+
               <Card>
                 <CardContent className="mt-6">
                   <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span>Sub Total</span>
-                      <Input
-                        type="number"
-                        value={calculateSubTotal().toFixed(2)}
-                        className="w-32"
-                        readOnly
-                      />
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Discount</span>
-                      <Input type="number" defaultValue={0} className="w-32" />
-                    </div>
                     <div className="flex justify-between font-bold">
                       <span>Grand Total</span>
                       <Input
@@ -373,15 +366,35 @@ const Invoice = () => {
 
         <div className="flex justify-end mt-6">
           <div className="space-x-2">
-            <Button>Apply</Button>
+            {/* <Button>Apply</Button> */}
+            <Button onClick={() => setIsModalOpen(true)}>
+              <Printer className="h-3 w-4 mr-2" /> Print Invoice
+            </Button>
             <Button variant="outline">Save & Print</Button>
             <Button variant="outline">Clear All</Button>
             <Button variant="outline">Find</Button>
           </div>
         </div>
       </div>
+      <CustomerAccountModal
+        isOpen={isCustomerAccountModalOpen}
+        onClose={() => setIsCustomerAccountModalOpen(false)}
+        onSave={handleSaveCustomerAccount}
+      />
+      {isModalOpen && (
+        <ModalOptions
+          onClose={() => setIsModalOpen(false)}
+          items={items}
+          customerAccount={customerAccount}
+          invoiceNumber={invoiceNumber}
+          invoiceDate={invoiceDate}
+          calculateSubTotal={calculateSubTotal}
+          calculateTotalDiscount={calculateTotalDiscount}
+          calculateTotalTax={calculateTotalTax}
+        />
+      )}
     </>
   );
 };
 
-export default Invoice;
+export default LocalPurchaseOrder;

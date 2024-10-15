@@ -60,6 +60,21 @@ const menuItems = [
         icon: RotateCcw,
         label: "Purchase Return",
       },
+      {
+        path: "/admin/sales-order",
+        icon: FileText,
+        label: "Sales Order",
+      },
+      {
+        path: "/admin/sales",
+        icon: FileText,
+        label: "Sales",
+      },
+      {
+        path: "/admin/sales-return",
+        icon: RotateCcw,
+        label: "Sales Return",
+      },
     ],
   },
   {
@@ -95,6 +110,7 @@ const menuItems = [
     items: [
       { path: "/admin/managers", icon: UserCog, label: "Managers" },
       { path: "/admin/staff", icon: User, label: "Staff" },
+      { path: "/admin/clients", icon: Users, label: "Clients" },
     ],
   },
   {

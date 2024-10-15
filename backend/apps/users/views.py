@@ -109,6 +109,12 @@ class UserViewSet(viewsets.ModelViewSet):
             return User.objects.filter(username=user.username)
         return User.objects.none()
 
+    @action(detail=False, methods=["get"])
+    def unassigned_managers(self, request):
+        unassigned_managers = User.objects.filter(role='branch_manager', managed_branch__isnull=True)
+        serializer = UserSerializer(unassigned_managers, many=True)
+        return Response(serializer.data)
+
 
 class BranchManagerViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(role='branch_manager')

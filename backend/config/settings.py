@@ -70,7 +70,7 @@ REST_FRAMEWORK = {
     },
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,
+    "PAGE_SIZE": 100,
 }
 
 MIDDLEWARE = [
@@ -497,6 +497,53 @@ UNFOLD = {
                         "title": _("Sidebar Items"),
                         "icon": "settings",
                         "link": reverse_lazy("admin:operations_sidebaritem_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Transactions"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Purchase Requests"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_purchaserequest_changelist"),
+                    },
+                    {
+                        "title": _("Purchase Request Items"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_purchaserequestitem_changelist"),
+                    },
+                    {
+                        "title": _("Local Purchase Orders"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_localpurchaseorder_changelist"),
+                    },
+                    {
+                        "title": _("Local Purchase Order Items"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_localpurchaseorderitem_changelist"),
+                    },
+                    {
+                        "title": _("Purchases"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_purchase_changelist"),
+                    },
+                    {
+                        "title": _("Purchase Items"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_purchaseitem_changelist"),
+                    },
+                    {
+                        "title": _("Purchase Returns"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_purchasereturn_changelist"),
+                    },
+                    {
+                        "title": _("Purchase Return Items"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_purchasereturnitem_changelist"),
                     },
                 ],
             },
