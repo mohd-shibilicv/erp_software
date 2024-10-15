@@ -59,15 +59,15 @@ import AssetReports from "./components/asset-management/AssetReports";
 
 import EmployeDashboard from "./pages/storePages/EmployeeManagment/EmployeDashboard";
 import LeaveAndVacation from "./pages/storePages/EmployeeManagment/LeaveAndVacation";
-import VpTrack from "./pages/storePages/EmployeeManagment/vpTrack";
+import VpTrack from "./components/employee-management/vp-track/VPTrack";
 import UniformReport from "./pages/storePages/EmployeeManagment/UniformReport";
 import Reports from "./pages/storePages/EmployeeManagment/reports";
 import CompanyLayouts from "./pages/storePages/CompanyManagement/CompanyLayouts/CompanyLayout";
 import CompanyDashboard from "./pages/storePages/CompanyManagement/CompanyDashboard";
 import { CompanyList } from "./pages/storePages/CompanyManagement/CompanyList";
 import { AddCompany } from "./pages/storePages/CompanyManagement/AddCompany";
-import { AddVehicle } from "./pages/storePages/CompanyManagement/AddVehicle";
-import { VehicleList } from "./pages/storePages/CompanyManagement/VehiclesList";
+import { AddVehicle } from "./pages/storePages/CompanyManagement/Vehicle/AddVehicle";
+import { VehicleList } from "./pages/storePages/CompanyManagement/Vehicle/VehiclesList";
 import { VehicleExpense } from "./pages/storePages/CompanyManagement/VehicleExpense";
 import { FireAndCertfication } from "./pages/storePages/CompanyManagement/fireandCertification";
 import { RentandExpense } from "./pages/storePages/CompanyManagement/rentAndExpense";

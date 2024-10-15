@@ -70,6 +70,7 @@ from apps.employees.views import (
     PerformanceViewSet,
     PayrollViewSet,
     TrainingViewSet,
+    VPTrackViewSet,
 )
 from apps.companies.views import (
     AnnualMaintenanceCostViewSet,
@@ -133,6 +134,7 @@ router.register(r'leaves', LeaveViewSet)
 router.register(r'performance', PerformanceViewSet)
 router.register(r'payroll', PayrollViewSet)
 router.register(r'training', TrainingViewSet)
+router.register(r'vptracks', VPTrackViewSet)
 
 # Companies
 router.register(r'company-details', CompanyDetailsViewSet)
