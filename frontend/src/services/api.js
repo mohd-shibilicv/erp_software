@@ -119,6 +119,7 @@ export const fetchEmployees = async () => {
 // VPTracking Details
 export const fetchVPTrackingList = async () => {
   const response = await api.get("/vptracks/");
+};
 // Purchase Request API endpoints
 export const fetchPurchaseRequests = async () => {
   const response = await api.get("/purchase-requests/");
