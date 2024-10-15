@@ -6,6 +6,7 @@ export const purchaseService = {
   createPurchase: (data) => api.post('/purchases/', data),
   updatePurchase: (id, data) => api.put(`/purchases/${id}/`, data),
   deletePurchase: (id) => api.delete(`/purchases/${id}/`),
+  softDeletePurchase: (id) => api.delete(`/purchases/${id}/soft_delete/`),
 };
 
 export const salesOrderService = {
@@ -46,6 +47,7 @@ export const saleService = {
   createSale: (data) => api.post('/sales/', data),
   updateSale: (id, data) => api.put(`/sales/${id}/`, data),
   deleteSale: (id) => api.delete(`/sales/${id}/`),
+  softDeleteSale: (id) => api.delete(`/sales/${id}/soft_delete/`),
 };
 
 export const saleItemService = {

@@ -166,8 +166,13 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
     0
   );
 
+  const handleCancel = () => {
+    reset(); // Reset the form
+    onClose(); // Close the modal
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleCancel}>
       <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0">
         <DialogHeader className="px-6 py-4">
           <DialogTitle>
@@ -366,7 +371,7 @@ const SalesOrderModal = ({ isOpen, onClose, salesOrder, onSave }) => {
               <Button type="submit">
                 {salesOrder ? "Update" : "Submit"}
               </Button>
-              <Button variant="outline" onClick={onClose}>
+              <Button type="button" variant="outline" onClick={handleCancel}>
                 Cancel
               </Button>
             </div>

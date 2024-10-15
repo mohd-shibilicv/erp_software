@@ -242,7 +242,7 @@ const PurchaseReturnModal = ({ isOpen, onClose, purchaseReturnId }) => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Purchase Item</TableHead>
-                    <TableHead>SKU</TableHead>
+                    <TableHead>Code</TableHead>
                     <TableHead>Quantity</TableHead>
                     <TableHead>Unit Price</TableHead>
                     <TableHead>Total</TableHead>

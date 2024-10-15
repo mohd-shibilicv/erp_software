@@ -84,10 +84,10 @@ import LPOTable from "./components/transactions/LPOTable";
 import PurchaseTable from "./components/transactions/PurchaseTable";
 import PurchaseReturnTable from "./components/transactions/PurchaseReturnTable";
 import Clients from "./components/client/Clients";
-import SalesTable from "./components/transactions/SalesTable";
 import SalesReturnTable from "./components/transactions/SalesReturnTable";
 import SalesOrderTable from "./components/transactions/SalesOrderTable";
 import { AnualManintananceCost } from "./pages/storePages/CompanyManagement/AnualManintanaceCost/AnualMaintananceCost";
+import SalesTable from "./components/transactions/SalesTable";
 
 function Store() {
   return (
@@ -157,14 +157,6 @@ function Store() {
           element={
             <StoreProtectedRoute allowedRoles={["admin"]}>
               <StoreReports />
-            </StoreProtectedRoute>
-          }
-        />
-        <Route
-          path="/sales"
-          element={
-            <StoreProtectedRoute allowedRoles={["admin"]}>
-              <SalesPageComponent />
             </StoreProtectedRoute>
           }
         />
@@ -295,7 +287,7 @@ function Store() {
 
         {/* User Management */}
         <Route
-          path="/customers"
+          path="/clients"
           element={
             <StoreProtectedRoute allowedRoles={["admin"]}>
               <Clients />

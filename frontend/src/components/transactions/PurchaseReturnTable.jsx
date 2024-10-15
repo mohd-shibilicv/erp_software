@@ -36,7 +36,9 @@ import {
   EllipsisVertical,
   Check,
   Copy,
+  AlertTriangle,
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const PurchaseReturnTable = () => {
   const [purchaseReturns, setPurchaseReturns] = useState([]);
@@ -104,13 +106,13 @@ const PurchaseReturnTable = () => {
     });
   };
 
-  const handleDelete = async () => {
+  const handleSoftDelete = async () => {
     try {
-      await api.delete(`/purchase-returns/${deletePurchaseReturnId}/`);
+      await api.delete(`/purchase-returns/${deletePurchaseReturnId}/soft_delete/`);
       fetchPurchaseReturns();
       setIsAlertOpen(false);
     } catch (error) {
-      console.error("Error deleting purchase return:", error);
+      console.error("Error soft deleting purchase return:", error);
     }
   };
 
@@ -165,6 +167,7 @@ const PurchaseReturnTable = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead></TableHead>
                 <TableHead>Return Number</TableHead>
                 <TableHead>Purchase Number</TableHead>
                 <TableHead>Date</TableHead>
@@ -176,91 +179,111 @@ const PurchaseReturnTable = () => {
             <TableBody>
               {filteredReturns.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-4">
+                  <TableCell colSpan={7} className="text-center py-4">
                     No purchase returns found.
                   </TableCell>
                 </TableRow>
               ) : (
                 <AnimatePresence>
                   {filteredReturns.map((purchaseReturn) => (
-                    <motion.tr
-                      key={purchaseReturn.id}
-                      variants={tableRowVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="hidden"
-                      layout
-                    >
-                      <TableCell className="text-center">
-                        {purchaseReturn.return_number}
-                      </TableCell>
-                      <TableCell className="flex items-center">
-                        {purchaseReturn.purchase_number}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() =>
-                            handleCopyToClipboard(
-                              purchaseReturn.purchase_number,
-                              purchaseReturn.id
-                            )
-                          }
+                    <Popover key={purchaseReturn.id}>
+                      <PopoverTrigger asChild>
+                        <motion.tr
+                          variants={tableRowVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="hidden"
+                          layout
+                          className={purchaseReturn.is_deleted ? "bg-red-50 border-l-4 border-red-500 cursor-help" : ""}
                         >
-                          {copiedId === purchaseReturn.id ? (
-                            <Check className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <Copy className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(purchaseReturn.date).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>QAR {purchaseReturn.total_amount}</TableCell>
-                      <TableCell>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                            purchaseReturn.status === "Pending"
-                              ? "bg-yellow-200 text-yellow-800"
-                              : purchaseReturn.status === "Approved"
-                              ? "bg-green-200 text-green-800"
-                              : purchaseReturn.status === "Completed"
-                              ? "bg-blue-200 text-blue-800"
-                              : "bg-red-200 text-red-800"
-                          }`}
-                        >
-                          {purchaseReturn.status}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost">
-                              <EllipsisVertical
-                                className="text-gray-400"
-                                size={20}
-                              />
+                          <TableCell>
+                            <div className={`w-1 h-full ${purchaseReturn.is_deleted ? 'bg-red-500' : ''}`}></div>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {purchaseReturn.return_number}
+                          </TableCell>
+                          <TableCell className="flex items-center">
+                            {purchaseReturn.purchase_number}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                handleCopyToClipboard(
+                                  purchaseReturn.purchase_number,
+                                  purchaseReturn.id
+                                )
+                              }
+                            >
+                              {copiedId === purchaseReturn.id ? (
+                                <Check className="h-4 w-4 text-green-500" />
+                              ) : (
+                                <Copy className="h-4 w-4" />
+                              )}
                             </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuItem
-                              onClick={() => handleOpenModal(purchaseReturn.id)}
+                          </TableCell>
+                          <TableCell>
+                            {new Date(purchaseReturn.date).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>QAR {purchaseReturn.total_amount}</TableCell>
+                          <TableCell>
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                purchaseReturn.is_deleted
+                                  ? "bg-red-200 text-red-800"
+                                  : purchaseReturn.status === "Pending"
+                                  ? "bg-yellow-200 text-yellow-800"
+                                  : purchaseReturn.status === "Approved"
+                                  ? "bg-green-200 text-green-800"
+                                  : purchaseReturn.status === "Completed"
+                                  ? "bg-blue-200 text-blue-800"
+                                  : "bg-gray-200 text-gray-800"
+                              }`}
                             >
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setDeletePurchaseReturnId(purchaseReturn.id);
-                                setIsAlertOpen(true);
-                              }}
-                              className="text-red-600"
-                            >
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </motion.tr>
+                              {purchaseReturn.is_deleted ? "Deleted" : purchaseReturn.status}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost">
+                                  <EllipsisVertical
+                                    className="text-gray-400"
+                                    size={20}
+                                  />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                <DropdownMenuItem
+                                  onClick={() => handleOpenModal(purchaseReturn.id)}
+                                  disabled={purchaseReturn.is_deleted}
+                                >
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    setDeletePurchaseReturnId(purchaseReturn.id);
+                                    setIsAlertOpen(true);
+                                  }}
+                                  className="text-red-600"
+                                  disabled={purchaseReturn.is_deleted}
+                                >
+                                  {purchaseReturn.is_deleted ? "Deleted" : "Delete"}
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </motion.tr>
+                      </PopoverTrigger>
+                      {purchaseReturn.is_deleted && (
+                        <PopoverContent className="w-80">
+                          <div className="text-center">
+                            <AlertTriangle className="h-6 w-6 text-red-500 mx-auto mb-2" />
+                            <p className="font-semibold text-red-500">This purchase return has been deleted</p>
+                            <p className="text-sm text-gray-500 mt-1">The purchase return is marked as deleted but can be restored if needed.</p>
+                          </div>
+                        </PopoverContent>
+                      )}
+                    </Popover>
                   ))}
                 </AnimatePresence>
               )}
@@ -278,14 +301,13 @@ const PurchaseReturnTable = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              purchase return.
+              This action will mark the purchase return as deleted. It can be restored later if needed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDelete}
+              onClick={handleSoftDelete}
               className="bg-red-600 hover:bg-red-700"
             >
               Delete

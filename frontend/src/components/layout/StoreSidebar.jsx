@@ -78,7 +78,7 @@ const UpdatedStoreSidebar = () => {
   // Define the desired order for each section
   const sectionOrder = {
     CRM: ["CRM Dashboard", "Client Requests", "Client Relationship", "Client Requirements", "Quotation", "Agreement"],
-    Transactions: ["Purchase Request", "Local Purchase Order", "Purchase", "Purchase Return", "Sales Order", "Sales", "Sales Return", "Join Venture Sales", "Invoice", "Add Receipt", "Add Payment"],
+    Transactions: ["Purchase Request", "Local Purchase Order", "Purchase", "Purchase Return", "Sales Order", "Sales", "Sales Return", "Join Venture Sales", "Receipt Voucher", "Payment Voucher", "Invoice"],
     "Project Management": ["Projects", "Tasks", "Delivery Note"],
     "Product Management": ["Dashboard", "Products", "Suppliers"],
     Users: ["Managers", "Staff"],

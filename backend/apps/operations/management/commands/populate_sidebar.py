@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.apps import apps
 import ast
+import os
 
 
 class Command(BaseCommand):
@@ -11,7 +12,8 @@ class Command(BaseCommand):
         SidebarItem = apps.get_model("operations", "SidebarItem")
 
         # Read the sidebar.txt file
-        with open("backend/sidebar.txt", "r") as file:
+        sidebar_path = os.path.join(os.path.dirname(__file__), 'sidebar.txt')
+        with open(sidebar_path, "r") as file:
             content = file.read()
 
         # Extract the menuItems list using ast
@@ -34,7 +36,7 @@ class Command(BaseCommand):
                     section=section,
                     path=item_data["path"],
                     defaults={
-                        "icon": item_data["icon"],
+                        "icon": item_data["icon"].__name__,  # Store the icon class name as a string
                         "label": item_data["label"],
                     },
                 )

@@ -153,6 +153,7 @@ class Purchase(models.Model):
         default="Pending"
     )
     notes = models.TextField(blank=True)
+    is_deleted = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-date']
@@ -211,6 +212,7 @@ class PurchaseReturn(models.Model):
         default="Pending"
     )
     reason = models.TextField(blank=True)
+    is_deleted = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-date']
@@ -327,6 +329,7 @@ class Sale(models.Model):
         default="Pending"
     )
     notes = models.TextField(blank=True)
+    is_deleted = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-date']
@@ -386,6 +389,7 @@ class SalesReturn(models.Model):
     )
     refund_amount = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
     notes = models.TextField(blank=True)
+    is_deleted = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-date']

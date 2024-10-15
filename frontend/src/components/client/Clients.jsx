@@ -71,6 +71,10 @@ const Clients = () => {
   };
 
   const handleOpenModal = (client = null) => {
+    if (client && client.preventDefault) {
+      client = null;
+    }
+    
     setSelectedClient(client);
     setIsModalOpen(true);
   };

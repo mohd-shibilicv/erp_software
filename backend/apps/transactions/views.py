@@ -114,7 +114,7 @@ class LocalPurchaseOrderItemViewSet(viewsets.ModelViewSet):
 
 
 class PurchaseViewSet(viewsets.ModelViewSet):
-    queryset = Purchase.objects.all()
+    queryset = Purchase.objects.filter()
     serializer_class = PurchaseSerializer
 
     def get_serializer_class(self):
@@ -131,10 +131,20 @@ class PurchaseViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'])
     def items(self, request, pk=None):
         try:
-            purchase = Purchase.objects.get(pk=pk)
+            purchase = Purchase.objects.get(pk=pk, is_deleted=False)
             items = purchase.items.all()
             serializer = PurchaseItemSerializer(items, many=True)
             return Response(serializer.data)
+        except Purchase.DoesNotExist:
+            return Response({"error": "Purchase not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=['DELETE'])
+    def soft_delete(self, request, pk=None):
+        try:
+            purchase = Purchase.objects.get(pk=pk, is_deleted=False)
+            purchase.is_deleted = True
+            purchase.save()
+            return Response({"message": "Purchase soft deleted successfully"}, status=status.HTTP_200_OK)
         except Purchase.DoesNotExist:
             return Response({"error": "Purchase not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -166,6 +176,16 @@ class PurchaseReturnViewSet(viewsets.ModelViewSet):
             items = purchase_return.items.all()
             serializer = PurchaseReturnItemSerializer(items, many=True)
             return Response(serializer.data)
+        except PurchaseReturn.DoesNotExist:
+            return Response({"error": "Purchase Return not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=['DELETE'])
+    def soft_delete(self, request, pk=None):
+        try:
+            purchase_return = PurchaseReturn.objects.get(pk=pk, is_deleted=False)
+            purchase_return.is_deleted = True
+            purchase_return.save()
+            return Response({"message": "Purchase Return soft deleted successfully"}, status=status.HTTP_200_OK)
         except PurchaseReturn.DoesNotExist:
             return Response({"error": "Purchase Return not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -230,6 +250,16 @@ class SaleViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except Sale.DoesNotExist:
             return Response({"error": "Sale not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=True, methods=['DELETE'])
+    def soft_delete(self, request, pk=None):
+        try:
+            sale = Sale.objects.get(pk=pk, is_deleted=False)
+            sale.is_deleted = True
+            sale.save()
+            return Response({"message": "Sale soft deleted successfully"}, status=status.HTTP_200_OK)
+        except Sale.DoesNotExist:
+            return Response({"error": "Sale not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class SaleItemViewSet(viewsets.ModelViewSet):
@@ -259,6 +289,16 @@ class SalesReturnViewSet(viewsets.ModelViewSet):
             items = sales_return.items.all()
             serializer = SalesReturnItemSerializer(items, many=True)
             return Response(serializer.data)
+        except SalesReturn.DoesNotExist:
+            return Response({"error": "Sales Return not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=['DELETE'])
+    def soft_delete(self, request, pk=None):
+        try:
+            sales_return = SalesReturn.objects.get(pk=pk, is_deleted=False)
+            sales_return.is_deleted = True
+            sales_return.save()
+            return Response({"message": "Sales Return soft deleted successfully"}, status=status.HTTP_200_OK)
         except SalesReturn.DoesNotExist:
             return Response({"error": "Sales Return not found"}, status=status.HTTP_404_NOT_FOUND)
 

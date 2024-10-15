@@ -50,6 +50,7 @@ const schema = z.object({
     .array(
       z.object({
         product: z.string().nonempty({ message: "Product is required" }),
+        sku: z.string().optional(),
         quantity: z.number().positive({ message: "Quantity must be positive" }),
         unit_price: z
           .number()
@@ -83,7 +84,7 @@ const LPOModal = ({ isOpen, onClose, lpoId }) => {
       delivery_date: new Date().toISOString().split("T")[0],
       status: "Pending",
       remarks: "",
-      items: [{ product: "", quantity: 1, unit_price: 0 }],
+      items: [{ product: "", sku: "", quantity: 1, unit_price: 0 }],
     },
   });
 
@@ -125,7 +126,7 @@ const LPOModal = ({ isOpen, onClose, lpoId }) => {
             delivery_date: new Date().toISOString().split("T")[0],
             status: "Pending",
             remarks: "",
-            items: [{ product: "", quantity: 1, unit_price: 0 }],
+            items: [{ product: "", sku: "", quantity: 1, unit_price: 0 }],
           });
           setQuotationDocumentUrl(null);
         }
@@ -158,6 +159,7 @@ const LPOModal = ({ isOpen, onClose, lpoId }) => {
     // Auto-fill the items
     const formattedItems = items.map(item => ({
       product: item.product.toString(),
+      sku: item.sku,
       quantity: item.quantity,
       unit_price: item.unit_price
     }));
@@ -170,6 +172,7 @@ const LPOModal = ({ isOpen, onClose, lpoId }) => {
       // Convert the items to the format expected by the backend
       const formattedItems = data.items.map(item => ({
         product: item.product,
+        sku: item.sku,
         quantity: parseFloat(item.quantity),
         unit_price: parseFloat(item.unit_price),
         total_price: parseFloat(item.quantity) * parseFloat(item.unit_price)
@@ -225,6 +228,7 @@ const LPOModal = ({ isOpen, onClose, lpoId }) => {
     const selectedProduct = products.find((p) => p.id.toString() === productId);
     if (selectedProduct) {
       setValue(`items.${index}.unit_price`, selectedProduct.price);
+      setValue(`items.${index}.sku`, selectedProduct.sku);
     }
   };
 
@@ -352,6 +356,7 @@ const LPOModal = ({ isOpen, onClose, lpoId }) => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Product</TableHead>
+                  <TableHead>Code</TableHead>
                   <TableHead>Quantity</TableHead>
                   <TableHead>Unit Price</TableHead>
                   <TableHead>Total</TableHead>
@@ -385,6 +390,12 @@ const LPOModal = ({ isOpen, onClose, lpoId }) => {
                             </SelectContent>
                           </Select>
                         )}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        type="text"
+                        {...register(`items.${index}.sku`, { valueAsNumber: true })}
                       />
                     </TableCell>
                     <TableCell>

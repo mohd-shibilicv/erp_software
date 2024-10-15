@@ -34,9 +34,20 @@ import {
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import { MoreHorizontal, ArrowUpDown, Search, Plus, Filter, Check, Copy } from "lucide-react";
+import {
+  MoreHorizontal,
+  ArrowUpDown,
+  Search,
+  Plus,
+  Filter,
+  Check,
+  Copy,
+  AlertTriangle,
+} from "lucide-react";
 import PurchaseModal from "./PurchaseModal";
 import { purchaseService } from "@/services/purchaseService";
+import { Badge } from "../ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 const PurchaseTable = () => {
   const [purchases, setPurchases] = useState([]);
@@ -76,13 +87,13 @@ const PurchaseTable = () => {
     fetchPurchases();
   };
 
-  const handleDelete = async () => {
+  const handleSoftDelete = async () => {
     try {
-      await purchaseService.deletePurchase(deletePurchaseId);
+      await purchaseService.softDeletePurchase(deletePurchaseId);
       fetchPurchases();
       setIsAlertOpen(false);
     } catch (error) {
-      console.error("Error deleting purchase:", error);
+      console.error("Error soft deleting purchase:", error);
     }
   };
 
@@ -96,12 +107,21 @@ const PurchaseTable = () => {
   const columns = useMemo(
     () => [
       {
+        accessorKey: "is_deleted",
+        header: "",
+        cell: ({ row }) => (
+          <div className={`w-1 h-full ${row.original.is_deleted ? 'bg-red-500' : ''}`}></div>
+        ),
+      },
+      {
         accessorKey: "purchase_number",
         header: ({ column }) => {
           return (
             <Button
               variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
             >
               Purchase Number
               <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -116,7 +136,9 @@ const PurchaseTable = () => {
           return (
             <Button
               variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
             >
               LPO
               <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -131,7 +153,9 @@ const PurchaseTable = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleCopyToClipboard(purchase.lpo_number, purchase.id)}
+                onClick={() =>
+                  handleCopyToClipboard(purchase.lpo_number, purchase.id)
+                }
               >
                 {copiedId === purchase.id ? (
                   <Check className="h-4 w-4 text-green-500" />
@@ -153,7 +177,9 @@ const PurchaseTable = () => {
           return (
             <Button
               variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
             >
               Date
               <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -168,14 +194,17 @@ const PurchaseTable = () => {
           return (
             <Button
               variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
             >
               Total Amount
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           );
         },
-        cell: ({ row }) => `QAR ${parseFloat(row.getValue("total_amount")).toFixed(2)}`,
+        cell: ({ row }) =>
+          `QAR ${parseFloat(row.getValue("total_amount")).toFixed(2)}`,
       },
       {
         accessorKey: "status",
@@ -183,16 +212,18 @@ const PurchaseTable = () => {
         cell: ({ row }) => (
           <span
             className={`px-2 py-1 rounded-full text-xs font-semibold ${
-              row.getValue("status") === "Pending"
+              row.original.is_deleted
+                ? "bg-red-200 text-red-800"
+                : row.original.status === "Pending"
                 ? "bg-yellow-200 text-yellow-800"
-                : row.getValue("status") === "Approved"
+                : row.original.status === "Approved"
                 ? "bg-green-200 text-green-800"
-                : row.getValue("status") === "Completed"
+                : row.original.status === "Completed"
                 ? "bg-blue-200 text-blue-800"
-                : "bg-red-200 text-red-800"
+                : "bg-gray-200 text-gray-800"
             }`}
           >
-            {row.getValue("status")}
+            {row.original.is_deleted ? "Deleted" : row.original.status}
           </span>
         ),
       },
@@ -207,7 +238,10 @@ const PurchaseTable = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleOpenModal(row.original.id)}>
+              <DropdownMenuItem
+                onClick={() => handleOpenModal(row.original.id)}
+                disabled={row.original.is_deleted}
+              >
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -216,8 +250,9 @@ const PurchaseTable = () => {
                   setIsAlertOpen(true);
                 }}
                 className="text-red-600"
+                disabled={row.original.is_deleted}
               >
-                Delete
+                {row.original.is_deleted ? "Deleted" : "Delete"}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -229,10 +264,15 @@ const PurchaseTable = () => {
 
   const filteredData = useMemo(() => {
     return purchases.filter((purchase) => {
-      const matchesStatus = statusFilter === "All" || purchase.status === statusFilter;
+      const matchesStatus =
+        statusFilter === "All" || purchase.status === statusFilter;
       const matchesGlobalFilter =
-        purchase.purchase_number.toLowerCase().includes(globalFilter.toLowerCase()) ||
-        purchase.supplier_name.toLowerCase().includes(globalFilter.toLowerCase()) ||
+        purchase.purchase_number
+          .toLowerCase()
+          .includes(globalFilter.toLowerCase()) ||
+        purchase.supplier_name
+          .toLowerCase()
+          .includes(globalFilter.toLowerCase()) ||
         purchase.status.toLowerCase().includes(globalFilter.toLowerCase());
       return matchesStatus && matchesGlobalFilter;
     });
@@ -301,7 +341,10 @@ const PurchaseTable = () => {
                     <TableHead key={header.id} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -311,24 +354,44 @@ const PurchaseTable = () => {
               <AnimatePresence>
                 {table.getRowModel().rows.length > 0 ? (
                   table.getRowModel().rows.map((row) => (
-                    <motion.tr
-                      key={row.id}
-                      variants={tableRowVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="hidden"
-                      layout
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="text-center">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </motion.tr>
+                    <Popover key={row.id}>
+                      <PopoverTrigger asChild>
+                        <motion.tr
+                          key={row.id}
+                          variants={tableRowVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="hidden"
+                          layout
+                          className={row.original.is_deleted ? "bg-red-50 border-l-4 border-red-500 cursor-help" : ""}
+                        >
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell key={cell.id} className="text-center">
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                        </motion.tr>
+                      </PopoverTrigger>
+                      {row.original.is_deleted && (
+                        <PopoverContent className="w-80">
+                          <div className="text-center">
+                            <AlertTriangle className="h-6 w-6 text-red-500 mx-auto mb-2" />
+                            <p className="font-semibold text-red-500">This purchase has been deleted</p>
+                            <p className="text-sm text-gray-500 mt-1">The purchase is marked as deleted but can be restored if needed.</p>
+                          </div>
+                        </PopoverContent>
+                      )}
+                    </Popover>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={table.getAllColumns().length} className="text-center py-4">
+                    <TableCell
+                      colSpan={table.getAllColumns().length}
+                      className="text-center py-4"
+                    >
                       No purchases found
                     </TableCell>
                   </TableRow>
@@ -366,12 +429,18 @@ const PurchaseTable = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the purchase.
+              This action will mark the purchase as deleted. It can be restored
+              later if needed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+            <AlertDialogAction
+              onClick={handleSoftDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

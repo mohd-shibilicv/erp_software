@@ -545,6 +545,36 @@ UNFOLD = {
                         "icon": "step_into",
                         "link": reverse_lazy("admin:transactions_purchasereturnitem_changelist"),
                     },
+                    {
+                        "title": _("Sales Orders"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_salesorder_changelist"),
+                    },
+                    {
+                        "title": _("Sales Order Items"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_salesorderitem_changelist"),
+                    },
+                    {
+                        "title": _("Sales"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_sale_changelist"),
+                    },
+                    {
+                        "title": _("Sales Items"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_saleitem_changelist"),
+                    },
+                    {
+                        "title": _("Sales Return"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_salesreturn_changelist"),
+                    },
+                    {
+                        "title": _("Sales Return Items"),
+                        "icon": "step_into",
+                        "link": reverse_lazy("admin:transactions_salesreturnitem_changelist"),
+                    },
                 ],
             },
             {

@@ -16,14 +16,16 @@ from .models import (
     SalesReturn,
     SalesReturnItem,
 )
-
+from apps.crm.models import Client
 
 # Purchase Serializers
 
 class PurchaseRequestItemSerializer(serializers.ModelSerializer):
+    sku = serializers.CharField(source="product.sku", read_only=True)
+
     class Meta:
         model = PurchaseRequestItem
-        fields = ["id", "product", "quantity", "unit_price", "total_price"]
+        fields = ["id", "product", "sku", "quantity", "unit_price", "total_price"]
 
 
 class PurchaseRequestSerializer(serializers.ModelSerializer):
@@ -80,9 +82,11 @@ class PurchaseRequestCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class LocalPurchaseOrderItemSerializer(serializers.ModelSerializer):
+    sku = serializers.CharField(source="product.sku", read_only=True)
+
     class Meta:
         model = LocalPurchaseOrderItem
-        fields = ["product", "quantity", "unit_price", "total_price"]
+        fields = ["product", "sku", "quantity", "unit_price", "total_price"]
 
 
 class LocalPurchaseOrderSerializer(serializers.ModelSerializer):
@@ -156,12 +160,14 @@ class LocalPurchaseOrderCreateUpdateSerializer(serializers.ModelSerializer):
 
 class PurchaseItemSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source="product.name", read_only=True)
+    sku = serializers.CharField(source="product.sku", read_only=True)
 
     class Meta:
         model = PurchaseItem
         fields = [
             "id",
             "product",
+            "sku",
             "product_name",
             "quantity",
             "unit_price",
@@ -187,6 +193,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "total_amount",
             "status",
             "notes",
+            "is_deleted",
             "items",
         ]
 
@@ -252,6 +259,7 @@ class PurchaseReturnSerializer(serializers.ModelSerializer):
             "total_amount",
             "status",
             "reason",
+            "is_deleted",
             "items",
         ]
 
@@ -298,7 +306,6 @@ class PurchaseReturnCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 # Sales Serializers
-
 class SalesOrderItemSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source="product.name", read_only=True)
 
@@ -378,6 +385,7 @@ class SaleItemSerializer(serializers.ModelSerializer):
 class SaleSerializer(serializers.ModelSerializer):
     items = SaleItemSerializer(many=True, read_only=True)
     client_name = serializers.CharField(source="client.name", read_only=True)
+    sales_order_number = serializers.CharField(source="sales_order.order_number", read_only=True)
 
     class Meta:
         model = Sale
@@ -387,11 +395,13 @@ class SaleSerializer(serializers.ModelSerializer):
             "client",
             "client_name",
             "sales_order",
+            "sales_order_number",
             "date",
             "total_amount",
             "status",
             "notes",
             "items",
+            "is_deleted",
         ]
 
 
@@ -458,6 +468,7 @@ class SalesReturnSerializer(serializers.ModelSerializer):
             "refund_amount",
             "notes",
             "items",
+            "is_deleted",
         ]
 
 
