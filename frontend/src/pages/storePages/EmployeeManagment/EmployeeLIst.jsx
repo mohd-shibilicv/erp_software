@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EmployeeCompanyCommonTable } from "./Components/EmployeListTable";
+import { EmployeeCompanyCommonTable } from "../CompanyManagement/CompanyTableColumns/CompanyTable";
 import { Edit2, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { api } from "@/services/api";

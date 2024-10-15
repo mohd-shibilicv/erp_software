@@ -87,6 +87,10 @@ from apps.transactions.views import (
     SalesReturnViewSet,
     SalesReturnItemViewSet,
 )
+from apps.companies.views import (
+    AnnualMaintenanceCostViewSet,
+    CompanyDetailsViewSet,
+    VehicleDetailsViewSet)
 
 
 router = DefaultRouter()
@@ -173,6 +177,12 @@ router.register(r"sales", SaleViewSet)
 router.register(r"sale-items", SaleItemViewSet)
 router.register(r"sales-returns", SalesReturnViewSet)
 router.register(r"sales-return-items", SalesReturnItemViewSet)
+
+# Companies
+router.register(r'company-details', CompanyDetailsViewSet)
+router.register(r'vehicles', VehicleDetailsViewSet)
+router.register(r'amc', AnnualMaintenanceCostViewSet)
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),

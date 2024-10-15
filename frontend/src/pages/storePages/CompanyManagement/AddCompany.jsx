@@ -2,21 +2,98 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InputWithLabel } from "@/components/ui/InputWithLabel";
 import { UploadIcon, X } from "lucide-react";
-import { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { api, fetchCompanies } from "@/services/api"; 
+import { CompanyList } from "./CompanyList";
+import { toast } from "@/components/ui/use-toast";
 
 export function AddCompany() {
-  const handleCompanyAdd = function () {};
+  const [companies, setCompanies] = useState([]);
+
+  const fetchCompanyData = useCallback(async () => {
+    try {
+      const data = await fetchCompanies();
+      if (Array.isArray(data.results)) {
+        setCompanies(data.results);
+      }
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load companies.",
+        variant: "destructive",
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCompanyData();
+  }, [fetchCompanyData]);
+
+  const handleCompanyUpdated = useCallback((updatedData) => {
+    setCompanies(updatedData);
+  }, []);
+
+  const handleCompanyAdd = async (e) => {
+    e.preventDefault(); 
+
+    const formData = new FormData();
+    formData.append("company_name", companyName);
+    formData.append("cr_no", crNo);
+    formData.append("cr_expiry", crExpiry.toISOString().split("T")[0]); 
+    formData.append("ruksa_number", RuksaNo);
+    formData.append("ruksa_expiry", RuksaExpiry?.toISOString().split("T")[0]); 
+    formData.append("computer_card", computerCard);
+    formData.append(
+      "computer_card_expiry",
+      cardexpireDate?.toISOString().split("T")[0]
+    ); // Format date if needed
+    if (crImage) formData.append("cr_image", crImage);
+    if (RuksImage) formData.append("ruksa_image", RuksImage);
+    if (computerCardImage)
+      formData.append("computer_card_image", computerCardImage);
+
+    try {
+      const response = await api.post("/company-details/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", 
+        },
+      });
+      
+      toast({
+        title: "Success",
+        description: "Company added successfully.",
+      })
+
+      setCompanyName("");
+      setCrNo("");
+      setCrExpiry(null);
+      setRuksaNo("");
+      setRuksaExpiry(null);
+      setComputerCard("");
+      setCardExpireDate(null);
+      setCrImage(null);
+      setRuksImage(null);
+      setComputerCardImage(null)
+    } catch (error) {
+      console.error("Error adding company:", error);
+      // Handle error, e.g., show error message
+    }
+  };
+
   const [companyName, setCompanyName] = useState("");
   const [crNo, setCrNo] = useState("");
-  const [crExpiry, setCrExpiry] = useState(undefined);
+  const [crExpiry, setCrExpiry] = useState(null);
   const [RuksaNo, setRuksaNo] = useState("");
-  const [RuksaExpiry, setRuksaExpiry] = useState(undefined);
+  const [RuksaExpiry, setRuksaExpiry] = useState(null);
   const [computerCard, setComputerCard] = useState("");
-  const [cardexpireDate, setCardExpireDate] = useState(undefined);
-  const [crImage, setCrImage] = useState(undefined);
-  const [RuksImage, setRuksImage] = useState(undefined);
-  const [computerCardImage, setComputerCardImage] = useState(undefined);
+  const [cardexpireDate, setCardExpireDate] = useState(null);
+  const [crImage, setCrImage] = useState(null);
+  const [RuksImage, setRuksImage] = useState(null);
+  const [computerCardImage, setComputerCardImage] = useState(null);
+
   return (
+    <>
     <main className="w-full h-full bg-white rounded-md p-2">
       <section className="w-full p-2 flex justify-center">
         <div className="w-full mx-auto p-5 min-h-64 shadow-md rounded-md border">
@@ -26,24 +103,16 @@ export function AddCompany() {
           <form className="w-full mt-3" onSubmit={handleCompanyAdd}>
             <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-2">
               <InputWithLabel
-                // error={errors}
                 label={"Company name"}
                 placholder={"Enter company name"}
                 setValue={setCompanyName}
                 value={companyName}
-                // trigger={trigger}
-                // watch={watch}
-                // watchKey={"companyName"}
               />
               <InputWithLabel
-                // error={errors}
                 label={"Cr NO"}
                 placholder={"Enter cr number"}
                 setValue={setCrNo}
                 value={crNo}
-                // trigger={trigger}
-                // watch={watch}
-                // watchKey={"crNo"}
               />
               <div className="flex flex-col gap-1">
                 <label htmlFor="" className="text-sm">
@@ -53,24 +122,16 @@ export function AddCompany() {
                   value={crExpiry?.toISOString().split("T")[0] || ""}
                   onChange={(e) => {
                     setCrExpiry(new Date(e.target.value));
-                    // trigger("crExpiry");
                   }}
                   type={"date"}
                   className="w-full bg-white"
                 />
-                {/* <span className="text-[13px] text-red-500 min-h-5">
-                  {errors && errors["crExpiry"] && errors["crExpiry"].message}
-                </span> */}
               </div>
               <InputWithLabel
-                // error={errors}
                 label={"Ruksa number"}
                 placholder={"Enter Ruksa number"}
                 setValue={setRuksaNo}
                 value={RuksaNo}
-                // trigger={trigger}
-                // watch={watch}
-                // watchKey={"RuksaNo"}
               />
             </div>
             <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-5 mt-4">
@@ -82,25 +143,15 @@ export function AddCompany() {
                   value={RuksaExpiry?.toISOString().split("T")[0] || ""}
                   onChange={(e) => {
                     setRuksaExpiry(new Date(e.target.value));
-                    // trigger("RuksaExpiry");
                   }}
                   type={"date"}
                   className="w-full bg-white"
                 />
-                {/* <span className="text-[13px] text-red-500 min-h-5">
-                  {errors &&
-                    errors["RuksaExpiry"] &&
-                    errors["RuksaExpiry"].message}
-                </span> */}
               </div>
               <InputWithLabel
                 label={"Computer Card"}
                 placholder={"computer card"}
-                // error={errors}
-                // trigger={trigger}
-                // watch={watch}
                 value={computerCard}
-                watchKey={"computerCard"}
                 setValue={setComputerCard}
               />
               <div className="flex flex-col gap-1">
@@ -111,16 +162,10 @@ export function AddCompany() {
                   value={cardexpireDate?.toISOString().split("T")[0] || ""}
                   onChange={(e) => {
                     setCardExpireDate(new Date(e.target.value));
-                    // trigger("cardexpireDate");
                   }}
                   type={"date"}
                   className="w-full bg-white"
                 />
-                {/* <span className="text-[13px] text-red-500 min-h-5">
-                  {errors &&
-                    errors["cardexpireDate"] &&
-                    errors["cardexpireDate"].message}
-                </span> */}
               </div>
             </div>
             <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
@@ -162,9 +207,6 @@ export function AddCompany() {
                     </>
                   )}
                 </label>
-                {/* <span className="text-[13px] text-red-600 h-4">
-                  {errors && errors.crImage && errors.crImage.message}
-                </span> */}
               </div>
               <div className="flex flex-col gap-1">
                 <input
@@ -204,9 +246,6 @@ export function AddCompany() {
                     </>
                   )}
                 </label>
-                {/* <span className="text-[13px] text-red-600 h-4">
-                  {errors && errors.RuksImage && errors.RuksImage.message}
-                </span> */}
               </div>
               <div className="flex flex-col gap-1">
                 <input
@@ -242,15 +281,12 @@ export function AddCompany() {
                   ) : (
                     <>
                       <UploadIcon className="w-5" />
-                      <h4 className="text-sm">Upload computer card image</h4>
+                      <h4 className="text-sm">
+                        Click and Upload Computer card image
+                      </h4>
                     </>
                   )}
                 </label>
-                {/* <span className="text-[13px] text-red-600 h-4">
-                  {errors &&
-                    errors.computerCardImage &&
-                    errors.computerCardImage.message}
-                </span> */}
               </div>
             </div>
             <div className="w-full flex justify-end mt-4">
@@ -259,6 +295,15 @@ export function AddCompany() {
           </form>
         </div>
       </section>
+
+
     </main>
+          {/* Company List Section */}
+          <section className="w-full p-2 flex justify-center">
+          <div className="w-full mx-auto p-5 min-h-64 shadow-md rounded-md border">
+            <CompanyList /> 
+          </div>
+        </section>
+        </>
   );
 }

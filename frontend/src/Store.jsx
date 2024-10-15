@@ -87,6 +87,7 @@ import Clients from "./components/client/Clients";
 import SalesTable from "./components/transactions/SalesTable";
 import SalesReturnTable from "./components/transactions/SalesReturnTable";
 import SalesOrderTable from "./components/transactions/SalesOrderTable";
+import { AnualManintananceCost } from "./pages/storePages/CompanyManagement/AnualManintanaceCost/AnualMaintananceCost";
 
 function Store() {
   return (
@@ -392,40 +393,22 @@ function Store() {
           }
         />
 
-        {/* Notifications */}
-        <Route
-          path="/notifications"
-          element={
-            <StoreProtectedRoute allowedRoles={["admin", "staff"]}>
-              <NotificationsPage />
-            </StoreProtectedRoute>
-          }
-        />
-
         {/* Company Management */}
-        <Route
-          path="/company-management"
-          element={
-            <StoreProtectedRoute allowedRoles={["admin"]}>
-              <CompanyLayouts />
-            </StoreProtectedRoute>
-          }
-        >
-          <Route index element={<CompanyDashboard />} />
-          <Route path="company-list" element={<CompanyList />} />
-          <Route path="add-company" element={<AddCompany />} />
-          <Route path="add-vehicle" element={<AddVehicle />} />
-          <Route path="vehicle-list" element={<VehicleList />} />
-          <Route path="vehicle-expense" element={<VehicleExpense />} />
-          <Route path="fire-certification" element={<FireAndCertfication />} />
-          <Route path="rent-expense" element={<RentandExpense />} />
-          <Route path="reports" element={<CompanyReports />} />
-          {/* <Route path="employee-list" element={<EmployeeList />} />
+        <Route path="/company-management" element={<CompanyDashboard />} />
+        <Route path="/add-company" element={<AddCompany />} />
+        <Route path="/add-vehicle" element={<AddVehicle />} />
+        <Route path="/vehicle-list" element={<VehicleList />} />
+        <Route path="/vehicle-expense" element={<VehicleExpense />} />
+        <Route path="/anual-maintanace-cost" element={<AnualManintananceCost />} />
+        <Route path="/reports" element={<CompanyReports />} />
+        {/* <Route path="/rent-expense" element={<RentandExpense />} /> */}
+        {/* <Route path="/company-list" element={<CompanyList />} /> */}
+        {/* <Route path="/fire-certification" element={<FireAndCertfication />} /> */}
+        {/* <Route path="employee-list" element={<EmployeeList />} />
           <Route path="leave-vacation" element={<LeaveAndVacation />} />
           <Route path="vp-track" element={<VpTrack />} />
           <Route path="uniform-report" element={<UniformReport />} />
           <Route path="reports" element={<Reports />} /> */}
-        </Route>
 
         {/* CRM */}
         <Route path="/crm-dashboard" element={<CrmDashboard />} />

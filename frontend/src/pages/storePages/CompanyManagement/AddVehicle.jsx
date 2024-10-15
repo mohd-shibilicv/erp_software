@@ -8,19 +8,80 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { VehicleList } from "./VehiclesList";
+import { api, fetchCompanies } from "@/services/api";
+import { toast } from "@/components/ui/use-toast";
 
 export function AddVehicle() {
-  const handleAddVehicle = function () {};
   const [vehicleName, setVehicleName] = useState("");
   const [vehicleNo, setVehicleNo] = useState("");
   const [expiryDate, setExpiryDate] = useState(undefined);
-  const [shopName, setShopName] = useState("");
+  const [vehicleModel, setVehicleModel] = useState("");
   const [ownerId, setOwnerId] = useState("");
   const [companies, setCompanies] = useState([]);
   const [company, setCompany] = useState("");
-  company;
-  setCompanies;
+  const [refreshVehicles, setRefreshVehicles] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchCompanies();
+        if (Array.isArray(data.results)) {
+          setCompanies(data.results); // Set companies to the results array
+        } else {
+          setCompanies([]); // Handle case if no data or unexpected structure
+        }
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load companies.",
+        });
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleVehicleUpdated = useCallback(() => {
+    setRefreshVehicles(prev => !prev);
+  }, []);
+
+  const handleAddVehicle = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const response = await api.post("vehicles/", {
+        vehicle_name: vehicleName,
+        vehicle_no: vehicleNo,
+        expiry_date: expiryDate,
+        vehicle_model: vehicleModel,
+        owner_id: ownerId,
+        company: company,
+      });
+
+      if (response.status === 201) {
+        toast({
+          title: "Success",
+          description: "Vehicle added successfully.",
+        });
+        setVehicleName("");
+        setVehicleNo("");
+        setExpiryDate(undefined);
+        setVehicleModel("");
+        setOwnerId("");
+        setCompany("");
+      } else {
+        // Handle error
+        alert("Failed to add vehicle. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error adding vehicle:", error);
+      alert("An error occurred while adding the vehicle.");
+    }
+  };
+
   return (
     <main className="w-full h-full bg-white rounded-md p-2">
       <section className="w-full p-2 flex justify-center">
@@ -32,13 +93,13 @@ export function AddVehicle() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
               <InputWithLabel
                 label={"Vehicle name"}
-                placholder={"enter vehicle name"}
+                placeholder={"enter vehicle name"}
                 value={vehicleName}
                 setValue={setVehicleName}
               />
               <InputWithLabel
                 label={"Vehicle No."}
-                placholder={"enter vehicle number"}
+                placeholder={"enter vehicle number"}
                 setValue={setVehicleNo}
                 value={vehicleNo}
               />
@@ -48,31 +109,23 @@ export function AddVehicle() {
                 </label>
                 <Input
                   value={expiryDate?.toISOString().split("T")[0] || ""}
-                  onChange={(e) => {
-                    setExpiryDate(new Date(e.target.value));
-                    // trigger("expiryDate");
-                  }}
+                  onChange={(e) => setExpiryDate(new Date(e.target.value))}
                   placeholder="Select date here"
                   type={"date"}
                   className="w-full bg-white"
                 />
-                {/* <span className="text-[13px] text-red-500 min-h-5">
-                  {errors &&
-                    errors["expiryDate"] &&
-                    errors["expiryDate"].message}
-                </span> */}
               </div>
             </div>
             <div className="grid grid-col-1 lg:grid-cols-3 gap-5 mt-4">
               <InputWithLabel
-                label={"Shop name"}
-                placholder={"Enter shop name"}
-                value={shopName}
-                setValue={setShopName}
+                label={"Vehicle Model"}
+                placeholder={"Enter vehicle model"}
+                value={vehicleModel}
+                setValue={setVehicleModel}
               />
               <InputWithLabel
                 label={"Owner Id"}
-                placholder={"Enter owner id"}
+                placeholder={"Enter owner id"}
                 value={ownerId}
                 setValue={setOwnerId}
               />
@@ -81,117 +134,38 @@ export function AddVehicle() {
                   Select company
                 </label>
                 <Select
-                  onValueChange={(value) => {
-                    setCompany(value);
-                  }}
+                  onValueChange={(value) => setCompany(value)}
+                  value={company}
                 >
                   <SelectTrigger className="w-full bg-white">
                     <SelectValue placeholder="Select Company" />
                   </SelectTrigger>
                   <SelectContent>
-                    {companies?.map((company) => (
-                      <SelectItem
-                        key={String(company?._id)}
-                        value={String(company?._id)}
-                      >
-                        {company?.companyName}
-                      </SelectItem>
-                    ))}
+                    {companies.length > 0 ? (
+                      companies.map((company) => (
+                        <SelectItem
+                          key={String(company?.id)}
+                          value={String(company?.id)}
+                        >
+                          {company?.company_name}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <p>No companies available</p>
+                    )}
                   </SelectContent>
                 </Select>
-                {/* <span className="text-[13px] text-red-500 min-h-5">
-                  {errors && errors["company"] && errors["company"].message}
-                </span> */}
               </div>
             </div>
-            {/* <div className="grid grid-col-1 lg:grid-cols-2 gap-5">
-              <InputWithLabel
-                label={"Vehicle maintance"}
-                placholder={"Vehicle maintance eg: oil change"}
-                watch={watch}
-                trigger={trigger}
-                error={errors}
-                setValue={setValue}
-                watchKey={"maintenance"}
-              />
-              <InputWithLabel
-                label={"Maintenance cost"}
-                placholder={"Enter maintenance cost"}
-                watch={watch}
-                trigger={trigger}
-                error={errors}
-                setValue={setValue}
-                watchKey={"maintanceCost"}
-              />
-            </div> */}
-
-            {/* <div className="w-full border rounded-md p-2">
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-2">
-                <Input
-                  value={maintanceTxt}
-                  onChange={(e) => setMaintanceTxt(e.target.value)}
-                  className="w-full col-span-4 bg-white"
-                  placeholder="maintenance or expense"
-                />
-                <Input
-                  className="w-full col-span-4 bg-white"
-                  placeholder="cost"
-                  value={maintanceCost}
-                  onChange={(e) => setMaintanceCost(e.target.value)}
-                />
-                <Input
-                  type="date"
-                  value={maintanceDate?.toISOString().split("T")[0] || ""}
-                  onChange={(e) => setMaintanceDate(new Date(e.target.value))}
-                  className="w-full col-span-3 bg-white"
-                />
-                <Button
-                  className="col-span-1 w-full"
-                  onClick={handleMaintanceAdd}
-                  type="button"
-                >
-                  Add
-                </Button>
-              </div>
-              <div className="w-full border max-h-[300px] mt-2 p-2 rounded-md space-y-2">
-                {watch("maintenances")?.map((item, Id) => (
-                  // cost: maintanceCost, date: maintanceDate, maintenance: maintanceTxt
-                  <div
-                    key={Id}
-                    className="w-full min-h-9 bg-slate-200 rounded-md pr-4 flex flex-wrap p-1 flex-row gap-2 relative"
-                  >
-                    <div className="min-h-8 py-1 px-2 rounded-md text-sm bg-white">
-                      {item?.maintenance}
-                    </div>
-                    <div className="min-h-8 py-1 px-2 rounded-md text-sm bg-white">
-                      {" "}
-                      {item?.cost}
-                    </div>
-                    <div className="min-h-8 py-1 px-2 rounded-md text-sm bg-white">
-                      {" "}
-                      {item?.date && format(String(item?.date), "PPP")}
-                    </div>
-                    <X
-                      className="w-4 absolute right-2 top-2 cursor-pointer"
-                      onClick={() =>
-                        setValue(
-                          "maintenances",
-                          getValues("maintenances")?.filter((_, I) => I !== Id)
-                        )
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-              <span className="text-sm text-red-600">
-                {errors && errors.maintenances && errors?.maintenances?.message}
-              </span>
-            </div> */}
             <div className="w-full flex mt-4 justify-end">
               <Button type={"submit"}>Submit</Button>
             </div>
           </form>
         </div>
+      </section>
+
+      <section className="w-full mt-8">
+        <VehicleList  />
       </section>
     </main>
   );

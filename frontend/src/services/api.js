@@ -132,3 +132,21 @@ export const fetchLPO = async (id) => {
   const response = await api.get(`/local-purchase-orders/${id}/`);
   return response.data;
 };
+
+// Comany Details
+export const fetchCompanies = async () => {
+  const response = await api.get("/company-details/");
+  return response.data;
+};
+
+// Vehicle Details
+export const fetchVehicles = async () => {
+  const response = await api.get("/vehicles/");
+  return response.data;
+};
+
+// Amc Details
+export const fetchAmc = async () => {
+  const response = await api.get("/amc/");
+  return response.data;
+};

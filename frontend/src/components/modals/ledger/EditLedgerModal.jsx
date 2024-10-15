@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { api } from "@/services/api"; // Assuming `api` is an Axios instance
+import { api } from "@/services/api"; 
 
 const EditLedgerModal = ({ ledger, groups, onClose, onSave }) => {
   const [updatedLedger, setUpdatedLedger] = useState(ledger);
   const [error, setError] = useState(null);
-  const [masterDataType, setMasterDataType] = useState(ledger.master_data || ""); // Initialize with ledger's master data
+  const [masterDataType, setMasterDataType] = useState(ledger.master_data || ""); 
   const [customers, setCustomers] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [selectedMasterData, setSelectedMasterData] = useState(

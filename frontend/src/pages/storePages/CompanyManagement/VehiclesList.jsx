@@ -1,10 +1,44 @@
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { vehicleColumn } from "./CompanyTableColumns/VehicleColumn";
-import { EmployeeCompanyCommonTable } from "../EmployeeManagment/Components/EmployeListTable";
+import { useState, useEffect } from "react";
+import { api } from "@/services/api";
+import { VehicleTable } from "./CompanyTableColumns/VehicleTable";
+import { EditVehicle } from "./EditVehicle";
 
-export function VehicleList() {
+export function VehicleList({ onVehicleUpdated }) {
   const [srch, setSrch] = useState("");
+  const [vehicles, setVehicles] = useState([]);
+  const [editingVehicle, setEditingVehicle] = useState(null);
+
+  const fetchVehicles = async () => {
+    try {
+      const response = await api.get("vehicles/");
+      setVehicles(response.data.results);
+    } catch (error) {
+      console.error("Error fetching vehicles:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load vehicles.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchVehicles();
+  }, [onVehicleUpdated]);
+
+  const handleCloseEdit = () => {
+    setEditingVehicle(null);
+  };
+
+  const handleVehicleUpdated = () => {
+    fetchVehicles();  
+  };
+  
+  const filteredVehicles = vehicles.filter(vehicle =>
+    vehicle.vehicle_name.toLowerCase().includes(srch.toLowerCase())
+  );
+
   return (
     <main className="w-full h-full bg-white rounded-md p-2">
       <section className="w-full">
@@ -17,7 +51,11 @@ export function VehicleList() {
           />
         </div>
 
-        <EmployeeCompanyCommonTable from="vehicle" columns={vehicleColumn} data={[]} />
+        <VehicleTable
+          from="vehicle"
+          data={filteredVehicles}
+          onVehicleUpdated={handleVehicleUpdated}
+        />
       </section>
     </main>
   );
